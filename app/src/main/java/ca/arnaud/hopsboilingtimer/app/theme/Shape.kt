@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.ui.theme
+package ca.arnaud.hopsboilingtimer.app.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

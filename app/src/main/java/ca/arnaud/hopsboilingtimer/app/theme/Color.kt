@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.ui.theme
+package ca.arnaud.hopsboilingtimer.app.theme
 
 import androidx.compose.ui.graphics.Color
 

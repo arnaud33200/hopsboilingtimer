@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer
+package ca.arnaud.hopsboilingtimer.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ca.arnaud.hopsboilingtimer.ui.theme.HopsBoilingTimerTheme
+import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
