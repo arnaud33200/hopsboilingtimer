@@ -7,7 +7,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
+import kotlinx.coroutines.flow.StateFlow
+
+interface MainScreenViewModel {
+    val screenModel: StateFlow<MainScreenModel>
+}
 
 @Composable
 fun MainScreen() {
