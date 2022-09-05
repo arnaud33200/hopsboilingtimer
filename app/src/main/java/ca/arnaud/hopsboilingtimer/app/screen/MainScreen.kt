@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,6 +34,23 @@ interface MainScreenViewModel {
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
     val model = viewModel.screenModel.collectAsState().value
+    MainScreen(
+        viewModel::newAdditionHopsTextChanged,
+        viewModel::newAdditionDurationTextChanged,
+        viewModel::addAdditionClick,
+        viewModel::startTimerButtonClick,
+        model
+    )
+}
+
+@Composable
+private fun MainScreen(
+    newAdditionHopsTextChanged: (String) -> Unit,
+    newAdditionDurationTextChanged: (String) -> Unit,
+    addAdditionClick: () -> Unit,
+    startTimerButtonClick: () -> Unit,
+    model: MainScreenModel
+) {
     Scaffold(
         topBar = {
             Row(
@@ -77,13 +95,21 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                     AdditionRow(model = rowModel)
                 }
 
-                AddNewAddition()
+                AddNewAddition(
+                    newAdditionHopsTextChanged,
+                    newAdditionDurationTextChanged,
+                    addAdditionClick
+                )
             })
     }
 }
 
 @Composable
-fun AddNewAddition() {
+fun AddNewAddition(
+    newAdditionHopsTextChanged: (String) -> Unit,
+    newAdditionDurationTextChanged: (String) -> Unit,
+    addAdditionClick: () -> Unit
+) {
     Column(
         Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
     ) {
@@ -101,22 +127,20 @@ fun AddNewAddition() {
                 modifier = Modifier.weight(1f),
                 value = "",
                 label = { Text("Hops") },
-                onValueChange = {
-                    // TODO - add listener
-                }
+                onValueChange = newAdditionHopsTextChanged
             )
             Spacer(modifier = Modifier.width(10.dp))
             TextField(
                 modifier = Modifier.defaultMinSize(60.dp),
                 value = "",
                 label = { Text("Min") },
-                onValueChange = {
-                    // TODO - add listener
-                }
+                onValueChange = newAdditionDurationTextChanged
             )
             Spacer(modifier = Modifier.width(10.dp))
             Icon(
-                modifier = Modifier.padding(5.dp),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .clickable { addAdditionClick },
                 imageVector = Icons.Rounded.Add,
                 contentDescription = ""
             )
@@ -162,6 +186,22 @@ fun DefaultPreview() {
                         )
                     )
                 )
+
+            override fun newAdditionHopsTextChanged(text: String) {
+
+            }
+
+            override fun newAdditionDurationTextChanged(text: String) {
+
+            }
+
+            override fun addAdditionClick() {
+
+            }
+
+            override fun startTimerButtonClick() {
+
+            }
 
         })
     }

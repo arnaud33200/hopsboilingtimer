@@ -16,6 +16,26 @@ class MainViewModel @Inject constructor() : ViewModel(), MainScreenViewModel {
     private val _screenModel = MutableStateFlow(MainScreenModel())
     override val screenModel: StateFlow<MainScreenModel> = _screenModel
 
+    // region new addition action
+
+    override fun newAdditionHopsTextChanged(text: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun newAdditionDurationTextChanged(text: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun addAdditionClick() {
+        TODO("Not yet implemented")
+    }
+
+    // endregion
+
+    override fun startTimerButtonClick() {
+        TODO("Not yet implemented")
+    }
+
     init {
         viewModelScope.launch {
             // TODO - get additions
