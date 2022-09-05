@@ -7,6 +7,7 @@ import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,21 +20,29 @@ class MainViewModel @Inject constructor() : ViewModel(), MainScreenViewModel {
     // region new addition action
 
     override fun newAdditionHopsTextChanged(text: String) {
-        TODO("Not yet implemented")
+        _screenModel.update {
+            it.copy(
+                newAdditionRow = it.newAdditionRow.copy(title = text)
+            )
+        }
     }
 
     override fun newAdditionDurationTextChanged(text: String) {
-        TODO("Not yet implemented")
+        _screenModel.update {
+            it.copy(
+                newAdditionRow = it.newAdditionRow.copy(duration = text)
+            )
+        }
     }
 
     override fun addAdditionClick() {
-        TODO("Not yet implemented")
+        // TODO - call use case, if success clear roww
     }
 
     // endregion
 
     override fun startTimerButtonClick() {
-        TODO("Not yet implemented")
+        // TODO - build alert and schedule
     }
 
     init {

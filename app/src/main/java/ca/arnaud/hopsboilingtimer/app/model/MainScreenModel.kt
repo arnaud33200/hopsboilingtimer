@@ -1,7 +1,8 @@
 package ca.arnaud.hopsboilingtimer.app.model
 
 data class MainScreenModel(
-    val additionRows: List<AdditionRowModel> = emptyList()
+    val additionRows: List<AdditionRowModel> = emptyList(),
+    val newAdditionRow: AdditionRowModel = AdditionRowModel()
 )
 
 data class AdditionRowModel(

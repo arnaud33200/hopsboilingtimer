@@ -98,7 +98,8 @@ private fun MainScreen(
                 AddNewAddition(
                     newAdditionHopsTextChanged,
                     newAdditionDurationTextChanged,
-                    addAdditionClick
+                    addAdditionClick,
+                    model.newAdditionRow
                 )
             })
     }
@@ -108,7 +109,8 @@ private fun MainScreen(
 fun AddNewAddition(
     newAdditionHopsTextChanged: (String) -> Unit,
     newAdditionDurationTextChanged: (String) -> Unit,
-    addAdditionClick: () -> Unit
+    addAdditionClick: () -> Unit,
+    model: AdditionRowModel
 ) {
     Column(
         Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
@@ -125,14 +127,14 @@ fun AddNewAddition(
         ) {
             TextField(
                 modifier = Modifier.weight(1f),
-                value = "",
+                value = model.title,
                 label = { Text("Hops") },
                 onValueChange = newAdditionHopsTextChanged
             )
             Spacer(modifier = Modifier.width(10.dp))
             TextField(
                 modifier = Modifier.defaultMinSize(60.dp),
-                value = "",
+                value = model.duration,
                 label = { Text("Min") },
                 onValueChange = newAdditionDurationTextChanged
             )
