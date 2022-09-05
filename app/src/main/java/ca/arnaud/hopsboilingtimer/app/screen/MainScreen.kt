@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +22,12 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface MainScreenViewModel {
     val screenModel: StateFlow<MainScreenModel>
+
+    fun newAdditionHopsTextChanged(text: String)
+    fun newAdditionDurationTextChanged(text: String)
+    fun addAdditionClick()
+
+    fun startTimerButtonClick()
 }
 
 @Composable
@@ -135,8 +140,9 @@ fun AdditionRow(model: AdditionRowModel) {
         Text(
             text = model.duration
         )
-        Spacer(modifier = Modifier.width(10.dp))
-        Icon(Icons.Filled.Delete, "")
+
+//        Spacer(modifier = Modifier.width(10.dp))
+//        Icon(Icons.Filled.Delete, "")
     }
 }
 
