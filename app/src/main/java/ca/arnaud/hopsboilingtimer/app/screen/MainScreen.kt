@@ -141,8 +141,8 @@ fun AddNewAddition(
             Spacer(modifier = Modifier.width(10.dp))
             Icon(
                 modifier = Modifier
-                    .padding(5.dp)
-                    .clickable { addAdditionClick },
+                    .clickable { addAdditionClick() }
+                    .padding(5.dp),
                 imageVector = Icons.Rounded.Add,
                 contentDescription = ""
             )

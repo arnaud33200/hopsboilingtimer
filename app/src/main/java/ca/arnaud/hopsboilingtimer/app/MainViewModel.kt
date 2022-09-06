@@ -2,20 +2,43 @@ package ca.arnaud.hopsboilingtimer.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
+import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
+import ca.arnaud.hopsboilingtimer.domain.usecase.AddNewAddition
+import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel(), MainScreenViewModel {
+class MainViewModel @Inject constructor(
+    private val getAdditions: GetAdditions,
+    private val addNewAddition: AddNewAddition,
+    private val additionRowModelMapper: AdditionRowModelMapper
+) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
     override val screenModel: StateFlow<MainScreenModel> = _screenModel
+
+    init {
+        viewModelScope.launch {
+            updateAdditions()
+        }
+    }
+
+    private suspend fun updateAdditions() {
+        val result = getAdditions.execute(Unit)
+        val additions = result.getOrDefault(emptyList())
+        _screenModel.update { model ->
+            model.copy(additionRows = additions.map { additionRowModelMapper.mapTo(it) })
+        }
+    }
 
     // region new addition action
 
@@ -36,7 +59,22 @@ class MainViewModel @Inject constructor() : ViewModel(), MainScreenViewModel {
     }
 
     override fun addAdditionClick() {
-        // TODO - call use case, if success clear roww
+        viewModelScope.launch {
+            val newAddition = screenModel.value.newAdditionRow
+            val params = AddNewAddition.Params(
+                name = newAddition.title,
+                duration = Duration.ofMinutes(newAddition.duration.toLong())
+            )
+            val result = addNewAddition.execute(params)
+            when {
+                result.isSuccess -> {
+                    _screenModel.update {
+                        it.copy(newAdditionRow = AdditionRowModel())
+                    }
+                    updateAdditions()
+                }
+            }
+        }
     }
 
     // endregion
