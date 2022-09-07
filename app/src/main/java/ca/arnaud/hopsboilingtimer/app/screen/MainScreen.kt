@@ -3,6 +3,7 @@ package ca.arnaud.hopsboilingtimer.app.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,12 +13,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
 import ca.arnaud.hopsboilingtimer.app.theme.Typography
+import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -55,7 +59,6 @@ private fun MainScreen(
         topBar = {
             Row(
                 modifier = Modifier
-                    .shadow(4.dp)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -75,7 +78,7 @@ private fun MainScreen(
                     modifier = Modifier
                         .height(50.dp)
                         .fillMaxWidth(),
-                    onClick = {}
+                    onClick = startTimerButtonClick
                 ) {
                     Row {
                         Text(
@@ -121,31 +124,45 @@ fun AddNewAddition(
         )
         Row(
             // TODO - setup dimension in theme
-            modifier = Modifier.padding(vertical = 20.dp),
+            modifier = Modifier.padding(vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            TextField(
+            TransparentTextField(
                 modifier = Modifier.weight(1f),
                 value = model.title,
                 label = { Text("Hops") },
-                onValueChange = newAdditionHopsTextChanged
+                singleLine = true,
+                onValueChange = newAdditionHopsTextChanged,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(modifier = Modifier.width(10.dp))
-            TextField(
-                modifier = Modifier.defaultMinSize(60.dp),
+            TransparentTextField(
+                modifier = Modifier.width(80.dp),
                 value = model.duration,
                 label = { Text("Min") },
-                onValueChange = newAdditionDurationTextChanged
+                singleLine = true,
+                onValueChange = newAdditionDurationTextChanged,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                )
             )
             Spacer(modifier = Modifier.width(10.dp))
-            Icon(
+
+            Button(
                 modifier = Modifier
-                    .clickable { addAdditionClick() }
-                    .padding(5.dp),
-                imageVector = Icons.Rounded.Add,
-                contentDescription = ""
-            )
+                    .height(40.dp)
+                    .width(40.dp),
+                onClick = addAdditionClick
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = ""
+                )
+            }
         }
     }
 }
@@ -154,7 +171,7 @@ fun AddNewAddition(
 fun AdditionRow(model: AdditionRowModel) {
     Row(
         // TODO - setup dimension in theme
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
