@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ca.arnaud.hopsboilingtimer">
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <application
         android:name=".app.HopsBoilingTimerApplication"
         android:allowBackup="true"
@@ -14,6 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HopsBoilingTimer"
         tools:targetApi="33">
+
+        <receiver android:name=".app.alarm.AdditionAlarmReceiver" />
 
         <activity
             android:name=".app.MainActivity"
