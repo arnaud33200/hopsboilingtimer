@@ -3,7 +3,9 @@ package ca.arnaud.hopsboilingtimer.domain.model
 import java.time.Duration
 
 data class AdditionAlert(
+    @Deprecated(message = "Only need trigger at time")
     val countDown: Duration,
+    val triggerAtTime: Long,
     val additions: List<Addition>
 )
 

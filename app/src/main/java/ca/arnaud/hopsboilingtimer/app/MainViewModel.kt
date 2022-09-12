@@ -2,11 +2,14 @@ package ca.arnaud.hopsboilingtimer.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.hopsboilingtimer.app.alarm.AdditionAlarmScheduler
 import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.AddNewAddition
+import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditionAlerts
 import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,11 +19,14 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
 
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getAdditions: GetAdditions,
     private val addNewAddition: AddNewAddition,
-    private val additionRowModelMapper: AdditionRowModelMapper
+    private val getAdditionAlerts: GetAdditionAlerts,
+    private val additionRowModelMapper: AdditionRowModelMapper,
+    private val additionAlarmScheduler: AdditionAlarmScheduler
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
@@ -35,6 +41,7 @@ class MainViewModel @Inject constructor(
     private suspend fun updateAdditions() {
         val result = getAdditions.execute(Unit)
         val additions = result.getOrDefault(emptyList())
+
         _screenModel.update { model ->
             model.copy(additionRows = additions.map { additionRowModelMapper.mapTo(it) })
         }
@@ -80,12 +87,34 @@ class MainViewModel @Inject constructor(
     // endregion
 
     override fun startTimerButtonClick() {
-        // TODO - build alert and schedule
-    }
-
-    init {
+        // TODO - probably better to use use case start and stop (reset)
+        //  viewmodel --> start
+        //  scheduler --> getAlertFLow and schedule next notification, getTimer (start, stop) and cancel if needed
+        //  received --> call received
         viewModelScope.launch {
-            // TODO - get additions
+            val alerts = getAdditionAlerts.execute(Unit)
+            additionAlarmScheduler.schedule(alerts)
+
+//            val now = System.currentTimeMillis()
+//            val alerts = listOf(
+//                AdditionAlert(
+//                    countDown = Duration.ZERO,
+//                    now + Duration.ZERO.toMillis(),
+//                    emptyList()
+//                ),
+//                AdditionAlert(
+//                    countDown = Duration.ofMinutes(1),
+//                    now + Duration.ofMinutes(1).toMillis(),
+//                    emptyList()
+//                ),
+//                AdditionAlert(
+//                    countDown = Duration.ofMinutes(2),
+//                    now + Duration.ofMinutes(2).toMillis(),
+//                    emptyList()
+//                )
+//            )
+
+            additionAlarmScheduler.schedule(alerts)
         }
     }
 }
