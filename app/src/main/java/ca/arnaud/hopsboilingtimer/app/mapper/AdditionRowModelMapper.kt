@@ -9,6 +9,7 @@ class AdditionRowModelMapper @Inject constructor() : DataMapper<Addition, Additi
 
     override fun mapTo(input: Addition): AdditionRowModel {
         return AdditionRowModel(
+            id = input.id,
             title = input.name,
             duration = input.duration.toMinutes().toString()
         )

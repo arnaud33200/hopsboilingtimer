@@ -13,4 +13,7 @@ interface AdditionDao {
 
     @Insert
     fun insert(additionEntity: AdditionEntity)
+
+    @Query("DELETE FROM additionentity WHERE id = :additionId")
+    fun deleteAddition(additionId: String)
 }

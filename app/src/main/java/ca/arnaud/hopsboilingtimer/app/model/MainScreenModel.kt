@@ -6,6 +6,7 @@ data class MainScreenModel(
 )
 
 data class AdditionRowModel(
+    val id: String = "",
     val title: String = "",
     val duration: String = ""
 )

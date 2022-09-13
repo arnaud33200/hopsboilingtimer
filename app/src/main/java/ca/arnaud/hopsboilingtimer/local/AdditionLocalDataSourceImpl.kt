@@ -18,4 +18,8 @@ class AdditionLocalDataSourceImpl @Inject constructor(
     override suspend fun insertAddition(addition: Addition) {
         appDatabase.additionDao().insert(additionEntityMapper.mapTo(addition))
     }
+
+    override suspend fun deleteAddition(additionId: String) {
+        appDatabase.additionDao().deleteAddition(additionId)
+    }
 }

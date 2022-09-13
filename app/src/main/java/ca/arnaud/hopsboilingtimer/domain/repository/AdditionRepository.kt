@@ -7,4 +7,6 @@ interface AdditionRepository {
     suspend fun getAdditions(): Result<List<Addition>>
 
     suspend fun addAddition(addition: Addition): Result<Unit>
+
+    suspend fun deleteAddition(additionId: String): Result<Unit>
 }

@@ -27,4 +27,10 @@ class AdditionRepositoryImpl @Inject constructor(
         additionLocalDataSource.insertAddition(addition)
         return Result.success(Unit)
     }
+
+    override suspend fun deleteAddition(additionId: String): Result<Unit> {
+        additionLocalDataSource.deleteAddition(additionId)
+        additions.removeIf { it.id == additionId }
+        return Result.success(Unit)
+    }
 }

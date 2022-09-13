@@ -5,14 +5,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +34,7 @@ interface MainScreenViewModel {
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
     fun addAdditionClick()
+    fun onDeleteAddition(additionRowModel: AdditionRowModel)
 
     fun startTimerButtonClick()
 }
@@ -43,6 +47,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
         viewModel::newAdditionDurationTextChanged,
         viewModel::addAdditionClick,
         viewModel::startTimerButtonClick,
+        viewModel::onDeleteAddition,
         model
     )
 }
@@ -53,7 +58,8 @@ private fun MainScreen(
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
     startTimerButtonClick: () -> Unit,
-    model: MainScreenModel
+    onDelete: (AdditionRowModel) -> Unit,
+    model: MainScreenModel,
 ) {
     Scaffold(
         topBar = {
@@ -95,7 +101,7 @@ private fun MainScreen(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             content = {
                 model.additionRows.forEach { rowModel ->
-                    AdditionRow(model = rowModel)
+                    AdditionRow(model = rowModel, onDelete = onDelete)
                 }
 
                 AddNewAddition(
@@ -113,7 +119,7 @@ fun AddNewAddition(
     newAdditionHopsTextChanged: (String) -> Unit,
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
-    model: AdditionRowModel
+    model: AdditionRowModel,
 ) {
     Column(
         Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
@@ -168,7 +174,10 @@ fun AddNewAddition(
 }
 
 @Composable
-fun AdditionRow(model: AdditionRowModel) {
+fun AdditionRow(
+    model: AdditionRowModel,
+    onDelete: (AdditionRowModel) -> Unit,
+) {
     Row(
         // TODO - setup dimension in theme
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
@@ -184,8 +193,14 @@ fun AdditionRow(model: AdditionRowModel) {
             text = model.duration
         )
 
-//        Spacer(modifier = Modifier.width(10.dp))
-//        Icon(Icons.Filled.Delete, "")
+        Spacer(modifier = Modifier.width(10.dp))
+        Icon(
+            modifier = Modifier
+                .clickable { onDelete(model) }
+                .padding(5.dp),
+            imageVector = Icons.Filled.Delete,
+            contentDescription = null
+        )
     }
 }
 
@@ -215,6 +230,10 @@ fun DefaultPreview() {
             }
 
             override fun addAdditionClick() {
+
+            }
+
+            override fun onDeleteAddition(additionRowModel: AdditionRowModel) {
 
             }
 

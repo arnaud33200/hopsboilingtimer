@@ -7,8 +7,8 @@ import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.AddNewAddition
+import ca.arnaud.hopsboilingtimer.domain.usecase.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditionAlerts
 import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,9 +24,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getAdditions: GetAdditions,
     private val addNewAddition: AddNewAddition,
+    private val deleteAddition: DeleteAddition,
     private val getAdditionAlerts: GetAdditionAlerts,
     private val additionRowModelMapper: AdditionRowModelMapper,
-    private val additionAlarmScheduler: AdditionAlarmScheduler
+    private val additionAlarmScheduler: AdditionAlarmScheduler,
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
@@ -81,6 +82,13 @@ class MainViewModel @Inject constructor(
                     updateAdditions()
                 }
             }
+        }
+    }
+
+    override fun onDeleteAddition(additionRowModel: AdditionRowModel) {
+        viewModelScope.launch {
+            deleteAddition.execute(DeleteAddition.Params(additionRowModel.id))
+            updateAdditions()
         }
     }
 

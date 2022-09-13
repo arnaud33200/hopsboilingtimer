@@ -7,4 +7,6 @@ interface AdditionLocalDataSource {
     suspend fun getAdditions(): List<Addition>
 
     suspend fun insertAddition(addition: Addition)
+
+    suspend fun deleteAddition(additionId: String)
 }
