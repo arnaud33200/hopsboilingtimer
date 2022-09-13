@@ -10,6 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
@@ -73,44 +74,52 @@ private fun MainScreen(
                     style = Typography.h5
                 )
             }
-        },
-        bottomBar = {
-            Column(
-                modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Button(
-                    // TODO - setup dimension
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth(),
-                    onClick = startTimerButtonClick
-                ) {
-                    Row {
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = "Start Timer"
-                        )
-                        Text("60 Min")
-                    }
-                }
-            }
         }
     ) { _ ->
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-            content = {
-                model.additionRows.forEach { rowModel ->
-                    AdditionRow(model = rowModel, onDelete = onDelete)
-                }
+        Column() {
 
-                AddNewAddition(
-                    newAdditionHopsTextChanged,
-                    newAdditionDurationTextChanged,
-                    addAdditionClick,
-                    model.newAdditionRow
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                content = {
+                    model.additionRows.forEach { rowModel ->
+                        AdditionRow(model = rowModel, onDelete = onDelete)
+                    }
+
+                    AddNewAddition(
+                        newAdditionHopsTextChanged,
+                        newAdditionDurationTextChanged,
+                        addAdditionClick,
+                        model.newAdditionRow
+                    )
+                })
+            BottomBar(startTimerButtonClick)
+        }
+    }
+}
+
+@Composable
+private fun BottomBar(startTimerButtonClick: () -> Unit) {
+    Column(
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Button(
+            // TODO - setup dimension
+            modifier = Modifier
+                .height(50.dp)
+                .fillMaxWidth(),
+            onClick = startTimerButtonClick
+        ) {
+            Row {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "Start Timer"
                 )
-            })
+                Text("60 Min")
+            }
+        }
     }
 }
 
@@ -161,11 +170,11 @@ fun AddNewAddition(
             Button(
                 modifier = Modifier
                     .height(40.dp)
-                    .width(40.dp),
+                    .width(50.dp),
                 onClick = addAdditionClick
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.Add,
+                    imageVector = Icons.Default.Add,
                     contentDescription = ""
                 )
             }
