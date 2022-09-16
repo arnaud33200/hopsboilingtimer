@@ -24,7 +24,7 @@ class AdditionAlarmScheduler @Inject constructor(
     fun scheduleNext(schedule: AdditionNotificationSchedule) {
         // TODO - replace with the proper usecase call
         val notifications = schedule.AdditionNotifications
-        val newNotifications = notifications.subList(0, notifications.lastIndex)
+        val newNotifications = notifications.filterIndexed { index, _ -> index > 0 }
         scheduleWith(schedule.copy(AdditionNotifications = newNotifications))
     }
 

@@ -7,6 +7,8 @@ import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
+import ca.arnaud.hopsboilingtimer.domain.model.Addition
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditionAlerts
@@ -100,27 +102,34 @@ class MainViewModel @Inject constructor(
         //  scheduler --> getAlertFLow and schedule next notification, getTimer (start, stop) and cancel if needed
         //  received --> call received
         viewModelScope.launch {
-            val alerts = getAdditionAlerts.execute(Unit)
-            additionAlarmScheduler.schedule(alerts)
+//            val alerts = getAdditionAlerts.execute(Unit)
+//            additionAlarmScheduler.schedule(alerts)
 
-//            val now = System.currentTimeMillis()
-//            val alerts = listOf(
-//                AdditionAlert(
-//                    countDown = Duration.ZERO,
-//                    now + Duration.ZERO.toMillis(),
-//                    emptyList()
-//                ),
-//                AdditionAlert(
-//                    countDown = Duration.ofMinutes(1),
-//                    now + Duration.ofMinutes(1).toMillis(),
-//                    emptyList()
-//                ),
-//                AdditionAlert(
-//                    countDown = Duration.ofMinutes(2),
-//                    now + Duration.ofMinutes(2).toMillis(),
-//                    emptyList()
-//                )
-//            )
+            val now = System.currentTimeMillis()
+            val alerts = listOf(
+                AdditionAlert(
+                    countDown = Duration.ofSeconds(3),
+                    now + Duration.ZERO.toMillis(),
+                    listOf(
+                        Addition(name = "Cascade", duration = Duration.ZERO)
+                    )
+                ),
+                AdditionAlert(
+                    countDown = Duration.ofSeconds(5),
+                    now + Duration.ofMinutes(1).toMillis(),
+                    emptyList()
+                ),
+                AdditionAlert(
+                    countDown = Duration.ofSeconds(7),
+                    now + Duration.ofMinutes(2).toMillis(),
+                    listOf(
+                        Addition(name = "Cascade", duration = Duration.ZERO),
+                        Addition(name = "Mosaic", duration = Duration.ZERO),
+                        Addition(name = "Saaz", duration = Duration.ZERO),
+
+                    )
+                )
+            )
 
             additionAlarmScheduler.schedule(alerts)
         }
