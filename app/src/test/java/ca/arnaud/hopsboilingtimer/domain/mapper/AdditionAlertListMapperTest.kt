@@ -1,8 +1,9 @@
 package ca.arnaud.hopsboilingtimer.domain.mapper
 
-import ca.arnaud.hopsboilingtimer.domain.mapper.AdditionAlertListMapper
+import ca.arnaud.hopsboilingtimer.domain.fake.FakeTimeProvider
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -12,6 +13,8 @@ class AdditionAlertListMapperTest {
 
     lateinit var subject: AdditionAlertListMapper
 
+    private val timeProvider = FakeTimeProvider()
+
     private val defaultHopsAddition = Addition(
         name = "",
         duration = Duration.ZERO
@@ -19,7 +22,11 @@ class AdditionAlertListMapperTest {
 
     @Before
     fun setup() {
-        subject = AdditionAlertListMapper()
+        timeProvider.nowMillis = 0L
+
+        subject = AdditionAlertListMapper(
+            timeProvider
+        )
     }
 
     @Test
@@ -36,7 +43,7 @@ class AdditionAlertListMapperTest {
         )
 
         val result = subject.mapTo(input)
-        val countdowns = result.map { it.countDown }
+        val countdowns = result.map { it.toCountdown(timeProvider) }
         assertEquals(listOf(0).toMinutes(), countdowns)
     }
 
@@ -47,7 +54,7 @@ class AdditionAlertListMapperTest {
         )
 
         val result = subject.mapTo(input)
-        val countdowns = result.map { it.countDown }
+        val countdowns = result.map { it.toCountdown(timeProvider) }
         assertEquals(listOf(0).toMinutes(), countdowns)
     }
 
@@ -61,7 +68,7 @@ class AdditionAlertListMapperTest {
         )
 
         val result = subject.mapTo(input)
-        val countdowns = result.map { it.countDown }
+        val countdowns = result.map { it.toCountdown(timeProvider) }
         assertEquals(listOf(0, 15, 40, 55).toMinutes(), countdowns)
     }
 
@@ -78,10 +85,10 @@ class AdditionAlertListMapperTest {
 
         val result = subject.mapTo(input)
         val expected = listOf(
-            AdditionAlert(Duration.ofMinutes(0), listOf(addition60Min)),
-            AdditionAlert(Duration.ofMinutes(15), listOf(addition45Min)),
-            AdditionAlert(Duration.ofMinutes(40), listOf(addition20Min)),
-            AdditionAlert(Duration.ofMinutes(55), listOf(addition5Min)),
+            AdditionAlert(Duration.ofMinutes(0).toMillis(), listOf(addition60Min)),
+            AdditionAlert(Duration.ofMinutes(15).toMillis(), listOf(addition45Min)),
+            AdditionAlert(Duration.ofMinutes(40).toMillis(), listOf(addition20Min)),
+            AdditionAlert(Duration.ofMinutes(55).toMillis(), listOf(addition5Min)),
         )
         assertEquals(expected, result)
     }
@@ -101,13 +108,17 @@ class AdditionAlertListMapperTest {
 
         val result = subject.mapTo(input)
         val expected = listOf(
-            AdditionAlert(Duration.ofMinutes(0), listOf(addition60Min)),
-            AdditionAlert(Duration.ofMinutes(15), listOf(addition45Min)),
-            AdditionAlert(Duration.ofMinutes(40), listOf(addition20Min, addition20Min2)),
-            AdditionAlert(Duration.ofMinutes(55), listOf(addition5Min, addition5Min2)),
+            AdditionAlert(Duration.ofMinutes(0).toMillis(), listOf(addition60Min)),
+            AdditionAlert(Duration.ofMinutes(15).toMillis(), listOf(addition45Min)),
+            AdditionAlert(Duration.ofMinutes(40).toMillis(), listOf(addition20Min, addition20Min2)),
+            AdditionAlert(Duration.ofMinutes(55).toMillis(), listOf(addition5Min, addition5Min2)),
         )
         assertEquals(expected, result)
     }
+}
+
+private fun AdditionAlert.toCountdown(timeProvider: TimeProvider): Duration {
+    return Duration.ofMillis(triggerAtTime - timeProvider.getNowTimeMillis())
 }
 
 private fun List<Int>.toMinutes(): List<Duration> {
