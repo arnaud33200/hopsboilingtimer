@@ -11,6 +11,9 @@ interface AdditionDao {
     @Query("SELECT * FROM additionentity")
     fun getAdditions(): List<AdditionEntity>
 
+    @Query("SELECT * FROM additionentity WHERE id = :additionId")
+    fun getAddition(additionId: String): AdditionEntity?
+
     @Insert
     fun insert(additionEntity: AdditionEntity)
 
