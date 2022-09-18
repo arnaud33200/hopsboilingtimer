@@ -12,18 +12,28 @@ class AdditionNotificationMapper @Inject constructor() :
 
     override fun mapTo(input: AdditionAlert): AdditionNotification {
         return when (input) {
-            is AdditionAlert.Start -> createWith(input.additions, input.triggerAtTime)
-            is AdditionAlert.Next -> createWith(input.additions, input.triggerAtTime)
+            is AdditionAlert.Start -> mapStart(input)
+            is AdditionAlert.Next -> mapNext(input)
             is AdditionAlert.End -> mapEnd(input)
         }
     }
 
-    private fun createWith(additions: List<Addition>, triggerAt: Long): AdditionNotification {
-        val duration = additions.firstOrNull()?.duration ?: Duration.ZERO
+    private fun mapStart(input: AdditionAlert.Start): AdditionNotification {
+        val additions = input.additions
         val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
         return AdditionNotification(
-            message = "${getRemainingTimeText(duration)} Addition$hops",
-            triggerAtMillis = triggerAt
+            message = "Start$hops",
+            triggerAtMillis = input.triggerAtTime
+        )
+    }
+
+    private fun mapNext(input: AdditionAlert.Next): AdditionNotification {
+        val additions = input.additions
+        val duration = input.additions.firstOrNull()?.duration ?: Duration.ZERO
+        val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
+        return AdditionNotification(
+            message = "Next Additions (${getRemainingTimeText(duration)})$hops",
+            triggerAtMillis = input.triggerAtTime
         )
     }
 
