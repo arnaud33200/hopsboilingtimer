@@ -7,7 +7,7 @@ import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import javax.inject.Inject
 
 class AdditionAlertListMapper @Inject constructor(
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
 ) : DataMapper<List<Addition>, List<AdditionAlert>> {
 
     override fun mapTo(input: List<Addition>): List<AdditionAlert> {
@@ -16,12 +16,21 @@ class AdditionAlertListMapper @Inject constructor(
         }
 
         val maxDuration = input.maxOf { it.duration }
-        return input.groupBy { it.duration }.map { (duration, additions) ->
+        val durationAdditionsMap = input.sortedByDescending { it.duration }.groupBy { it.duration }
+
+        return durationAdditionsMap.keys.mapIndexed { index, duration ->
+            val additions = durationAdditionsMap[duration] ?: emptyList()
             val countDown = maxDuration - duration
-            AdditionAlert(
-                triggerAtTime = timeProvider.getNowTimeMillis() + countDown.toMillis(),
-                additions = additions
-            )
-        }.sortedBy { it.triggerAtTime }
+            val triggerAt = timeProvider.getNowTimeMillis() + countDown.toMillis()
+            when (index) {
+                0 -> AdditionAlert.Start(triggerAt, additions)
+                else -> AdditionAlert.Next(triggerAt, additions)
+            }
+        }.toMutableList().apply {
+            if (isNotEmpty()) {
+                val triggerAt = timeProvider.getNowTimeMillis() + maxDuration.toMillis()
+                add(AdditionAlert.End(triggerAt))
+            }
+        }
     }
 }

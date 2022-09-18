@@ -102,35 +102,7 @@ class MainViewModel @Inject constructor(
         //  scheduler --> getAlertFLow and schedule next notification, getTimer (start, stop) and cancel if needed
         //  received --> call received
         viewModelScope.launch {
-//            val alerts = getAdditionAlerts.execute(Unit)
-//            additionAlarmScheduler.schedule(alerts)
-
-            val now = System.currentTimeMillis()
-            val alerts = listOf(
-                AdditionAlert(
-                    countDown = Duration.ofSeconds(3),
-                    now + Duration.ZERO.toMillis(),
-                    listOf(
-                        Addition(name = "Cascade", duration = Duration.ZERO)
-                    )
-                ),
-                AdditionAlert(
-                    countDown = Duration.ofSeconds(5),
-                    now + Duration.ofMinutes(1).toMillis(),
-                    emptyList()
-                ),
-                AdditionAlert(
-                    countDown = Duration.ofSeconds(7),
-                    now + Duration.ofMinutes(2).toMillis(),
-                    listOf(
-                        Addition(name = "Cascade", duration = Duration.ZERO),
-                        Addition(name = "Mosaic", duration = Duration.ZERO),
-                        Addition(name = "Saaz", duration = Duration.ZERO),
-
-                    )
-                )
-            )
-
+            val alerts = getAdditionAlerts.execute(Unit)
             additionAlarmScheduler.schedule(alerts)
         }
     }

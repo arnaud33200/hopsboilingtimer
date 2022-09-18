@@ -38,42 +38,34 @@ class AdditionAlertListMapperTest {
 
     @Test
     fun `GIVEN zero duration list WHEN execution VERIFY empty list`() {
-        val input = listOf(
-            defaultHopsAddition.copy(duration = Duration.ZERO),
-        )
+        val zeroAddition = defaultHopsAddition.copy(duration = Duration.ZERO)
+        val input = listOf(zeroAddition)
 
         val result = subject.mapTo(input)
-        val countdowns = result.map { it.toCountdown(timeProvider) }
-        assertEquals(listOf(0).toMinutes(), countdowns)
+
+        val expected = listOf(
+            AdditionAlert.Start(0L.minutesToTriggerAt(timeProvider), listOf(zeroAddition)),
+            AdditionAlert.End(0L.minutesToTriggerAt(timeProvider)),
+        )
+        assertEquals(expected, result)
     }
 
     @Test
     fun `GIVEN one hopsAddition WHEN execution VERIFY empty list`() {
-        val input = listOf(
-            defaultHopsAddition.copy(duration = Duration.ofMinutes(60)),
-        )
+        val addition60Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(60))
+        val input = listOf(addition60Min)
 
         val result = subject.mapTo(input)
-        val countdowns = result.map { it.toCountdown(timeProvider) }
-        assertEquals(listOf(0).toMinutes(), countdowns)
+
+        val expected = listOf(
+            AdditionAlert.Start(Duration.ofMinutes(0).toMillis(), listOf(addition60Min)),
+            AdditionAlert.End(Duration.ofMinutes(60).toMillis()),
+        )
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `GIVEN ordered duration WHEN execution VERIFY correct out put`() {
-        val input = listOf(
-            defaultHopsAddition.copy(duration = Duration.ofMinutes(60)),
-            defaultHopsAddition.copy(duration = Duration.ofMinutes(45)),
-            defaultHopsAddition.copy(duration = Duration.ofMinutes(20)),
-            defaultHopsAddition.copy(duration = Duration.ofMinutes(5))
-        )
-
-        val result = subject.mapTo(input)
-        val countdowns = result.map { it.toCountdown(timeProvider) }
-        assertEquals(listOf(0, 15, 40, 55).toMinutes(), countdowns)
-    }
-
-    @Test
-    fun `GIVEN not ordered duration WHEN execution VERIFY correct out put`() {
+    fun `GIVEN ordered ascending duration WHEN execution VERIFY correct out put`() {
         val addition60Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(60))
         val addition45Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(45))
         val addition20Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(20))
@@ -85,10 +77,56 @@ class AdditionAlertListMapperTest {
 
         val result = subject.mapTo(input)
         val expected = listOf(
-            AdditionAlert(Duration.ofMinutes(0).toMillis(), listOf(addition60Min)),
-            AdditionAlert(Duration.ofMinutes(15).toMillis(), listOf(addition45Min)),
-            AdditionAlert(Duration.ofMinutes(40).toMillis(), listOf(addition20Min)),
-            AdditionAlert(Duration.ofMinutes(55).toMillis(), listOf(addition5Min)),
+            AdditionAlert.Start(0L.minutesToTriggerAt(timeProvider), listOf(addition60Min)),
+            AdditionAlert.Next(15L.minutesToTriggerAt(timeProvider), listOf(addition45Min)),
+            AdditionAlert.Next(40L.minutesToTriggerAt(timeProvider), listOf(addition20Min)),
+            AdditionAlert.Next(55L.minutesToTriggerAt(timeProvider), listOf(addition5Min)),
+            AdditionAlert.End(60L.minutesToTriggerAt(timeProvider)),
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `GIVEN ordered descending duration WHEN execution VERIFY correct out put`() {
+        val addition60Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(60))
+        val addition45Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(45))
+        val addition20Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(20))
+        val addition5Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(5))
+
+        val input = listOf(
+            addition60Min, addition45Min, addition20Min, addition5Min
+        )
+
+        val result = subject.mapTo(input)
+        val expected = listOf(
+            AdditionAlert.Start(0L.minutesToTriggerAt(timeProvider), listOf(addition60Min)),
+            AdditionAlert.Next(15L.minutesToTriggerAt(timeProvider), listOf(addition45Min)),
+            AdditionAlert.Next(40L.minutesToTriggerAt(timeProvider), listOf(addition20Min)),
+            AdditionAlert.Next(55L.minutesToTriggerAt(timeProvider), listOf(addition5Min)),
+            AdditionAlert.End(60L.minutesToTriggerAt(timeProvider)),
+        )
+        assertEquals(expected, result)
+    }
+
+
+    @Test
+    fun `GIVEN not ordered duration WHEN execution VERIFY correct out put`() {
+        val addition60Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(60))
+        val addition45Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(45))
+        val addition20Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(20))
+        val addition5Min = defaultHopsAddition.copy(duration = Duration.ofMinutes(5))
+
+        val input = listOf(
+            addition5Min, addition60Min, addition20Min, addition45Min
+        )
+
+        val result = subject.mapTo(input)
+        val expected = listOf(
+            AdditionAlert.Start(0L.minutesToTriggerAt(timeProvider), listOf(addition60Min)),
+            AdditionAlert.Next(15L.minutesToTriggerAt(timeProvider), listOf(addition45Min)),
+            AdditionAlert.Next(40L.minutesToTriggerAt(timeProvider), listOf(addition20Min)),
+            AdditionAlert.Next(55L.minutesToTriggerAt(timeProvider), listOf(addition5Min)),
+            AdditionAlert.End(60L.minutesToTriggerAt(timeProvider)),
         )
         assertEquals(expected, result)
     }
@@ -108,13 +146,22 @@ class AdditionAlertListMapperTest {
 
         val result = subject.mapTo(input)
         val expected = listOf(
-            AdditionAlert(Duration.ofMinutes(0).toMillis(), listOf(addition60Min)),
-            AdditionAlert(Duration.ofMinutes(15).toMillis(), listOf(addition45Min)),
-            AdditionAlert(Duration.ofMinutes(40).toMillis(), listOf(addition20Min, addition20Min2)),
-            AdditionAlert(Duration.ofMinutes(55).toMillis(), listOf(addition5Min, addition5Min2)),
+            AdditionAlert.Start(0L.minutesToTriggerAt(timeProvider), listOf(addition60Min)),
+            AdditionAlert.Next(15L.minutesToTriggerAt(timeProvider), listOf(addition45Min)),
+            AdditionAlert.Next(
+                40L.minutesToTriggerAt(timeProvider), listOf(addition20Min, addition20Min2)
+            ),
+            AdditionAlert.Next(
+                55L.minutesToTriggerAt(timeProvider), listOf(addition5Min, addition5Min2)
+            ),
+            AdditionAlert.End(60L.minutesToTriggerAt(timeProvider)),
         )
         assertEquals(expected, result)
     }
+}
+
+private fun Long.minutesToTriggerAt(timeProvider: TimeProvider): Long {
+    return timeProvider.getNowTimeMillis() + Duration.ofMinutes(this).toMillis()
 }
 
 private fun AdditionAlert.toCountdown(timeProvider: TimeProvider): Duration {
