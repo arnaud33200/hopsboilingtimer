@@ -12,10 +12,11 @@ class AdditionNotificationMapper @Inject constructor(
 ) : DataMapper<AdditionAlert, AdditionNotification> {
 
     override fun mapTo(input: AdditionAlert): AdditionNotification {
+        val duration = input.additions.firstOrNull()?.duration ?: Duration.ZERO
         val hops = input.additions.joinToString(separator = ", ", prefix = ": ") { it.name }
         return AdditionNotification(
-            message = "${getRemainingTimeText(input.countDown)} Addition$hops",
-            triggerAtMillis = timeProvider.getNowTimeMillis() + input.countDown.toMillis()
+            message = "${getRemainingTimeText(duration)} Addition$hops",
+            triggerAtMillis = input.triggerAtTime
         )
     }
 

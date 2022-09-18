@@ -15,10 +15,9 @@ class AdditionAlertFactory @Inject constructor() {
         return inputs.groupBy { it.duration }.map { (duration, additions) ->
             val countDown = maxDuration - duration
             AdditionAlert(
-                countDown = countDown,
                 triggerAtTime = startTime + countDown.toMillis(),
                 additions = additions
             )
-        }.sortedBy { it.countDown }
+        }.sortedBy { it.triggerAtTime }
     }
 }
