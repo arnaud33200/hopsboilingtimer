@@ -13,6 +13,8 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditionAlerts
 import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditions
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +29,8 @@ class MainViewModel @Inject constructor(
     private val getAdditions: GetAdditions,
     private val addNewAddition: AddNewAddition,
     private val deleteAddition: DeleteAddition,
+    private val startAdditionSchedule: StartAdditionSchedule,
+    private val getAdditionSchedule: GetAdditionSchedule,
     private val getAdditionAlerts: GetAdditionAlerts,
     private val additionRowModelMapper: AdditionRowModelMapper,
     private val additionAlarmScheduler: AdditionAlarmScheduler,
@@ -102,8 +106,9 @@ class MainViewModel @Inject constructor(
         //  scheduler --> getAlertFLow and schedule next notification, getTimer (start, stop) and cancel if needed
         //  received --> call received
         viewModelScope.launch {
-            val alerts = getAdditionAlerts.execute(Unit)
-            additionAlarmScheduler.schedule(alerts)
+            startAdditionSchedule.execute()
+//            val alerts = getAdditionAlerts.execute(Unit)
+//            additionAlarmScheduler.schedule(alerts)
         }
     }
 }
