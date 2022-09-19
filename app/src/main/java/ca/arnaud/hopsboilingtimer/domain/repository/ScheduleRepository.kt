@@ -7,12 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface ScheduleRepository {
 
-    suspend fun setScheduleStatus(status: ScheduleStatus)
-    fun getScheduleStatusFlow(): StateFlow<ScheduleStatus>
+    suspend fun getNextAlertFLow(): StateFlow<AdditionAlert?>
+    suspend fun getScheduleFlow(): StateFlow<AdditionSchedule?>
 
     suspend fun setAdditionSchedule(additionSchedule: AdditionSchedule?)
     suspend fun getAdditionSchedule(): AdditionSchedule?
-
-    suspend fun setNextAdditionAlert(alert: AdditionAlert?)
-    fun getNextAlertFLow(): StateFlow<AdditionAlert?>
 }

@@ -20,14 +20,8 @@ class StartAdditionSchedule @Inject constructor(
     // TODO - can put a starting time as param or skip XX minutes
 
     override suspend fun buildRequest() {
-        if (scheduleRepository.getScheduleStatusFlow().value != ScheduleStatus.STOP) {
-            return // already started
-        }
-
         val additions = getAdditions.execute(Unit).getOrDefault(emptyList())
         val schedule = additionScheduleFactory.create(additions, timeProvider.getNowTimeMillis())
-        scheduleRepository.setScheduleStatus(ScheduleStatus.IN_PROGRESS)
         scheduleRepository.setAdditionSchedule(schedule)
-        scheduleRepository.setNextAdditionAlert(schedule.alerts.firstOrNull())
     }
 }
