@@ -28,10 +28,7 @@ class MainViewModel @Inject constructor(
     private val addNewAddition: AddNewAddition,
     private val deleteAddition: DeleteAddition,
     private val startAdditionSchedule: StartAdditionSchedule,
-    private val getAdditionSchedule: GetAdditionSchedule,
-    private val getAdditionAlerts: GetAdditionAlerts,
-    private val additionRowModelMapper: AdditionRowModelMapper,
-    private val additionAlarmScheduler: AdditionAlarmScheduler,
+    private val additionRowModelMapper: AdditionRowModelMapper
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
@@ -99,14 +96,8 @@ class MainViewModel @Inject constructor(
     // endregion
 
     override fun startTimerButtonClick() {
-        // TODO - probably better to use use case start and stop (reset)
-        //  viewmodel --> start
-        //  scheduler --> getAlertFLow and schedule next notification, getTimer (start, stop) and cancel if needed
-        //  received --> call received
         viewModelScope.launch {
             startAdditionSchedule.execute()
-//            val alerts = getAdditionAlerts.execute(Unit)
-//            additionAlarmScheduler.schedule(alerts)
         }
     }
 }
