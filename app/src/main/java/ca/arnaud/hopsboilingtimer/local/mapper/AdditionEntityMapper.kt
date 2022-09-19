@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.local
+package ca.arnaud.hopsboilingtimer.local.mapper
 
 import ca.arnaud.hopsboilingtimer.domain.common.TwoWayMapper
 import ca.arnaud.hopsboilingtimer.domain.model.Addition

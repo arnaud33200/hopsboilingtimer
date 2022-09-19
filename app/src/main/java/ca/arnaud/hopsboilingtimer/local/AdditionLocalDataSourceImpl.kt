@@ -2,6 +2,7 @@ package ca.arnaud.hopsboilingtimer.local
 
 import ca.arnaud.hopsboilingtimer.data.datasource.AdditionLocalDataSource
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
+import ca.arnaud.hopsboilingtimer.local.mapper.AdditionEntityMapper
 import javax.inject.Inject
 
 class AdditionLocalDataSourceImpl @Inject constructor(

@@ -1,7 +1,8 @@
-package ca.arnaud.hopsboilingtimer.domain.usecase
+package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.mapper.AdditionAlertListMapper
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import javax.inject.Inject

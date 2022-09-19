@@ -1,10 +1,12 @@
 package ca.arnaud.hopsboilingtimer.local
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import ca.arnaud.hopsboilingtimer.local.converter.DurationConverter
 import ca.arnaud.hopsboilingtimer.local.converter.StringListConverter
+import ca.arnaud.hopsboilingtimer.local.database.AdditionDao
+import ca.arnaud.hopsboilingtimer.local.database.ScheduleDao
 import ca.arnaud.hopsboilingtimer.local.entity.AdditionEntity
 import ca.arnaud.hopsboilingtimer.local.entity.AlertEntity
 import ca.arnaud.hopsboilingtimer.local.entity.ScheduleEntity

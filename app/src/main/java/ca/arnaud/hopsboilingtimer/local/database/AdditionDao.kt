@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.local
+package ca.arnaud.hopsboilingtimer.local.database
 
 import androidx.room.Dao
 import androidx.room.Insert

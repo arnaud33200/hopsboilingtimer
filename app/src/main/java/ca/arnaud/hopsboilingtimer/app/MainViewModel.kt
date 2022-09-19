@@ -7,12 +7,10 @@ import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
-import ca.arnaud.hopsboilingtimer.domain.model.Addition
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.usecase.AddNewAddition
-import ca.arnaud.hopsboilingtimer.domain.usecase.DeleteAddition
-import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditionAlerts
-import ca.arnaud.hopsboilingtimer.domain.usecase.GetAdditions
+import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
+import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionAlerts
+import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import dagger.hilt.android.lifecycle.HiltViewModel

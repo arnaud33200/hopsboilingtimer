@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.domain.usecase
+package ca.arnaud.hopsboilingtimer.domain.usecase.addition
 
 import ca.arnaud.hopsboilingtimer.domain.repository.AdditionRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider

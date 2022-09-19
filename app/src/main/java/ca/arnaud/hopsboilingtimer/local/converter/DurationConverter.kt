@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.local
+package ca.arnaud.hopsboilingtimer.local.converter
 
 import androidx.room.TypeConverter
 import java.time.Duration
