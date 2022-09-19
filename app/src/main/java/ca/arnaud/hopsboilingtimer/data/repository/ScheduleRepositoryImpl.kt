@@ -49,7 +49,22 @@ class ScheduleRepositoryImpl @Inject constructor(
             scheduleStatusFlow.value = additionSchedule
         }
 
-        updateNextAddition()
+        nextAdditionAlert.value = additionSchedule.alerts.firstOrNull()
+    }
+
+    override suspend fun refreshAdditionSchedule() {
+        val additionSchedule = schedule ?: return
+        val nextAlert = additionSchedule.getNextAlert(timeProvider.getNowTimeMillis())
+        if (nextAlert == null) {
+            scheduleStatusFlow.value = null
+            nextAdditionAlert.value = null
+            // TODO remove shceduled and alert
+            return
+        }
+
+        if (nextAdditionAlert.value != nextAlert) {
+            nextAdditionAlert.value = nextAlert
+        }
     }
 
     private fun updateNextAddition() {

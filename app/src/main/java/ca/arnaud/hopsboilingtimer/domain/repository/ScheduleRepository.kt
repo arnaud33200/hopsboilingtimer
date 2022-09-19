@@ -11,5 +11,6 @@ interface ScheduleRepository {
     suspend fun getScheduleFlow(): StateFlow<AdditionSchedule?>
 
     suspend fun setAdditionSchedule(additionSchedule: AdditionSchedule?)
+    suspend fun refreshAdditionSchedule()
     suspend fun getAdditionSchedule(): AdditionSchedule?
 }
