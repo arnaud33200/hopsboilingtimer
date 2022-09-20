@@ -5,14 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -22,6 +18,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
+import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
+import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
 import ca.arnaud.hopsboilingtimer.app.theme.Typography
@@ -94,30 +92,41 @@ private fun MainScreen(
                         model.newAdditionRow
                     )
                 })
-            BottomBar(startTimerButtonClick)
+            BottomBar(startTimerButtonClick, model.bottomBarModel)
         }
     }
 }
 
 @Composable
-private fun BottomBar(startTimerButtonClick: () -> Unit) {
+private fun BottomBar(
+    startTimerButtonClick: () -> Unit,
+    model: BottomBarModel,
+) {
     Column(
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val backgroundColor = when (model.buttonStyle) {
+            ButtonStyle.Start -> MaterialTheme.colors.primary
+            ButtonStyle.Stop -> MaterialTheme.colors.secondary
+        }
+
         Button(
             // TODO - setup dimension
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth(),
-            onClick = startTimerButtonClick
+            onClick = startTimerButtonClick,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = backgroundColor
+            )
         ) {
             Row {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = "Start Timer"
+                    text = model.buttonTitle
                 )
-                Text("60 Min")
+                Text(model.buttonTime)
             }
         }
     }
@@ -128,8 +137,11 @@ fun AddNewAddition(
     newAdditionHopsTextChanged: (String) -> Unit,
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
-    model: AdditionRowModel,
+    model: AdditionRowModel?,
 ) {
+    if (model == null) {
+        return
+    }
     Column(
         Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
     ) {

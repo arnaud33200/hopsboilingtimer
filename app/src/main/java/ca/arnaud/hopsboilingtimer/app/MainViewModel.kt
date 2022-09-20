@@ -2,17 +2,17 @@ package ca.arnaud.hopsboilingtimer.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.hopsboilingtimer.app.alarm.AdditionAlarmScheduler
 import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
+import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
+import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionAlerts
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +28,8 @@ class MainViewModel @Inject constructor(
     private val addNewAddition: AddNewAddition,
     private val deleteAddition: DeleteAddition,
     private val startAdditionSchedule: StartAdditionSchedule,
-    private val additionRowModelMapper: AdditionRowModelMapper
+    private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
+    private val additionRowModelMapper: AdditionRowModelMapper,
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
@@ -37,6 +38,30 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             updateAdditions()
+            subscribeAdditionSchedule.execute().collect { schedule ->
+                val currentAddNewAddition = screenModel.value.newAdditionRow
+                _screenModel.update { model ->
+                    // TODO - move stuff into factory
+                    model.copy(
+                        newAdditionRow = when (schedule) {
+                            null -> currentAddNewAddition
+                            else -> null
+                        },
+                        bottomBarModel = when (schedule) {
+                            null -> BottomBarModel(
+                                buttonTitle = "Start Timer",
+                                buttonStyle = ButtonStyle.Start
+                            )
+                            else -> {
+                                BottomBarModel(
+                                    buttonTitle = "Stop Timer",
+                                    buttonStyle = ButtonStyle.Stop
+                                )
+                            }
+                        }
+                    )
+                }
+            }
         }
     }
 
@@ -54,7 +79,7 @@ class MainViewModel @Inject constructor(
     override fun newAdditionHopsTextChanged(text: String) {
         _screenModel.update {
             it.copy(
-                newAdditionRow = it.newAdditionRow.copy(title = text)
+                newAdditionRow = it.newAdditionRow?.copy(title = text)
             )
         }
     }
@@ -62,7 +87,7 @@ class MainViewModel @Inject constructor(
     override fun newAdditionDurationTextChanged(text: String) {
         _screenModel.update {
             it.copy(
-                newAdditionRow = it.newAdditionRow.copy(duration = text)
+                newAdditionRow = it.newAdditionRow?.copy(duration = text)
             )
         }
     }
@@ -71,8 +96,8 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val newAddition = screenModel.value.newAdditionRow
             val params = AddNewAddition.Params(
-                name = newAddition.title,
-                duration = Duration.ofMinutes(newAddition.duration.toLong())
+                name = newAddition?.title ?: "",
+                duration = Duration.ofMinutes(newAddition?.duration?.toLong() ?: 0L)
             )
             val result = addNewAddition.execute(params)
             when {
