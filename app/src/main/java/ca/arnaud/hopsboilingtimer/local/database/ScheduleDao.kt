@@ -22,5 +22,8 @@ interface ScheduleDao {
     fun insertAlert(alertEntity: AlertEntity)
 
     @Query("DELETE FROM scheduleentity WHERE id = :scheduleId")
-    fun deleteAddition(scheduleId: String)
+    fun deleteSchedule(scheduleId: String)
+
+    @Query("DELETE FROM alertentity WHERE id = :alertId")
+    fun deleteAlert(alertId: String)
 }

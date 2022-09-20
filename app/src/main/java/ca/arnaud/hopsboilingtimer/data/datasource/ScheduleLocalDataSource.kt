@@ -7,4 +7,6 @@ interface ScheduleLocalDataSource {
     suspend fun getSchedule() : AdditionSchedule?
 
     suspend fun setSchedule(schedule: AdditionSchedule): Result<AdditionSchedule>
+
+    suspend fun deleteSchedule(schedule: AdditionSchedule): Result<Unit>
 }

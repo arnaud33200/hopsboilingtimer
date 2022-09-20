@@ -50,4 +50,16 @@ class ScheduleLocalDataSourceImpl @Inject constructor(
             Result.failure(exception)
         }
     }
+
+    override suspend fun deleteSchedule(schedule: AdditionSchedule): Result<Unit> {
+        return try {
+            appDatabase.scheduleDao().deleteSchedule(schedule.id)
+            schedule.alerts.forEach { alert ->
+                appDatabase.scheduleDao().deleteAlert(alert.id)
+            }
+            Result.success(Unit)
+        } catch (exception: Throwable) {
+            Result.failure(exception)
+        }
+    }
 }

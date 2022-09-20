@@ -23,7 +23,8 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override suspend fun getScheduleFlow(): StateFlow<AdditionSchedule?> {
         if (scheduleStatusFlow.value == null) {
-            scheduleStatusFlow.value = getAdditionSchedule()
+            getAdditionSchedule()
+            refreshAdditionSchedule()
         }
         return scheduleStatusFlow
     }
@@ -40,7 +41,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         val nextAlert = schedule?.getNextAlert(timeProvider.getNowTimeMillis())
         if (additionSchedule == null || nextAlert == null) {
             scheduleStatusFlow.value = null
-            // TODO remove shceduled and alert
+            deleteSchedule()
             return
         }
 
@@ -58,7 +59,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         if (nextAlert == null) {
             scheduleStatusFlow.value = null
             nextAdditionAlert.value = null
-            // TODO remove shceduled and alert
+            deleteSchedule()
             return
         }
 
@@ -79,5 +80,10 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override suspend fun getAdditionSchedule(): AdditionSchedule? {
         return schedule ?: scheduleLocalDataSource.getSchedule().also { schedule = it }
+    }
+
+    private suspend fun deleteSchedule() {
+        schedule?.let { scheduleLocalDataSource.deleteSchedule(it) }
+        schedule = null
     }
 }
