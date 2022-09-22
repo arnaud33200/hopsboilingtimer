@@ -30,7 +30,7 @@ interface MainScreenViewModel {
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
     fun addAdditionClick()
-    fun onDeleteAddition(additionRowModel: AdditionRowModel)
+    fun onOptionClick(additionRowModel: AdditionRowModel, optionType: AdditionOptionType)
 
     fun startTimerButtonClick()
 }
@@ -43,7 +43,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
         viewModel::newAdditionDurationTextChanged,
         viewModel::addAdditionClick,
         viewModel::startTimerButtonClick,
-        viewModel::onDeleteAddition,
+        viewModel::onOptionClick,
         model
     )
 }
@@ -54,7 +54,7 @@ private fun MainScreen(
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
     startTimerButtonClick: () -> Unit,
-    onDelete: (AdditionRowModel) -> Unit,
+    onOptionClick: (AdditionRowModel, AdditionOptionType) -> Unit,
     model: MainScreenModel,
 ) {
     Scaffold(
@@ -79,7 +79,7 @@ private fun MainScreen(
                     .verticalScroll(rememberScrollState()),
                 content = {
                     model.additionRows.forEach { rowModel ->
-                        AdditionRow(model = rowModel, onDelete = onDelete)
+                        AdditionRow(model = rowModel, onOptionClick = onOptionClick)
                     }
 
                     AddNewAddition(
@@ -194,8 +194,8 @@ fun AddNewAddition(
 
 @Composable
 fun AdditionRow(
+    onOptionClick: (AdditionRowModel, AdditionOptionType) -> Unit,
     model: AdditionRowModel,
-    onDelete: (AdditionRowModel) -> Unit,
 ) {
     Row(
         // TODO - setup dimension in theme
@@ -213,11 +213,28 @@ fun AdditionRow(
         )
 
         Spacer(modifier = Modifier.width(10.dp))
+
+        AdditionOptions(
+            onClick = { type -> onOptionClick(model, type) },
+            types = model.options
+        )
+    }
+}
+
+@Composable
+private fun AdditionOptions(
+    onClick: (AdditionOptionType) -> Unit,
+    types: List<AdditionOptionType>,
+) {
+    types.forEach { type ->
+        val imageVector = when (type) {
+            AdditionOptionType.Delete -> Icons.Filled.Delete
+        }
         Icon(
             modifier = Modifier
-                .clickable { onDelete(model) }
+                .clickable { onClick(type) }
                 .padding(5.dp),
-            imageVector = Icons.Filled.Delete,
+            imageVector = imageVector,
             contentDescription = null
         )
     }
@@ -252,7 +269,10 @@ fun DefaultPreview() {
 
             }
 
-            override fun onDeleteAddition(additionRowModel: AdditionRowModel) {
+            override fun onOptionClick(
+                additionRowModel: AdditionRowModel,
+                optionType: AdditionOptionType,
+            ) {
 
             }
 

@@ -26,5 +26,10 @@ data class NewAdditionModel(
 data class AdditionRowModel(
     val id: String = "",
     val title: String = "",
-    val duration: String = ""
+    val duration: String = "",
+    val options: List<AdditionOptionType> = emptyList()
 )
+
+enum class AdditionOptionType {
+    Delete
+}

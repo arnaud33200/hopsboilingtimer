@@ -1,12 +1,12 @@
 package ca.arnaud.hopsboilingtimer.app
 
-import android.icu.text.CaseMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.hopsboilingtimer.app.factory.MainScreenModelFactory
 import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
-import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
 import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Duration
 import javax.inject.Inject
 
 
@@ -30,50 +29,31 @@ class MainViewModel @Inject constructor(
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
-    private val additionRowModelMapper: AdditionRowModelMapper,
-    private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper
+    private val mainScreenModelFactory: MainScreenModelFactory,
+    private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
     override val screenModel: StateFlow<MainScreenModel> = _screenModel
 
+    private var currentSchedule: AdditionSchedule? = null
+
     init {
         viewModelScope.launch {
-            updateAdditions()
             subscribeAdditionSchedule.execute().collect { schedule ->
-                val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
-                _screenModel.update { model ->
-                    // TODO - move stuff into factory
-                    model.copy(
-                        newAdditionRow = when (schedule) {
-                            null -> currentAddNewAddition
-                            else -> null
-                        },
-                        bottomBarModel = when (schedule) {
-                            null -> BottomBarModel(
-                                buttonTitle = "Start Timer",
-                                buttonStyle = ButtonStyle.Start
-                            )
-                            else -> {
-                                BottomBarModel(
-                                    buttonTitle = "Stop Timer",
-                                    buttonStyle = ButtonStyle.Stop
-                                )
-                            }
-                        }
-                    )
-                }
+                currentSchedule = schedule
+                updateScreenModel()
             }
         }
     }
 
-    private suspend fun updateAdditions() {
+    private suspend fun updateScreenModel() {
         val result = getAdditions.execute(Unit)
         val additions = result.getOrDefault(emptyList())
-
-        _screenModel.update { model ->
-            model.copy(additionRows = additions.map { additionRowModelMapper.mapTo(it) })
-        }
+        val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
+        _screenModel.value = mainScreenModelFactory.create(
+            additions, currentSchedule, currentAddNewAddition
+        )
     }
 
     // region new addition action
@@ -119,17 +99,23 @@ class MainViewModel @Inject constructor(
                     _screenModel.update {
                         it.copy(newAdditionRow = NewAdditionModel())
                     }
-                    updateAdditions()
+                    updateScreenModel()
                 }
             }
         }
     }
 
-    override fun onDeleteAddition(additionRowModel: AdditionRowModel) {
+    override fun onOptionClick(additionRowModel: AdditionRowModel, optionType: AdditionOptionType) {
         viewModelScope.launch {
-            deleteAddition.execute(DeleteAddition.Params(additionRowModel.id))
-            updateAdditions()
+            when (optionType) {
+                AdditionOptionType.Delete -> deleteAddition(additionRowModel)
+            }
         }
+    }
+
+    private suspend fun deleteAddition(additionRowModel: AdditionRowModel) {
+        deleteAddition.execute(DeleteAddition.Params(additionRowModel.id))
+        updateScreenModel()
     }
 
     // endregion

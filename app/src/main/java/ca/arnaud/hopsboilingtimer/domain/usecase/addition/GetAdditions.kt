@@ -12,6 +12,8 @@ class GetAdditions @Inject constructor(
 ) : SuspendableUseCase<Unit, Result<List<Addition>>>(jobExecutorProvider) {
 
     override suspend fun buildRequest(params: Unit): Result<List<Addition>> {
-        return additionRepository.getAdditions()
+        return additionRepository.getAdditions().map { additions ->
+            additions.sortedByDescending { it.duration }
+        }
     }
 }
