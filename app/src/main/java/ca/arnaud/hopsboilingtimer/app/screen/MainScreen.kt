@@ -17,10 +17,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
-import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
-import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
 import ca.arnaud.hopsboilingtimer.app.theme.Typography
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
@@ -137,7 +134,7 @@ fun AddNewAddition(
     newAdditionHopsTextChanged: (String) -> Unit,
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
-    model: AdditionRowModel?,
+    model: NewAdditionModel?,
 ) {
     if (model == null) {
         return
@@ -183,7 +180,8 @@ fun AddNewAddition(
                 modifier = Modifier
                     .height(40.dp)
                     .width(50.dp),
-                onClick = addAdditionClick
+                onClick = addAdditionClick,
+                enabled = model.buttonEnabled
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,

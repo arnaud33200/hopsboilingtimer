@@ -1,12 +1,11 @@
 package ca.arnaud.hopsboilingtimer.app
 
+import android.icu.text.CaseMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.mapper.AdditionRowModelMapper
-import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
-import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
-import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
@@ -32,6 +31,7 @@ class MainViewModel @Inject constructor(
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
     private val additionRowModelMapper: AdditionRowModelMapper,
+    private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
@@ -41,7 +41,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             updateAdditions()
             subscribeAdditionSchedule.execute().collect { schedule ->
-                val currentAddNewAddition = screenModel.value.newAdditionRow ?: AdditionRowModel()
+                val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
                 _screenModel.update { model ->
                     // TODO - move stuff into factory
                     model.copy(
@@ -79,33 +79,45 @@ class MainViewModel @Inject constructor(
     // region new addition action
 
     override fun newAdditionHopsTextChanged(text: String) {
-        _screenModel.update {
-            it.copy(
-                newAdditionRow = it.newAdditionRow?.copy(title = text)
-            )
-        }
+        val newAddition = screenModel.value.newAdditionRow ?: return
+        updateNewAdditionModel(
+            title = text,
+            duration = newAddition.duration
+        )
     }
 
     override fun newAdditionDurationTextChanged(text: String) {
+        val newAddition = screenModel.value.newAdditionRow ?: return
+        updateNewAdditionModel(
+            title = newAddition.title,
+            duration = text
+        )
+    }
+
+    private fun updateNewAdditionModel(title: String, duration: String) {
+        val newAddition = screenModel.value.newAdditionRow ?: return
         _screenModel.update {
+            // TODO - setup validator & formatter
+            val enabled = title.isNotBlank() && duration.isNotBlank()
             it.copy(
-                newAdditionRow = it.newAdditionRow?.copy(duration = text)
+                newAdditionRow = newAddition.copy(
+                    title = title,
+                    duration = duration,
+                    buttonEnabled = enabled
+                )
             )
         }
     }
 
     override fun addAdditionClick() {
+        val newAddition = screenModel.value.newAdditionRow ?: return
         viewModelScope.launch {
-            val newAddition = screenModel.value.newAdditionRow
-            val params = AddNewAddition.Params(
-                name = newAddition?.title ?: "",
-                duration = Duration.ofMinutes(newAddition?.duration?.toLong() ?: 0L)
-            )
+            val params = addNewAdditionParamsMapper.mapTo(newAddition)
             val result = addNewAddition.execute(params)
             when {
                 result.isSuccess -> {
                     _screenModel.update {
-                        it.copy(newAdditionRow = AdditionRowModel())
+                        it.copy(newAdditionRow = NewAdditionModel())
                     }
                     updateAdditions()
                 }

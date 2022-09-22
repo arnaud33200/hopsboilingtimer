@@ -7,8 +7,9 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import java.time.Duration
 import javax.inject.Inject
 
-class AdditionNotificationMapper @Inject constructor() :
-    DataMapper<AdditionAlert, AdditionNotification> {
+class AdditionNotificationMapper @Inject constructor(
+    private val durationTextMapper: DurationTextMapper
+) : DataMapper<AdditionAlert, AdditionNotification> {
 
     override fun mapTo(input: AdditionAlert): AdditionNotification {
         return when (input) {
@@ -32,7 +33,7 @@ class AdditionNotificationMapper @Inject constructor() :
         val duration = input.additions.firstOrNull()?.duration ?: Duration.ZERO
         val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
         return AdditionNotification(
-            message = "Next Additions (${getRemainingTimeText(duration)})$hops",
+            message = "Next Additions (${durationTextMapper.mapTo(duration)})$hops",
             triggerAtMillis = input.triggerAtTime
         )
     }
@@ -42,12 +43,5 @@ class AdditionNotificationMapper @Inject constructor() :
             message = "Stop Boiling!",
             triggerAtMillis = input.triggerAtTime
         )
-    }
-
-    private fun getRemainingTimeText(countDown: Duration): String {
-        return when {
-            countDown.toMinutes() > 0 -> "${countDown.toMinutes()} min"
-            else -> "${countDown.toMillis() / 1000} sec"
-        }
     }
 }
