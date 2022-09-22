@@ -12,18 +12,18 @@ class OnAdditionAlertReceived @Inject constructor(
 ) : SuspendableUseCase<OnAdditionAlertReceived.Params, Unit>(jobExecutorProvider) {
 
     data class Params(
-        val alertId: String
+        val alertId: String,
     )
 
-    override suspend fun buildRequest(params: OnAdditionAlertReceived.Params) {
+    override suspend fun buildRequest(params: Params) {
         val alert = scheduleRepository.getAdditionSchedule()?.alerts?.find {
             it.id == params.alertId
         }
         when (alert) {
-            is AdditionAlert.Start -> {
-                scheduleRepository.refreshAdditionSchedule()
-            }
-            is AdditionAlert.Next -> {
+            is AdditionAlert.Start,
+            is AdditionAlert.Next,
+            -> {
+                // TODO - get the next event and pass it
                 scheduleRepository.refreshAdditionSchedule()
             }
             is AdditionAlert.End -> {
