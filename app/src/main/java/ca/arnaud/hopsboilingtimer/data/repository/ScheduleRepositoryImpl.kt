@@ -40,7 +40,6 @@ class ScheduleRepositoryImpl @Inject constructor(
         schedule = additionSchedule
         val nextAlert = schedule?.getNextAlert(timeProvider.getNowTimeMillis())
         if (additionSchedule == null || nextAlert == null) {
-            scheduleStatusFlow.value = null
             deleteSchedule()
             return
         }
@@ -57,8 +56,6 @@ class ScheduleRepositoryImpl @Inject constructor(
         val additionSchedule = schedule ?: return
         val nextAlert = additionSchedule.getNextAlert(timeProvider.getNowTimeMillis())
         if (nextAlert == null) {
-            scheduleStatusFlow.value = null
-            nextAdditionAlert.value = null
             deleteSchedule()
             return
         }
@@ -82,8 +79,10 @@ class ScheduleRepositoryImpl @Inject constructor(
         return schedule ?: scheduleLocalDataSource.getSchedule().also { schedule = it }
     }
 
-    private suspend fun deleteSchedule() {
+    override suspend fun deleteSchedule() {
         schedule?.let { scheduleLocalDataSource.deleteSchedule(it) }
         schedule = null
+        scheduleStatusFlow.value = null
+        nextAdditionAlert.value = null
     }
 }

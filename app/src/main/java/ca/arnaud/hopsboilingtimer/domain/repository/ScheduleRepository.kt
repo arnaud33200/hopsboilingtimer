@@ -10,7 +10,9 @@ interface ScheduleRepository {
     suspend fun getNextAlertFLow(): StateFlow<AdditionAlert?>
     suspend fun getScheduleFlow(): StateFlow<AdditionSchedule?>
 
+
     suspend fun setAdditionSchedule(additionSchedule: AdditionSchedule?)
+    suspend fun deleteSchedule()
     suspend fun refreshAdditionSchedule()
     suspend fun getAdditionSchedule(): AdditionSchedule?
 }

@@ -12,6 +12,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ class MainViewModel @Inject constructor(
     private val addNewAddition: AddNewAddition,
     private val deleteAddition: DeleteAddition,
     private val startAdditionSchedule: StartAdditionSchedule,
+    private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
     private val additionRowModelMapper: AdditionRowModelMapper,
 ) : ViewModel(), MainScreenViewModel {
@@ -39,7 +41,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             updateAdditions()
             subscribeAdditionSchedule.execute().collect { schedule ->
-                val currentAddNewAddition = screenModel.value.newAdditionRow
+                val currentAddNewAddition = screenModel.value.newAdditionRow ?: AdditionRowModel()
                 _screenModel.update { model ->
                     // TODO - move stuff into factory
                     model.copy(
@@ -122,7 +124,11 @@ class MainViewModel @Inject constructor(
 
     override fun startTimerButtonClick() {
         viewModelScope.launch {
-            startAdditionSchedule.execute()
+            when (screenModel.value.bottomBarModel.buttonStyle) {
+                ButtonStyle.Start -> startAdditionSchedule.execute()
+                ButtonStyle.Stop -> stopAdditionSchedule.execute()
+            }
+
         }
     }
 }
