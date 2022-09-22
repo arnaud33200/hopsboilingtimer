@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.content.Context
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.mapper.AdditionNotificationMapper
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,6 +17,7 @@ class AdditionAlarmScheduler @Inject constructor(
     private val context: Context,
     private val additionNotificationMapper: AdditionNotificationMapper,
     private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
+    private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
 ) {
 
     init {
@@ -27,6 +29,19 @@ class AdditionAlarmScheduler @Inject constructor(
                 }
             }
         }
+        coroutineScopeProvider.scope.launch {
+            subscribeAdditionSchedule.execute().collect { schedule ->
+                if (schedule == null) {
+                    cancelAlarm()
+                }
+            }
+        }
+    }
+
+    private fun cancelAlarm() {
+        val notification = AdditionNotification("", 0L)
+        val pendingIntent = AdditionAlarmReceiver.createPendingIntent(context, notification)
+        alarmManager.cancel(pendingIntent)
     }
 
     private fun schedule(notification: AdditionNotification) {
