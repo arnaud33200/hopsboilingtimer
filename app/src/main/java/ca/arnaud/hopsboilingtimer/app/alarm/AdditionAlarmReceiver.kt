@@ -56,9 +56,9 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
 
         val alert = intent.getParcelableExtra<AdditionNotification>(NOTIFICATION_EXTRA) ?: return
 
-        val uri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val mp: MediaPlayer = MediaPlayer.create(context, uri)
-        mp.start()
+//        val uri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+//        val mp: MediaPlayer = MediaPlayer.create(context, uri)
+//        mp.start()
 
         // TODO - put in factory
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {

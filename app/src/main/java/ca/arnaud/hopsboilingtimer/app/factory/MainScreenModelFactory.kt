@@ -14,12 +14,12 @@ class MainScreenModelFactory @Inject constructor(
         schedule: AdditionSchedule?,
         newAdditionModel: NewAdditionModel = NewAdditionModel(),
     ): MainScreenModel {
-        val options = when (schedule) {
-            null -> listOf(AdditionOptionType.Delete)
-            else -> emptyList()
+        val mode = when (schedule) {
+            null -> AdditionRowModelFactory.AdditionRowMode.Edit
+            else -> AdditionRowModelFactory.AdditionRowMode.Schedule
         }
         return MainScreenModel(
-            additionRows = additions.map { additionRowModelFactory.create(it, options) },
+            additionRows = additions.map { additionRowModelFactory.create(it, mode, schedule) },
             newAdditionRow = when (schedule) {
                 null -> newAdditionModel
                 else -> null
@@ -28,7 +28,7 @@ class MainScreenModelFactory @Inject constructor(
         )
     }
 
-    fun createBottomModel(schedule: AdditionSchedule?): BottomBarModel {
+    private fun createBottomModel(schedule: AdditionSchedule?): BottomBarModel {
         return when (schedule) {
             null -> BottomBarModel(
                 buttonTitle = "Start Timer", // TODO - hardcoded string

@@ -6,6 +6,8 @@ import ca.arnaud.hopsboilingtimer.app.factory.MainScreenModelFactory
 import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
+import ca.arnaud.hopsboilingtimer.app.service.ClockService
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
@@ -13,6 +15,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +32,10 @@ class MainViewModel @Inject constructor(
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
+    private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
     private val mainScreenModelFactory: MainScreenModelFactory,
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
+    private val clockService: ClockService,
 ) : ViewModel(), MainScreenViewModel {
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
@@ -42,6 +47,16 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             subscribeAdditionSchedule.execute().collect { schedule ->
                 currentSchedule = schedule
+                when (schedule) {
+                    null -> clockService.reset()
+                    else -> clockService.start()
+                }
+                updateScreenModel()
+            }
+        }
+
+        viewModelScope.launch {
+            clockService.getTickFlow().collect { tick ->
                 updateScreenModel()
             }
         }
