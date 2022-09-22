@@ -10,6 +10,7 @@ data class AdditionNotificationSchedule(
 
 @Parcelize
 data class AdditionNotification(
+    val alertId: String,
     val message: String,
     val triggerAtMillis: Long
 ) : Parcelable

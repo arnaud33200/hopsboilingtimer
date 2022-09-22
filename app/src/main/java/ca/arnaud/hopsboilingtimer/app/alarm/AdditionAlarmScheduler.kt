@@ -39,7 +39,7 @@ class AdditionAlarmScheduler @Inject constructor(
     }
 
     private fun cancelAlarm() {
-        val notification = AdditionNotification("", 0L)
+        val notification = AdditionNotification("", "", 0L)
         val pendingIntent = AdditionAlarmReceiver.createPendingIntent(context, notification)
         alarmManager.cancel(pendingIntent)
     }

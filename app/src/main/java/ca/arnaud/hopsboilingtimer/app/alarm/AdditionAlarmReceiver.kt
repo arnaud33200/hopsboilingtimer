@@ -5,15 +5,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
-import android.media.RingtoneManager
-import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.RefreshAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.*
@@ -46,7 +43,7 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
     }
 
     @Inject
-    lateinit var refreshAdditionSchedule: RefreshAdditionSchedule
+    lateinit var onAdditionAlertReceived: OnAdditionAlertReceived
 
     @Inject
     lateinit var coroutineScopeProvider: CoroutineScopeProvider
@@ -74,7 +71,7 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
         NotificationManagerCompat.from(context).notify(notificationId, notification)
 
         coroutineScopeProvider.scope.launch {
-            refreshAdditionSchedule.execute()
+            onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(alert.alertId))
         }
     }
 

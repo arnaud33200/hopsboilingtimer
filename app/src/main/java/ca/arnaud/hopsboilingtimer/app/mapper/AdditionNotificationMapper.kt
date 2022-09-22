@@ -23,6 +23,7 @@ class AdditionNotificationMapper @Inject constructor(
         val additions = input.additions
         val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
         return AdditionNotification(
+            alertId = input.id,
             message = "Start$hops",
             triggerAtMillis = input.triggerAtTime
         )
@@ -33,6 +34,7 @@ class AdditionNotificationMapper @Inject constructor(
         val duration = input.additions.firstOrNull()?.duration ?: Duration.ZERO
         val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
         return AdditionNotification(
+            alertId = input.id,
             message = "Next Additions (${durationTextMapper.mapTo(duration)})$hops",
             triggerAtMillis = input.triggerAtTime
         )
@@ -40,6 +42,7 @@ class AdditionNotificationMapper @Inject constructor(
 
     private fun mapEnd(input: AdditionAlert.End): AdditionNotification {
         return AdditionNotification(
+            alertId = input.id,
             message = "Stop Boiling!",
             triggerAtMillis = input.triggerAtTime
         )
