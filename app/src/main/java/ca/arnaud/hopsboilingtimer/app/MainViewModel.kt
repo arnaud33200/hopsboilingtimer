@@ -32,7 +32,6 @@ class MainViewModel @Inject constructor(
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
-    private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
     private val mainScreenModelFactory: MainScreenModelFactory,
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
     private val clockService: ClockService,
