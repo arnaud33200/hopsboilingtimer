@@ -7,7 +7,6 @@ import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
@@ -15,7 +14,6 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -119,16 +117,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    override fun onOptionClick(additionRowModel: AdditionRowModel, optionType: AdditionOptionType) {
+    override fun onOptionClick(rowModel: RowModel, optionType: AdditionOptionType) {
         viewModelScope.launch {
             when (optionType) {
-                AdditionOptionType.Delete -> deleteAddition(additionRowModel)
+                AdditionOptionType.Delete -> deleteAddition(rowModel)
             }
         }
     }
 
-    private suspend fun deleteAddition(additionRowModel: AdditionRowModel) {
-        deleteAddition.execute(DeleteAddition.Params(additionRowModel.id))
+    private suspend fun deleteAddition(rowModel: RowModel) {
+        deleteAddition.execute(DeleteAddition.Params(rowModel.id))
         updateScreenModel()
     }
 

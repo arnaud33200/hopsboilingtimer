@@ -30,7 +30,7 @@ interface MainScreenViewModel {
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
     fun addAdditionClick()
-    fun onOptionClick(additionRowModel: AdditionRowModel, optionType: AdditionOptionType)
+    fun onOptionClick(rowModel: RowModel, optionType: AdditionOptionType)
 
     fun startTimerButtonClick()
 }
@@ -54,7 +54,7 @@ private fun MainScreen(
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
     startTimerButtonClick: () -> Unit,
-    onOptionClick: (AdditionRowModel, AdditionOptionType) -> Unit,
+    onOptionClick: (RowModel, AdditionOptionType) -> Unit,
     model: MainScreenModel,
 ) {
     Scaffold(
@@ -194,8 +194,8 @@ fun AddNewAddition(
 
 @Composable
 fun AdditionRow(
-    onOptionClick: (AdditionRowModel, AdditionOptionType) -> Unit,
-    model: AdditionRowModel,
+    onOptionClick: (RowModel, AdditionOptionType) -> Unit,
+    model: RowModel,
 ) {
     Row(
         // TODO - setup dimension in theme
@@ -249,10 +249,10 @@ fun DefaultPreview() {
                 get() = MutableStateFlow(
                     MainScreenModel(
                         listOf(
-                            AdditionRowModel("Amarillo", "60"),
-                            AdditionRowModel("Mozaic", "45"),
-                            AdditionRowModel("Saaz", "5"),
-                            AdditionRowModel("El Dorado", "10"),
+                            RowModel("Amarillo", "60"),
+                            RowModel("Mozaic", "45"),
+                            RowModel("Saaz", "5"),
+                            RowModel("El Dorado", "10"),
                         )
                     )
                 )
@@ -270,7 +270,7 @@ fun DefaultPreview() {
             }
 
             override fun onOptionClick(
-                additionRowModel: AdditionRowModel,
+                rowModel: RowModel,
                 optionType: AdditionOptionType,
             ) {
 

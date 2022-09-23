@@ -3,7 +3,7 @@ package ca.arnaud.hopsboilingtimer.app.factory
 import ca.arnaud.hopsboilingtimer.app.mapper.DurationTextMapper
 import ca.arnaud.hopsboilingtimer.app.mapper.RemainingTimeTextMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
-import ca.arnaud.hopsboilingtimer.app.model.AdditionRowModel
+import ca.arnaud.hopsboilingtimer.app.model.RowModel
 import ca.arnaud.hopsboilingtimer.domain.model.*
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import javax.inject.Inject
@@ -18,16 +18,22 @@ class AdditionRowModelFactory @Inject constructor(
         Edit, Schedule
     }
 
-    fun create(input: Addition, mode: AdditionRowMode, schedule: AdditionSchedule?): AdditionRowModel {
-        val options = when (mode) {
-            AdditionRowMode.Edit -> listOf(AdditionOptionType.Delete)
-            AdditionRowMode.Schedule -> emptyList()
-        }
-        return AdditionRowModel(
-            id = input.id,
-            title = input.name,
-            duration = mapDuration(input, mode, schedule),
-            options = options
+    fun create(addition: Addition): RowModel {
+        return RowModel(
+            id = addition.id,
+            title = addition.name,
+            duration = durationTextMapper.mapTo(addition.duration),
+            options = listOf(AdditionOptionType.Delete)
+        )
+    }
+
+    fun create(alert: AdditionAlert): RowModel {
+        val title = alert.additionsOrEmpty().joinToString(separator = ", ")
+        return RowModel(
+            id = alert.id,
+            title = title,
+            duration = "",
+            options = listOf(AdditionOptionType.Delete)
         )
     }
 
