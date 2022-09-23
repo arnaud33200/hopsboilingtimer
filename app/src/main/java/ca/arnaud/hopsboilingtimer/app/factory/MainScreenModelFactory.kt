@@ -1,12 +1,15 @@
 package ca.arnaud.hopsboilingtimer.app.factory
 
-import ca.arnaud.hopsboilingtimer.app.model.*
+import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
+import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
+import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import javax.inject.Inject
 
 class MainScreenModelFactory @Inject constructor(
-    private val additionRowModelFactory: AdditionRowModelFactory,
+    private val rowModelFactory: RowModelFactory,
 ) {
 
     fun create(
@@ -14,12 +17,13 @@ class MainScreenModelFactory @Inject constructor(
         schedule: AdditionSchedule?,
         newAdditionModel: NewAdditionModel = NewAdditionModel(),
     ): MainScreenModel {
-        val mode = when (schedule) {
-            null -> AdditionRowModelFactory.AdditionRowMode.Edit
-            else -> AdditionRowModelFactory.AdditionRowMode.Schedule
+        val additionRows = when (schedule) {
+            null -> additions.map { rowModelFactory.create(it) }
+            else -> schedule.alerts.mapNotNull { rowModelFactory.create(it) }
         }
+
         return MainScreenModel(
-            additionRows = additions.map { additionRowModelFactory.create(it) },
+            additionRows = additionRows,
             newAdditionRow = when (schedule) {
                 null -> newAdditionModel
                 else -> null

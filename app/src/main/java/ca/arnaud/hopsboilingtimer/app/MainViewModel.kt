@@ -131,6 +131,9 @@ class MainViewModel @Inject constructor(
                 deleteAddition.execute(DeleteAddition.Params(rowModel.id))
                 updateScreenModel()
             }
+            else -> {
+                // No-op
+            }
         }
     }
 

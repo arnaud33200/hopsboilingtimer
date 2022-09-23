@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +51,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
     )
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun MainScreen(
     newAdditionHopsTextChanged: (String) -> Unit,
@@ -71,8 +75,7 @@ private fun MainScreen(
             }
         }
     ) { _ ->
-        Column() {
-
+        Column {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -82,6 +85,9 @@ private fun MainScreen(
                         when (rowModel) {
                             is RowModel.AdditionRowModel -> {
                                 AdditionRow(model = rowModel, onOptionClick = onOptionClick)
+                            }
+                            is RowModel.AlertRowModel -> {
+                                AlertRow(model = rowModel)
                             }
                         }
 
@@ -222,6 +228,33 @@ fun AdditionRow(
         AdditionOptions(
             onClick = { type -> onOptionClick(model, type) },
             types = model.options
+        )
+    }
+}
+
+@Composable
+fun AlertRow(
+    model: RowModel.AlertRowModel,
+) {
+    Row(
+        // TODO - setup dimension in theme
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // TODO - setup typography
+        val textColor = if (model.disabled) Color.Gray else Color.Black
+        val fontStyle = if (model.disabled) FontStyle.Italic else null
+        Text(
+            modifier = Modifier.weight(1f),
+            text = model.title,
+            fontStyle = fontStyle,
+            color = textColor
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = model.duration,
+            fontStyle = fontStyle,
+            color = textColor
         )
     }
 }

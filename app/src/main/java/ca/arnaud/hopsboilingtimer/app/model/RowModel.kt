@@ -8,4 +8,11 @@ sealed interface RowModel {
         val duration: String = "",
         val options: List<AdditionOptionType> = emptyList()
     ) : RowModel
+
+    data class AlertRowModel(
+        val id: String = "",
+        val title: String = "",
+        val duration: String = "",
+        val disabled: Boolean
+    ) : RowModel
 }
