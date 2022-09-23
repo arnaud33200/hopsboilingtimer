@@ -25,7 +25,9 @@ class ScheduleRepositoryImpl @Inject constructor(
         if (scheduleStatusFlow.value == null) {
             getAdditionSchedule()
             refreshAdditionSchedule()
+            scheduleStatusFlow.value = schedule
         }
+
         return scheduleStatusFlow
     }
 
