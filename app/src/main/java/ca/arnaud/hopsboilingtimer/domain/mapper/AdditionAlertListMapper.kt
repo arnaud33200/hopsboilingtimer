@@ -32,7 +32,7 @@ class AdditionAlertListMapper @Inject constructor(
             if (isNotEmpty()) {
                 val triggerAt = timeProvider.getNowTimeMillis() + maxDuration.toMillis()
                 val id = UUID.randomUUID().toString()
-                add(AdditionAlert.End(id, triggerAt))
+                add(AdditionAlert.End(id, triggerAt, maxDuration))
             }
         }
     }

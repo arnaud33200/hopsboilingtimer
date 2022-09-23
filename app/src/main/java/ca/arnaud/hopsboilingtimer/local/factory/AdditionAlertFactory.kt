@@ -43,7 +43,8 @@ class AdditionAlertFactory @Inject constructor() {
     ): AdditionAlert.End {
         return AdditionAlert.End(
             id = alertEntity.id,
-            triggerAtTime = alertEntity.triggerAt
+            triggerAtTime = alertEntity.triggerAt,
+            duration = alertEntity.duration
         )
     }
 }

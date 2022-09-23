@@ -1,5 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.model
 
+import java.time.Duration
+
 sealed interface AdditionAlert {
 
     val id: String
@@ -20,6 +22,7 @@ sealed interface AdditionAlert {
     data class End(
         override val id: String,
         override val triggerAtTime: Long,
+        val duration: Duration
     ) : AdditionAlert
 }
 
@@ -28,6 +31,14 @@ fun AdditionAlert.additionsOrEmpty(): List<Addition> {
         is AdditionAlert.End -> emptyList()
         is AdditionAlert.Next -> additions
         is AdditionAlert.Start -> additions
+    }
+}
+
+fun AdditionAlert.getDuration(): Duration? {
+    return when (this) {
+        is AdditionAlert.End -> duration
+        is AdditionAlert.Start,
+        is AdditionAlert.Next -> additionsOrEmpty().firstOrNull()?.duration
     }
 }
 
