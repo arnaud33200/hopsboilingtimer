@@ -79,7 +79,12 @@ private fun MainScreen(
                     .verticalScroll(rememberScrollState()),
                 content = {
                     model.additionRows.forEach { rowModel ->
-                        AdditionRow(model = rowModel, onOptionClick = onOptionClick)
+                        when (rowModel) {
+                            is RowModel.AdditionRowModel -> {
+                                AdditionRow(model = rowModel, onOptionClick = onOptionClick)
+                            }
+                        }
+
                     }
 
                     AddNewAddition(
@@ -195,7 +200,7 @@ fun AddNewAddition(
 @Composable
 fun AdditionRow(
     onOptionClick: (RowModel, AdditionOptionType) -> Unit,
-    model: RowModel,
+    model: RowModel.AdditionRowModel,
 ) {
     Row(
         // TODO - setup dimension in theme
@@ -249,10 +254,10 @@ fun DefaultPreview() {
                 get() = MutableStateFlow(
                     MainScreenModel(
                         listOf(
-                            RowModel("Amarillo", "60"),
-                            RowModel("Mozaic", "45"),
-                            RowModel("Saaz", "5"),
-                            RowModel("El Dorado", "10"),
+                            RowModel.AdditionRowModel("Amarillo", "60"),
+                            RowModel.AdditionRowModel("Mozaic", "45"),
+                            RowModel.AdditionRowModel("Saaz", "5"),
+                            RowModel.AdditionRowModel("El Dorado", "10"),
                         )
                     )
                 )

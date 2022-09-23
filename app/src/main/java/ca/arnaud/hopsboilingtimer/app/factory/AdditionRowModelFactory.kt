@@ -19,7 +19,7 @@ class AdditionRowModelFactory @Inject constructor(
     }
 
     fun create(addition: Addition): RowModel {
-        return RowModel(
+        return RowModel.AdditionRowModel(
             id = addition.id,
             title = addition.name,
             duration = durationTextMapper.mapTo(addition.duration),
@@ -27,15 +27,15 @@ class AdditionRowModelFactory @Inject constructor(
         )
     }
 
-    fun create(alert: AdditionAlert): RowModel {
-        val title = alert.additionsOrEmpty().joinToString(separator = ", ")
-        return RowModel(
-            id = alert.id,
-            title = title,
-            duration = "",
-            options = listOf(AdditionOptionType.Delete)
-        )
-    }
+//    fun create(alert: AdditionAlert): RowModel {
+//        val title = alert.additionsOrEmpty().joinToString(separator = ", ")
+//        return RowModel.AdditionRowModel(
+//            id = alert.id,
+//            title = title,
+//            duration = "",
+//            options = listOf(AdditionOptionType.Delete)
+//        )
+//    }
 
     private fun mapDuration(
         addition: Addition,

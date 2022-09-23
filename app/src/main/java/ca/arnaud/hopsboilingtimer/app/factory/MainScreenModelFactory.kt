@@ -19,7 +19,7 @@ class MainScreenModelFactory @Inject constructor(
             else -> AdditionRowModelFactory.AdditionRowMode.Schedule
         }
         return MainScreenModel(
-            additionRows = additions.map { additionRowModelFactory.create(it, mode, schedule) },
+            additionRows = additions.map { additionRowModelFactory.create(it) },
             newAdditionRow = when (schedule) {
                 null -> newAdditionModel
                 else -> null

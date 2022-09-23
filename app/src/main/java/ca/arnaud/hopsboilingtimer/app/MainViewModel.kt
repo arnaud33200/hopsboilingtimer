@@ -126,8 +126,12 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun deleteAddition(rowModel: RowModel) {
-        deleteAddition.execute(DeleteAddition.Params(rowModel.id))
-        updateScreenModel()
+        when (rowModel) {
+            is RowModel.AdditionRowModel -> {
+                deleteAddition.execute(DeleteAddition.Params(rowModel.id))
+                updateScreenModel()
+            }
+        }
     }
 
     // endregion
