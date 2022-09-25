@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.model.*
-import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
+import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.Typography
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -251,7 +251,8 @@ fun AlertRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
-        val textColor = if (model.disabled) Color.Gray else Color.Black
+        val textAlpha = if (model.disabled) 0.3f else LocalContentAlpha.current
+        val textColor = LocalContentColor.current.copy(alpha = textAlpha)
         val fontStyle = if (model.disabled) FontStyle.Italic else null
         val fontWeight = if (model.highlighted) FontWeight.Bold else null
         val textDecoration = if (model.addChecked == true) TextDecoration.LineThrough else null
@@ -274,8 +275,7 @@ fun AlertRow(
         )
 
         model.addChecked?.let { checked ->
-            // TODO - will remove the extra paddind
-//            CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+            Spacer(modifier = Modifier.width(10.dp))
             Checkbox(
                 checked = checked,
                 onCheckedChange = { newChecked ->
@@ -308,7 +308,7 @@ private fun AdditionOptions(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    HopsBoilingTimerTheme {
+    HopsAppTheme {
         MainScreen(viewModel = object : MainScreenViewModel {
             override val screenModel: StateFlow<MainScreenModel>
                 get() = MutableStateFlow(

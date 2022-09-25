@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.HopsBoilingTimer" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+        <!-- Might set later if cannot be changed from compose -->
+        <!-- <item name="android:statusBarColor">@color/purple_700</item> -->
     </style>
 </resources>

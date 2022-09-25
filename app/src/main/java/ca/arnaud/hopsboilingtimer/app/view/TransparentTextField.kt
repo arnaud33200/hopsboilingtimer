@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import ca.arnaud.hopsboilingtimer.app.theme.HopsBoilingTimerTheme
+import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 
 @Composable
 fun TransparentTextField(
@@ -67,7 +67,7 @@ fun TransparentTextField(
 @Preview(showBackground = true)
 @Composable
 fun TransparentTextFieldPreview() {
-    HopsBoilingTimerTheme {
+    HopsAppTheme {
         TransparentTextField(
             value = "this is a textFied",
             onValueChange = {}
