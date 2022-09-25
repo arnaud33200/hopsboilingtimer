@@ -13,6 +13,7 @@ sealed interface RowModel {
         val id: String = "",
         val title: String = "",
         val duration: String = "",
-        val disabled: Boolean
+        val disabled: Boolean = false,
+        val highlighted : Boolean = false
     ) : RowModel
 }

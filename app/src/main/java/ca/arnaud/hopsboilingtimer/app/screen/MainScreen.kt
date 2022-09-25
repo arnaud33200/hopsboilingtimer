@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -244,16 +245,19 @@ fun AlertRow(
         // TODO - setup typography
         val textColor = if (model.disabled) Color.Gray else Color.Black
         val fontStyle = if (model.disabled) FontStyle.Italic else null
+        val fontWeight = if (model.highlighted) FontWeight.Bold else null
         Text(
             modifier = Modifier.weight(1f),
             text = model.title,
             fontStyle = fontStyle,
+            fontWeight = fontWeight,
             color = textColor
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = model.duration,
             fontStyle = fontStyle,
+            fontWeight = fontWeight,
             color = textColor
         )
     }

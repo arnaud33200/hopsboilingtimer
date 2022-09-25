@@ -14,9 +14,6 @@ class RowModelFactory @Inject constructor(
     private val timeProvider: TimeProvider,
     private val remainingTimeTextMapper: RemainingTimeTextMapper
 ) {
-    enum class AdditionRowMode {
-        Edit, Schedule
-    }
 
     fun create(addition: Addition): RowModel {
         return RowModel.AdditionRowModel(
@@ -27,36 +24,39 @@ class RowModelFactory @Inject constructor(
         )
     }
 
-    fun create(alert: AdditionAlert): RowModel {
+    fun create(alert: AdditionAlert, currentAlert: AdditionAlert?): RowModel {
         val nowTime = timeProvider.getNowTimeMillis()
         val expired = alert.triggerAtTime < nowTime
+        val remainingDuration = (alert.triggerAtTime - nowTime).milliseconds
+        val countdown = remainingTimeTextMapper.mapTo(remainingDuration)
+        val highlighted = alert == currentAlert
         if (alert is AdditionAlert.End) {
-            val remainingDuration = (alert.triggerAtTime - nowTime).milliseconds
+
             return RowModel.AlertRowModel(
                 id = alert.id,
-                title = "",
-                duration = "END in ${remainingTimeTextMapper.mapTo(remainingDuration)}",
-                disabled = expired
+                title = "END of boiling", // TODO - Hardcoded string
+                duration = countdown,
+                disabled = expired,
+                highlighted = highlighted
             )
         }
 
         val title = alert.additionsOrEmpty().joinToString(separator = ", ") { it.name }
-        val countdown  = when {
-             expired -> "Added!"
-            else -> {
-                val remainingDuration = (alert.triggerAtTime - nowTime).milliseconds
-                "Add in ${remainingTimeTextMapper.mapTo(remainingDuration)}" // TODO - Hardcoded string
-            }
+        val alertDuration  = when {
+             expired -> "Done" // TODO - Hardcoded string
+            highlighted -> "Add in $countdown" // TODO - Hardcoded string
+            else -> countdown
         }
 
-        val duration = alert.additionsOrEmpty().firstOrNull()?.let { addition ->
+        val additionDuration = alert.additionsOrEmpty().firstOrNull()?.let { addition ->
             durationTextMapper.mapTo(addition.duration)
         } ?: ""
         return RowModel.AlertRowModel(
             id = alert.id,
-            title = "$title ($duration)",
-            duration = countdown,
-            disabled = expired
+            title = "$title ($additionDuration)",
+            duration = alertDuration,
+            disabled = expired,
+            highlighted = highlighted
         )
     }
 }
