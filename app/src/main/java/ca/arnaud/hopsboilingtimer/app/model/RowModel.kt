@@ -14,6 +14,7 @@ sealed interface RowModel {
         val title: String = "",
         val duration: String = "",
         val disabled: Boolean = false,
-        val highlighted : Boolean = false
+        val highlighted : Boolean = false,
+        val addChecked: Boolean? = null // only show when not null
     ) : RowModel
 }

@@ -40,12 +40,17 @@ class MainViewModel @Inject constructor(
 
     private var currentSchedule: AdditionSchedule? = null
 
+    private val checkedAlertIds: MutableSet<String> = mutableSetOf()
+
     init {
         viewModelScope.launch {
             subscribeAdditionSchedule.execute().collect { schedule ->
                 currentSchedule = schedule
                 when (schedule) {
-                    null -> clockService.reset()
+                    null -> {
+                        clockService.reset()
+                        checkedAlertIds.clear()
+                    }
                     else -> clockService.start()
                 }
                 updateScreenModel()
@@ -64,7 +69,7 @@ class MainViewModel @Inject constructor(
         val additions = result.getOrDefault(emptyList())
         val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
         _screenModel.value = mainScreenModelFactory.create(
-            additions, currentSchedule, currentAddNewAddition
+            additions, currentSchedule, currentAddNewAddition, checkedAlertIds
         )
     }
 
@@ -122,6 +127,13 @@ class MainViewModel @Inject constructor(
             when (optionType) {
                 AdditionOptionType.Delete -> deleteAddition(rowModel)
             }
+        }
+    }
+
+    override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {
+        when (checked) {
+            true -> checkedAlertIds.add(alertId)
+            false -> checkedAlertIds.remove(alertId)
         }
     }
 

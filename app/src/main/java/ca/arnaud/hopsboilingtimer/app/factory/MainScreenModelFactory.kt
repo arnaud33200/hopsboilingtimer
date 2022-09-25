@@ -7,7 +7,6 @@ import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
@@ -25,11 +24,15 @@ class MainScreenModelFactory @Inject constructor(
         additions: List<Addition>,
         schedule: AdditionSchedule?,
         newAdditionModel: NewAdditionModel = NewAdditionModel(),
+        checkedAlertIds: Set<String>,
     ): MainScreenModel {
         val additionRows = when (schedule) {
             null -> additions.map { rowModelFactory.create(it) }
             else -> schedule.alerts.map {
-                rowModelFactory.create(it, schedule.getNextAlert(timeProvider.getNowTimeMillis()))
+                val currentAlert = schedule.getNextAlert(timeProvider.getNowTimeMillis())
+                rowModelFactory.create(
+                    it, currentAlert, checkedAlertIds
+                )
             }
         }
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.model.*
@@ -35,6 +36,7 @@ interface MainScreenViewModel {
     fun newAdditionDurationTextChanged(text: String)
     fun addAdditionClick()
     fun onOptionClick(rowModel: RowModel, optionType: AdditionOptionType)
+    fun onAlertRowCheckChanged(checked: Boolean, alertId: String)
 
     fun startTimerButtonClick()
 }
@@ -48,6 +50,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
         viewModel::addAdditionClick,
         viewModel::startTimerButtonClick,
         viewModel::onOptionClick,
+        viewModel::onAlertRowCheckChanged,
         model
     )
 }
@@ -60,6 +63,7 @@ private fun MainScreen(
     addAdditionClick: () -> Unit,
     startTimerButtonClick: () -> Unit,
     onOptionClick: (RowModel, AdditionOptionType) -> Unit,
+    onAlertRowCheckChanged: (Boolean, String) -> Unit,
     model: MainScreenModel,
 ) {
     Scaffold(
@@ -88,7 +92,10 @@ private fun MainScreen(
                                 AdditionRow(model = rowModel, onOptionClick = onOptionClick)
                             }
                             is RowModel.AlertRowModel -> {
-                                AlertRow(model = rowModel)
+                                AlertRow(
+                                    model = rowModel,
+                                    onAlertRowCheckChanged = onAlertRowCheckChanged
+                                )
                             }
                         }
 
@@ -235,6 +242,7 @@ fun AdditionRow(
 
 @Composable
 fun AlertRow(
+    onAlertRowCheckChanged: (Boolean, String) -> Unit,
     model: RowModel.AlertRowModel,
 ) {
     Row(
@@ -246,11 +254,14 @@ fun AlertRow(
         val textColor = if (model.disabled) Color.Gray else Color.Black
         val fontStyle = if (model.disabled) FontStyle.Italic else null
         val fontWeight = if (model.highlighted) FontWeight.Bold else null
+        val textDecoration = if (model.addChecked == true) TextDecoration.LineThrough else null
+
         Text(
             modifier = Modifier.weight(1f),
             text = model.title,
             fontStyle = fontStyle,
             fontWeight = fontWeight,
+            textDecoration = textDecoration,
             color = textColor
         )
         Spacer(modifier = Modifier.width(10.dp))
@@ -258,8 +269,20 @@ fun AlertRow(
             text = model.duration,
             fontStyle = fontStyle,
             fontWeight = fontWeight,
+            textDecoration = textDecoration,
             color = textColor
         )
+
+        model.addChecked?.let { checked ->
+            // TODO - will remove the extra paddind
+//            CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = { newChecked ->
+                    onAlertRowCheckChanged(newChecked, model.id)
+                }
+            )
+        }
     }
 }
 
@@ -315,6 +338,10 @@ fun DefaultPreview() {
                 rowModel: RowModel,
                 optionType: AdditionOptionType,
             ) {
+
+            }
+
+            override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {
 
             }
 

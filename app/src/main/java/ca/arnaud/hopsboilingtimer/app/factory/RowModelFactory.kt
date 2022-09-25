@@ -4,7 +4,9 @@ import ca.arnaud.hopsboilingtimer.app.mapper.DurationTextMapper
 import ca.arnaud.hopsboilingtimer.app.mapper.RemainingTimeTextMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
 import ca.arnaud.hopsboilingtimer.app.model.RowModel
-import ca.arnaud.hopsboilingtimer.domain.model.*
+import ca.arnaud.hopsboilingtimer.domain.model.Addition
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -12,7 +14,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class RowModelFactory @Inject constructor(
     private val durationTextMapper: DurationTextMapper,
     private val timeProvider: TimeProvider,
-    private val remainingTimeTextMapper: RemainingTimeTextMapper
+    private val remainingTimeTextMapper: RemainingTimeTextMapper,
 ) {
 
     fun create(addition: Addition): RowModel {
@@ -24,7 +26,11 @@ class RowModelFactory @Inject constructor(
         )
     }
 
-    fun create(alert: AdditionAlert, currentAlert: AdditionAlert?): RowModel {
+    fun create(
+        alert: AdditionAlert,
+        currentAlert: AdditionAlert?,
+        checkedAlertIds: Set<String>,
+    ): RowModel {
         val nowTime = timeProvider.getNowTimeMillis()
         val expired = alert.triggerAtTime < nowTime
         val remainingDuration = (alert.triggerAtTime - nowTime).milliseconds
@@ -42,8 +48,15 @@ class RowModelFactory @Inject constructor(
         }
 
         val title = alert.additionsOrEmpty().joinToString(separator = ", ") { it.name }
-        val alertDuration  = when {
-             expired -> "Done" // TODO - Hardcoded string
+
+        val addChecked = when {
+            !expired -> null
+            else -> checkedAlertIds.contains(alert.id)
+        }
+
+        val alertDuration = when {
+            addChecked == false -> "Added?"
+            expired -> "Done" // TODO - Hardcoded string
             highlighted -> "Add in $countdown" // TODO - Hardcoded string
             else -> countdown
         }
@@ -51,12 +64,14 @@ class RowModelFactory @Inject constructor(
         val additionDuration = alert.additionsOrEmpty().firstOrNull()?.let { addition ->
             durationTextMapper.mapTo(addition.duration)
         } ?: ""
+
         return RowModel.AlertRowModel(
             id = alert.id,
             title = "$title ($additionDuration)",
             duration = alertDuration,
             disabled = expired,
-            highlighted = highlighted
+            highlighted = highlighted,
+            addChecked = addChecked
         )
     }
 }
