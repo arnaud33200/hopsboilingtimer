@@ -11,12 +11,14 @@ sealed interface AdditionAlert {
         override val id: String,
         override val triggerAtTime: Long,
         val additions: List<Addition>,
+        val checked: Boolean
     ) : AdditionAlert
 
     data class Next(
         override val id: String,
         override val triggerAtTime: Long,
         val additions: List<Addition>,
+        val checked: Boolean
     ) : AdditionAlert
 
     data class End(
@@ -39,6 +41,14 @@ fun AdditionAlert.getDuration(): Duration? {
         is AdditionAlert.End -> duration
         is AdditionAlert.Start,
         is AdditionAlert.Next -> additionsOrEmpty().firstOrNull()?.duration
+    }
+}
+
+fun AdditionAlert.isChecked(): Boolean? {
+    return when (this) {
+        is AdditionAlert.Start -> checked
+        is AdditionAlert.Next -> checked
+        is AdditionAlert.End -> null
     }
 }
 

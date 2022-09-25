@@ -4,6 +4,7 @@ import ca.arnaud.hopsboilingtimer.domain.common.DataMapper
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.model.getDuration
+import ca.arnaud.hopsboilingtimer.domain.model.isChecked
 import ca.arnaud.hopsboilingtimer.local.entity.AlertEntity
 import ca.arnaud.hopsboilingtimer.local.entity.AlertTypeEntity
 import java.time.Duration
@@ -22,7 +23,8 @@ class AlertEntityMapper @Inject constructor() : DataMapper<AdditionAlert, AlertE
             },
             triggerAt = input.triggerAtTime,
             additionIds = input.additionsOrEmpty().map { it.id },
-            duration = input.getDuration() ?: Duration.ZERO
+            duration = input.getDuration() ?: Duration.ZERO,
+            checked = input.isChecked() ?: false
         )
     }
 }

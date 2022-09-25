@@ -23,7 +23,8 @@ class AdditionAlertFactory @Inject constructor() {
         return AdditionAlert.Start(
             id = alertEntity.id,
             triggerAtTime = alertEntity.triggerAt,
-            additions = additions
+            additions = additions,
+            checked = alertEntity.checked
         )
     }
 
@@ -34,7 +35,8 @@ class AdditionAlertFactory @Inject constructor() {
         return AdditionAlert.Next(
             id = alertEntity.id,
             triggerAtTime = alertEntity.triggerAt,
-            additions = additions
+            additions = additions,
+            checked = alertEntity.checked
         )
     }
 

@@ -11,7 +11,8 @@ data class AlertEntity(
     @ColumnInfo(name = "type") val type: AlertTypeEntity,
     @ColumnInfo(name = "trigger_at") val triggerAt: Long,
     @ColumnInfo(name = "addition_ids") val additionIds: List<String>, // only for type Start & Next
-    @ColumnInfo(name = "duration") val duration: Duration // only for type End
+    @ColumnInfo(name = "duration") val duration: Duration, // only for type End
+    @ColumnInfo(name = "checked") val checked: Boolean
 )
 
 enum class AlertTypeEntity {
