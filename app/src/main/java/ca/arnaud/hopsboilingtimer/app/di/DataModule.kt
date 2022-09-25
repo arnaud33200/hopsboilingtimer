@@ -1,6 +1,10 @@
 package ca.arnaud.hopsboilingtimer.app.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import ca.arnaud.hopsboilingtimer.data.datasource.AdditionLocalDataSource
 import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
@@ -24,6 +28,7 @@ abstract class DataModule {
 
     companion object {
         const val DATA_BASE_NAME = "hops_additions"
+        const val PREFERENCES_DATASTORE_NAME = "datastore_preferences"
 
         @Provides
         fun provideAppDataBase(context: Context): AppDatabase {
@@ -32,6 +37,14 @@ abstract class DataModule {
                 AppDatabase::class.java,
                 DATA_BASE_NAME
             ).build()
+        }
+
+        @Provides
+        @Singleton
+        fun providesDataStore(context: Context): DataStore<Preferences> {
+            return PreferenceDataStoreFactory.create(produceFile = {
+                context.preferencesDataStoreFile(PREFERENCES_DATASTORE_NAME)
+            })
         }
     }
 

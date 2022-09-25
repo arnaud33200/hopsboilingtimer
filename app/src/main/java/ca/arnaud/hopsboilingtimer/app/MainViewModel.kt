@@ -1,5 +1,9 @@
 package ca.arnaud.hopsboilingtimer.app
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.hopsboilingtimer.app.factory.MainScreenModelFactory
@@ -35,7 +39,14 @@ class MainViewModel @Inject constructor(
     private val mainScreenModelFactory: MainScreenModelFactory,
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
     private val clockService: ClockService,
+    private val dataStore: DataStore<Preferences>, // TODO - put in a peference use case
 ) : ViewModel(), MainScreenViewModel {
+
+    companion object {
+        const val DARK_THEME_PREFERENCES_KEY = "dark_theme"
+    }
+
+    private val darkThemePreferenceKey = booleanPreferencesKey(DARK_THEME_PREFERENCES_KEY)
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
     override val screenModel: StateFlow<MainScreenModel> = _screenModel
@@ -62,6 +73,14 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             clockService.getTickFlow().collect { tick ->
                 updateScreenModel()
+            }
+        }
+
+        viewModelScope.launch {
+            dataStore.data.collect { preferences ->
+                if (preferences.contains(darkThemePreferenceKey)) {
+                    _darkMode.value = preferences[darkThemePreferenceKey]
+                }
             }
         }
     }
@@ -143,8 +162,12 @@ class MainViewModel @Inject constructor(
     }
 
     override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {
-        // TODO - save locally
-        _darkMode.value = !(darkMode.value ?: isSystemInDarkTheme)
+        viewModelScope.launch {
+            dataStore.edit { preferences ->
+                val darkTheme = preferences[darkThemePreferenceKey] ?: isSystemInDarkTheme
+                preferences[darkThemePreferenceKey] = !darkTheme
+            }
+        }
     }
 
     private suspend fun deleteAddition(rowModel: RowModel) {
