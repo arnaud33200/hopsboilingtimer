@@ -14,6 +14,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +31,7 @@ class MainViewModel @Inject constructor(
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
+    private val updateAdditionAlert: UpdateAdditionAlert,
     private val mainScreenModelFactory: MainScreenModelFactory,
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
     private val clockService: ClockService,
@@ -40,8 +42,6 @@ class MainViewModel @Inject constructor(
 
     private var currentSchedule: AdditionSchedule? = null
 
-    private val checkedAlertIds: MutableSet<String> = mutableSetOf()
-
     init {
         viewModelScope.launch {
             subscribeAdditionSchedule.execute().collect { schedule ->
@@ -49,7 +49,6 @@ class MainViewModel @Inject constructor(
                 when (schedule) {
                     null -> {
                         clockService.reset()
-                        checkedAlertIds.clear()
                     }
                     else -> clockService.start()
                 }
@@ -69,7 +68,7 @@ class MainViewModel @Inject constructor(
         val additions = result.getOrDefault(emptyList())
         val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
         _screenModel.value = mainScreenModelFactory.create(
-            additions, currentSchedule, currentAddNewAddition, checkedAlertIds
+            additions, currentSchedule, currentAddNewAddition
         )
     }
 
@@ -131,9 +130,12 @@ class MainViewModel @Inject constructor(
     }
 
     override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {
-        when (checked) {
-            true -> checkedAlertIds.add(alertId)
-            false -> checkedAlertIds.remove(alertId)
+        viewModelScope.launch {
+            val params = UpdateAdditionAlert.Params(
+                alertId = alertId,
+                checked = checked
+            )
+            updateAdditionAlert.execute(params)
         }
     }
 

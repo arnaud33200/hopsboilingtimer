@@ -24,15 +24,12 @@ class MainScreenModelFactory @Inject constructor(
         additions: List<Addition>,
         schedule: AdditionSchedule?,
         newAdditionModel: NewAdditionModel = NewAdditionModel(),
-        checkedAlertIds: Set<String>,
     ): MainScreenModel {
         val additionRows = when (schedule) {
             null -> additions.map { rowModelFactory.create(it) }
             else -> schedule.alerts.map {
                 val currentAlert = schedule.getNextAlert(timeProvider.getNowTimeMillis())
-                rowModelFactory.create(
-                    it, currentAlert, checkedAlertIds
-                )
+                rowModelFactory.create(it, currentAlert)
             }
         }
 
