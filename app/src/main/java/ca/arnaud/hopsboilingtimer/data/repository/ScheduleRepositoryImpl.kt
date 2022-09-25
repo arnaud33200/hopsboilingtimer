@@ -1,19 +1,21 @@
 package ca.arnaud.hopsboilingtimer.data.repository
 
 import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
+import ca.arnaud.hopsboilingtimer.domain.common.Response
+import ca.arnaud.hopsboilingtimer.domain.common.doOnSuccess
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.model.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
     private val scheduleLocalDataSource: ScheduleLocalDataSource,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
 ) : ScheduleRepository {
 
     private val scheduleStatusFlow = MutableStateFlow<AdditionSchedule?>(null)
@@ -86,5 +88,32 @@ class ScheduleRepositoryImpl @Inject constructor(
         schedule = null
         scheduleStatusFlow.value = null
         nextAdditionAlert.value = null
+    }
+
+    override suspend fun updateAdditionAlert(newAlert: AdditionAlert): Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException> {
+        return scheduleLocalDataSource.updateAdditionAlert(newAlert).also { response ->
+            response.doOnSuccess { updateCachedSchedule(it) }
+        }
+    }
+
+    private fun updateCachedSchedule(updatedAlert: AdditionAlert) {
+        val currentSchedule = schedule ?: return
+        val newAlerts = currentSchedule.alerts.toMutableList().apply {
+            replaceAll { alert ->
+                when {
+                    alert.id == updatedAlert.id -> updatedAlert
+                    else -> alert
+                }
+            }
+        }
+        updateCachedSchedule(currentSchedule.copy(alerts = newAlerts))
+    }
+
+    private fun updateCachedSchedule(schedule: AdditionSchedule) {
+        if (this.schedule == schedule) {
+            return
+        }
+        this.schedule = schedule
+        scheduleStatusFlow.value = schedule
     }
 }

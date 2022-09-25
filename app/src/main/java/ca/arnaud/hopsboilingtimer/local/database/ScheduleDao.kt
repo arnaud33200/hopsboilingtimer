@@ -3,6 +3,7 @@ package ca.arnaud.hopsboilingtimer.local.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import ca.arnaud.hopsboilingtimer.local.entity.AlertEntity
 import ca.arnaud.hopsboilingtimer.local.entity.ScheduleEntity
 
@@ -26,4 +27,7 @@ interface ScheduleDao {
 
     @Query("DELETE FROM alertentity WHERE id = :alertId")
     fun deleteAlert(alertId: String)
+
+    @Update
+    fun updateAlert(alertEntity: AlertEntity)
 }

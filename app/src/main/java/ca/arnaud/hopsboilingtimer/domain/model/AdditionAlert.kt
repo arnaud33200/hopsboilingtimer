@@ -52,3 +52,10 @@ fun AdditionAlert.isChecked(): Boolean? {
     }
 }
 
+fun AdditionAlert.setChecked(checked: Boolean): AdditionAlert {
+    return when (this) {
+        is AdditionAlert.Start -> this.copy(checked = checked)
+        is AdditionAlert.Next -> this.copy(checked = checked)
+        is AdditionAlert.End -> this
+    }
+}
