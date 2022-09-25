@@ -17,7 +17,7 @@ class MainScreenModelFactory @Inject constructor(
     private val rowModelFactory: RowModelFactory,
     private val timeProvider: TimeProvider,
     private val durationTextMapper: DurationTextMapper,
-    private val remainingTimeTextMapper: RemainingTimeTextMapper
+    private val remainingTimeTextMapper: RemainingTimeTextMapper,
 ) {
 
     fun create(
@@ -47,19 +47,20 @@ class MainScreenModelFactory @Inject constructor(
         schedule: AdditionSchedule?,
         additions: List<Addition>,
     ): BottomBarModel {
+        val maxDuration = additions.maxOfOrNull { it.duration }
         return when (schedule) {
             null -> BottomBarModel(
                 buttonTitle = "Start Timer", // TODO - hardcoded string
-                buttonTime = durationTextMapper.mapTo(additions.maxOf { it.duration }),
+                buttonTime = maxDuration?.let { durationTextMapper.mapTo(it) } ?: "",
                 buttonStyle = ButtonStyle.Start
             )
             else -> {
                 val nowTime = timeProvider.getNowTimeMillis()
-                val triggerAtTime = schedule.alerts.maxOf { it.triggerAtTime }
-                val remainingDuration = (triggerAtTime - nowTime).milliseconds
+                val triggerAtTime = schedule.alerts.maxOfOrNull { it.triggerAtTime }
+                val remainingDuration = triggerAtTime?.let { (it - nowTime).milliseconds }
                 BottomBarModel(
                     buttonTitle = "Stop Timer", // TODO - hardcoded string
-                    buttonTime = remainingTimeTextMapper.mapTo(remainingDuration),
+                    buttonTime = remainingDuration?.let { remainingTimeTextMapper.mapTo(it) } ?: "",
                     buttonStyle = ButtonStyle.Stop
                 )
             }

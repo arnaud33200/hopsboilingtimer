@@ -25,8 +25,8 @@ class AdditionAlertListMapper @Inject constructor(
             val countDown = maxDuration - duration
             val triggerAt = timeProvider.getNowTimeMillis() + countDown.toMillis()
             when (index) {
-                0 -> AdditionAlert.Start(id, triggerAt, additions)
-                else -> AdditionAlert.Next(id, triggerAt, additions)
+                0 -> AdditionAlert.Start(id, triggerAt, additions, false)
+                else -> AdditionAlert.Next(id, triggerAt, additions, false)
             }
         }.toMutableList().apply {
             if (isNotEmpty()) {
