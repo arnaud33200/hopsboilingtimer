@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.collectAsState
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreen
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +18,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            HopsAppTheme {
+            val darkMode = viewModel.darkMode.collectAsState().value
+            HopsAppTheme(
+                darkTheme = darkMode ?: isSystemInDarkTheme(),
+            ) {
                 MainScreen(viewModel)
             }
         }

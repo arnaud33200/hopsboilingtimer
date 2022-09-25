@@ -16,11 +16,14 @@ fun HopsAppTheme(
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        localAppColors provides DarkHopsAppColors(),
+        LocalAppColors provides when (darkTheme) {
+            true -> DarkHopsAppColors()
+            false -> LightHopsAppColors()
+        },
         LocalMinimumTouchTargetEnforcement provides false // remove padding around checkbox
     ) {
         MaterialTheme(
-            colors = localAppColors.current.toMaterialColors(),
+            colors = LocalAppColors.current.toMaterialColors(),
             typography = Typography,
             shapes = Shapes,
             content = content
@@ -28,11 +31,8 @@ fun HopsAppTheme(
     }
 }
 
-val localAppColors = staticCompositionLocalOf<HopsAppColors> { DefaultHopsAppColors() }
+val LocalAppColors = staticCompositionLocalOf<HopsAppColors> { DefaultHopsAppColors() }
 
-object HopsAppTheme {
-    val colors: HopsAppColors @Composable get() = localAppColors.current
-}
 
 
 

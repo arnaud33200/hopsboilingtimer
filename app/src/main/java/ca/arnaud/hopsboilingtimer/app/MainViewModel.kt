@@ -40,6 +40,9 @@ class MainViewModel @Inject constructor(
     private val _screenModel = MutableStateFlow(MainScreenModel())
     override val screenModel: StateFlow<MainScreenModel> = _screenModel
 
+    private val _darkMode = MutableStateFlow<Boolean?>(null)
+    val darkMode: StateFlow<Boolean?> = _darkMode
+
     private var currentSchedule: AdditionSchedule? = null
 
     init {
@@ -137,6 +140,11 @@ class MainViewModel @Inject constructor(
             )
             updateAdditionAlert.execute(params)
         }
+    }
+
+    override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {
+        // TODO - save locally
+        _darkMode.value = !(darkMode.value ?: isSystemInDarkTheme)
     }
 
     private suspend fun deleteAddition(rowModel: RowModel) {

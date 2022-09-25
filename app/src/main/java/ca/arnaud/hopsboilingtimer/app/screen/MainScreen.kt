@@ -2,6 +2,7 @@ package ca.arnaud.hopsboilingtimer.app.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,6 +11,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -24,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
+import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
 import ca.arnaud.hopsboilingtimer.app.theme.Typography
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +41,7 @@ interface MainScreenViewModel {
     fun addAdditionClick()
     fun onOptionClick(rowModel: RowModel, optionType: AdditionOptionType)
     fun onAlertRowCheckChanged(checked: Boolean, alertId: String)
+    fun onThemeIconClick(isSystemInDarkTheme: Boolean)
 
     fun startTimerButtonClick()
 }
@@ -51,6 +56,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
         viewModel::startTimerButtonClick,
         viewModel::onOptionClick,
         viewModel::onAlertRowCheckChanged,
+        viewModel::onThemeIconClick,
         model
     )
 }
@@ -64,27 +70,42 @@ private fun MainScreen(
     startTimerButtonClick: () -> Unit,
     onOptionClick: (RowModel, AdditionOptionType) -> Unit,
     onAlertRowCheckChanged: (Boolean, String) -> Unit,
+    onThemeIconClick: (Boolean) -> Unit,
     model: MainScreenModel,
 ) {
+    val currentDarkTheme = isSystemInDarkTheme()
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
+            Column {
+                Row(
                     modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
-                    text = "Hops Boiling Timer",
-                    style = Typography.h5
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "Hops Boiling Timer",
+                        style = Typography.h6
+                    )
+
+                    Icon(
+                        modifier = Modifier
+                            .clickable { onThemeIconClick(currentDarkTheme) }
+                            .padding(5.dp),
+                        imageVector = Icons.Filled.InvertColors,
+                        contentDescription = null
+                    )
+                }
+                Divider()
             }
+
         }
     ) { _ ->
         Column {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 10.dp),
                 content = {
                     model.additionRows.forEach { rowModel ->
                         when (rowModel) {
@@ -123,8 +144,8 @@ private fun BottomBar(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val backgroundColor = when (model.buttonStyle) {
-            ButtonStyle.Start -> MaterialTheme.colors.primary
-            ButtonStyle.Stop -> MaterialTheme.colors.secondary
+            ButtonStyle.Start -> LocalAppColors.current.primary
+            ButtonStyle.Stop -> LocalAppColors.current.secondary
         }
 
         Button(
@@ -342,6 +363,10 @@ fun DefaultPreview() {
             }
 
             override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {
+
+            }
+
+            override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {
 
             }
 

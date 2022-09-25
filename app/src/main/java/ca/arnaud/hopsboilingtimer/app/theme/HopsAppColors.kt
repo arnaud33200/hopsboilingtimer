@@ -69,3 +69,25 @@ data class DarkHopsAppColors(
     override val isLight: Boolean = false
 
 ): HopsAppColors
+
+data class LightHopsAppColors(
+    override val primary: Color = Color(0xFF199444),
+    override val primaryVariant: Color = Color(0xFF30854D),
+    override val onPrimary: Color = Color(0xFFFFFFFF),
+
+    override val secondary: Color = Color(0xFF3171EE),
+    override val secondaryVariant: Color = Color(0xFF1A53E6),
+    override val onSecondary: Color = Color(0xFFFFFFFF),
+
+    override val background: Color = Color(0xFFFAFAFA),
+    override val onBackground: Color = Color(0xFF111111),
+
+    override val surface: Color = Color(0xFFEEEEEE),
+    override val onSurface: Color = Color(0xFF111111),
+
+    override val error: Color = Color(0xFFEC4646),
+    override val onError: Color = Color(0xFFFFFFFF),
+
+    override val isLight: Boolean = false
+
+): HopsAppColors
