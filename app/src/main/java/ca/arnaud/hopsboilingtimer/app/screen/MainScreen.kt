@@ -178,15 +178,18 @@ fun AddNewAddition(
         return
     }
     Column(
-        Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
+        Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
     ) {
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
+
         Text(
-            "New Addition",
+            "New Addition", // TODO - hardcoded string
             style = LocalAppTypography.current.h2
         )
         Row(
             // TODO - setup dimension in theme
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
