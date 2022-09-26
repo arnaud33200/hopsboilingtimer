@@ -11,13 +11,11 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -28,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
-import ca.arnaud.hopsboilingtimer.app.theme.Typography
+import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -84,7 +82,7 @@ private fun MainScreen(
                     Text(
                         modifier = Modifier.weight(1f),
                         text = "Hops Boiling Timer",
-                        style = Typography.h6
+                        style = LocalAppTypography.current.h1
                     )
 
                     Icon(
@@ -184,7 +182,7 @@ fun AddNewAddition(
     ) {
         Text(
             "New Addition",
-            style = Typography.h6
+            style = LocalAppTypography.current.h2
         )
         Row(
             // TODO - setup dimension in theme
