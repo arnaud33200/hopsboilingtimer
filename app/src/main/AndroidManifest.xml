@@ -21,7 +21,7 @@
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.HopsBoilingTimer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
