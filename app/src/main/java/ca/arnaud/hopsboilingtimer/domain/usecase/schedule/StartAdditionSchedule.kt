@@ -1,11 +1,13 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
+import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.NoParamsSuspendableUseCase
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
+import java.time.Duration
 import javax.inject.Inject
 
 class StartAdditionSchedule @Inject constructor(
@@ -13,14 +15,22 @@ class StartAdditionSchedule @Inject constructor(
     private val timeProvider: TimeProvider,
     private val getAdditions: GetAdditions,
     private val additionScheduleFactory: AdditionScheduleFactory,
-    private val scheduleRepository: ScheduleRepository
-) : NoParamsSuspendableUseCase<Unit>(jobExecutorProvider) {
+    private val scheduleRepository: ScheduleRepository,
+) : SuspendableUseCase<ScheduleOptions, Unit>(jobExecutorProvider) {
 
-    // TODO - can put a starting time as param or skip XX minutes
-
-    override suspend fun buildRequest() {
+    override suspend fun buildRequest(params: ScheduleOptions) {
         val additions = getAdditions.execute(Unit).getOrDefault(emptyList())
-        val schedule = additionScheduleFactory.create(additions, timeProvider.getNowTimeMillis())
+
+        val maxDuration = additions.maxOfOrNull { it.duration } ?: Duration.ZERO
+        val delay = when {
+            params.delay == null -> Duration.ZERO
+            params.delay > maxDuration -> maxDuration
+            params.delay < Duration.ZERO -> Duration.ZERO
+            else -> params.delay
+        }
+        val startTime = timeProvider.getNowTimeMillis() - delay.toMillis()
+
+        val schedule = additionScheduleFactory.create(additions, startTime)
         scheduleRepository.setAdditionSchedule(schedule)
     }
 }

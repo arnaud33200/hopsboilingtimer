@@ -12,6 +12,7 @@ import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
 import javax.inject.Inject
 
 
@@ -185,9 +187,12 @@ class MainViewModel @Inject constructor(
     // endregion
 
     override fun startTimerButtonClick() {
+        // TODO - get Delay and reset it
         viewModelScope.launch {
             when (screenModel.value.bottomBarModel.buttonStyle) {
-                ButtonStyle.Start -> startAdditionSchedule.execute()
+                ButtonStyle.Start -> startAdditionSchedule.execute(
+                    ScheduleOptions()
+                )
                 ButtonStyle.Stop -> stopAdditionSchedule.execute()
             }
 
