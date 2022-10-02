@@ -120,12 +120,18 @@ private fun MainScreen(
 
                     }
 
-                    AddNewAddition(
-                        newAdditionHopsTextChanged,
-                        newAdditionDurationTextChanged,
-                        addAdditionClick,
-                        model.newAdditionRow
-                    )
+                    model.newAdditionRow?.let { newAdditionRow ->
+                        if (model.additionRows.isNotEmpty()) {
+                            Divider()
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        AddNewAddition(
+                            newAdditionHopsTextChanged,
+                            newAdditionDurationTextChanged,
+                            addAdditionClick,
+                            newAdditionRow
+                        )
+                    }
                 })
             BottomBar(startTimerButtonClick, model.bottomBarModel)
         }
@@ -172,17 +178,11 @@ fun AddNewAddition(
     newAdditionHopsTextChanged: (String) -> Unit,
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
-    model: NewAdditionModel?,
+    model: NewAdditionModel,
 ) {
-    if (model == null) {
-        return
-    }
     Column(
         Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
     ) {
-        Divider()
-        Spacer(modifier = Modifier.height(10.dp))
-
         Text(
             "New Addition", // TODO - hardcoded string
             style = LocalAppTypography.current.h2
