@@ -45,20 +45,20 @@ object DefaultAppTypography: AppTypography {
 }
 
 object HopsAppTypography: AppTypography {
-    override val h1 = createTextStyle(fontSize = 17.sp)
-    override val h2 = createTextStyle(fontSize = 15.sp)
-    override val h3 = createTextStyle(fontSize = 14.sp)
-    override val h4 = createTextStyle(fontSize = 13.sp) // probably won't use
+    override val h1 = createTextStyle(fontSize = 20.sp)
+    override val h2 = createTextStyle(fontSize = 18.sp)
+    override val h3 = createTextStyle(fontSize = 16.sp)
+    override val h4 = createTextStyle(fontSize = 14.sp) // probably won't use
     override val h5 = createTextStyle(fontSize = 12.sp) // Won't use lol
     override val h6 = createTextStyle(fontSize = 12.sp) // Won't use lol
 
     override val subtitle1 = createTextStyle(fontSize = 11.sp)
     override val subtitle2 = createTextStyle(fontSize = 10.sp)
 
-    override val body1 = createTextStyle(fontSize = 12.sp)
-    override val body2 = createTextStyle(fontSize = 12.sp)
+    override val body1 = createTextStyle(fontSize = 14.sp)
+    override val body2 = createTextStyle(fontSize = 16.sp)
 
-    override val button = createTextStyle(fontSize = 14.sp)
+    override val button = createTextStyle(fontSize = 18.sp)
     override val caption = createTextStyle(fontSize = 12.sp)
     override val overline = createTextStyle(fontSize = 12.sp)
 }

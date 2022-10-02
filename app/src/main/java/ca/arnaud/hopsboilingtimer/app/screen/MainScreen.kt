@@ -285,7 +285,8 @@ fun AlertRow(
             fontStyle = fontStyle,
             fontWeight = fontWeight,
             textDecoration = textDecoration,
-            color = textColor
+            color = textColor,
+            style = LocalAppTypography.current.body2
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
@@ -293,7 +294,8 @@ fun AlertRow(
             fontStyle = fontStyle,
             fontWeight = fontWeight,
             textDecoration = textDecoration,
-            color = textColor
+            color = textColor,
+            style = LocalAppTypography.current.body2
         )
 
         model.addChecked?.let { checked ->
@@ -330,16 +332,26 @@ private fun AdditionOptions(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    HopsAppTheme {
+    HopsAppTheme(darkTheme = true) {
         MainScreen(viewModel = object : MainScreenViewModel {
             override val screenModel: StateFlow<MainScreenModel>
                 get() = MutableStateFlow(
                     MainScreenModel(
-                        listOf(
-                            RowModel.AdditionRowModel("Amarillo", "60"),
-                            RowModel.AdditionRowModel("Mozaic", "45"),
-                            RowModel.AdditionRowModel("Saaz", "5"),
-                            RowModel.AdditionRowModel("El Dorado", "10"),
+                        additionRows = listOf(
+                            RowModel.AdditionRowModel("", "Amarillo", "60"),
+                            RowModel.AdditionRowModel("", "Mozaic", "45"),
+                            RowModel.AdditionRowModel("", "Saaz", "5"),
+                            RowModel.AdditionRowModel("", "El Dorado", "10"),
+                        ),
+                        newAdditionRow = NewAdditionModel(
+                            title = "new addition",
+                            duration = "30",
+                            buttonEnabled = true
+                        ),
+                        bottomBarModel = BottomBarModel(
+                            buttonTitle = "Start Timer",
+                            buttonTime = "60 Min",
+                            buttonStyle = ButtonStyle.Start
                         )
                     )
                 )
