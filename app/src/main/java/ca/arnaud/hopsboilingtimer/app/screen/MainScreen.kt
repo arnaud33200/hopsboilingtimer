@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -42,6 +43,7 @@ interface MainScreenViewModel {
     fun onThemeIconClick(isSystemInDarkTheme: Boolean)
 
     fun startTimerButtonClick()
+    fun onSubButtonClick()
 }
 
 @Composable
@@ -52,6 +54,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
         viewModel::newAdditionDurationTextChanged,
         viewModel::addAdditionClick,
         viewModel::startTimerButtonClick,
+        viewModel::onSubButtonClick,
         viewModel::onOptionClick,
         viewModel::onAlertRowCheckChanged,
         viewModel::onThemeIconClick,
@@ -66,6 +69,7 @@ private fun MainScreen(
     newAdditionDurationTextChanged: (String) -> Unit,
     addAdditionClick: () -> Unit,
     startTimerButtonClick: () -> Unit,
+    onSubButtonClick: () -> Unit,
     onOptionClick: (RowModel, AdditionOptionType) -> Unit,
     onAlertRowCheckChanged: (Boolean, String) -> Unit,
     onThemeIconClick: (Boolean) -> Unit,
@@ -133,7 +137,7 @@ private fun MainScreen(
                         )
                     }
                 })
-            BottomBar(startTimerButtonClick, model.bottomBarModel)
+            BottomBar(startTimerButtonClick, onSubButtonClick, model.bottomBarModel)
         }
     }
 }
@@ -141,6 +145,7 @@ private fun MainScreen(
 @Composable
 private fun BottomBar(
     startTimerButtonClick: () -> Unit,
+    onSubButtonClick: () -> Unit,
     model: BottomBarModel,
 ) {
     Column(
@@ -157,6 +162,7 @@ private fun BottomBar(
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth(),
+            enabled = model.buttonEnable,
             onClick = startTimerButtonClick,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = backgroundColor
@@ -170,6 +176,25 @@ private fun BottomBar(
                 Text(model.buttonTime)
             }
         }
+
+//        model.subButtonTitle?.let { buttonTitle ->
+//            Button(
+//                modifier = Modifier.padding(5.dp),
+//                onClick = onSubButtonClick,
+//                elevation = null,
+//                colors = ButtonDefaults.buttonColors(
+//                    backgroundColor = Color.Transparent
+//                )
+//            ) {
+//                Row {
+//                    Text(
+//                        text = buttonTitle,
+//                        color = backgroundColor,
+//                        style = LocalAppTypography.current.body1
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
@@ -351,7 +376,9 @@ fun DefaultPreview() {
                         bottomBarModel = BottomBarModel(
                             buttonTitle = "Start Timer",
                             buttonTime = "60 Min",
-                            buttonStyle = ButtonStyle.Start
+                            buttonStyle = ButtonStyle.Start,
+                            buttonEnable = true,
+                            subButtonTitle = "Options"
                         )
                     )
                 )
@@ -384,6 +411,10 @@ fun DefaultPreview() {
             }
 
             override fun startTimerButtonClick() {
+
+            }
+
+            override fun onSubButtonClick() {
 
             }
 

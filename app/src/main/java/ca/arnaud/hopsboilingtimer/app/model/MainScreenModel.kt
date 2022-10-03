@@ -10,6 +10,8 @@ data class BottomBarModel(
     // TODO probably better to have a button model
     val buttonTitle: String = "",
     val buttonTime: String = "",
+    val buttonEnable: Boolean = false,
+    val subButtonTitle: String? = null,
     val buttonStyle: ButtonStyle = ButtonStyle.Start,
 )
 

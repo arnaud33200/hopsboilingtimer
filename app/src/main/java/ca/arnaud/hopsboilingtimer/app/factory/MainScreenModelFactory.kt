@@ -8,6 +8,7 @@ import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import javax.inject.Inject
@@ -52,7 +53,9 @@ class MainScreenModelFactory @Inject constructor(
             null -> BottomBarModel(
                 buttonTitle = "Start Timer", // TODO - hardcoded string
                 buttonTime = maxDuration?.let { durationTextMapper.mapTo(it) } ?: "",
-                buttonStyle = ButtonStyle.Start
+                buttonStyle = ButtonStyle.Start,
+                buttonEnable = additions.isNotEmpty(),
+                subButtonTitle = "Options" // TODO hardcoded string
             )
             else -> {
                 val nowTime = timeProvider.getNowTimeMillis()
@@ -61,7 +64,9 @@ class MainScreenModelFactory @Inject constructor(
                 BottomBarModel(
                     buttonTitle = "Stop Timer", // TODO - hardcoded string
                     buttonTime = remainingDuration?.let { remainingTimeTextMapper.mapTo(it) } ?: "",
-                    buttonStyle = ButtonStyle.Stop
+                    buttonStyle = ButtonStyle.Stop,
+                    buttonEnable = true,
+                    subButtonTitle = null
                 )
             }
         }

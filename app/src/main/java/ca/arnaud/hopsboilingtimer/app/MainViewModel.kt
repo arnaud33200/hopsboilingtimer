@@ -198,4 +198,8 @@ class MainViewModel @Inject constructor(
 
         }
     }
+
+    override fun onSubButtonClick() {
+
+    }
 }
