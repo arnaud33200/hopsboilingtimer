@@ -196,7 +196,7 @@ class MainViewModel @Inject constructor(
             when (screenModel.value.bottomBarModel.buttonStyle) {
                 ButtonStyle.Start -> {
                     if (!permissionService.hasNotificationPermission()) {
-                        _showRequestPermissionDialog.value = true
+                        showPermissionDialog()
                         return@launch
                     }
                     startAdditionSchedule.execute(ScheduleOptions())
@@ -205,6 +205,10 @@ class MainViewModel @Inject constructor(
             }
 
         }
+    }
+
+    private fun showPermissionDialog() {
+        _showRequestPermissionDialog.value = true
     }
 
     override fun onSubButtonClick() {

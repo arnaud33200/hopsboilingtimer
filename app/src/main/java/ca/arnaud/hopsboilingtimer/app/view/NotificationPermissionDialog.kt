@@ -2,9 +2,11 @@ package ca.arnaud.hopsboilingtimer.app.view
 
 import android.Manifest
 import android.os.Build
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import ca.arnaud.hopsboilingtimer.app.extension.launchNotificationPermissionSettings
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
@@ -18,25 +20,19 @@ fun NotificationPermissionDialog(
         return
     }
 
-    var permissionRequested by remember {
-        mutableStateOf(false)
-    }
-
     val notificationPermissionState = rememberPermissionState(
         permission = Manifest.permission.POST_NOTIFICATIONS,
-        onPermissionResult = { permissionRequested = true }
+        onPermissionResult = onPermissionResult
     )
-    val hasPermission = notificationPermissionState.status.isGranted
+    val context = LocalContext.current
 
-    LaunchedEffect(hasPermission, permissionRequested) {
-        if (permissionRequested || hasPermission) {
-            onPermissionResult(hasPermission)
-        }
+    LaunchedEffect(notificationPermissionState) {
 
-        if (notificationPermissionState.status.shouldShowRationale) {
+        if (!notificationPermissionState.status.shouldShowRationale) {
             notificationPermissionState.launchPermissionRequest()
         } else {
             onPermissionResult(false)
+            context.launchNotificationPermissionSettings()
         }
     }
 }
