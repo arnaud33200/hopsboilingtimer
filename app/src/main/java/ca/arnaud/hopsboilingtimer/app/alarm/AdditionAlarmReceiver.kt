@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.mapper.AlertNotificationFactory
+import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -46,10 +47,25 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
     @Inject
     lateinit var alertNotificationFactory: AlertNotificationFactory
 
+    @Inject
+    lateinit var permissionService: PermissionService
+
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
         val alert = intent.getParcelableExtra<AdditionNotification>(NOTIFICATION_EXTRA) ?: return
+
+        showNotification(alert, context)
+
+        coroutineScopeProvider.scope.launch {
+            onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(alert.alertId))
+        }
+    }
+
+    private fun showNotification(alert: AdditionNotification, context: Context) {
+        if (!permissionService.hasNotificationPermission()) {
+            return
+        }
 
         alertNotificationFactory.createChannel(context)
         val notification = alertNotificationFactory.create(alert, context)
@@ -57,9 +73,5 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
         // TODO - use id from the alert, probably make the id int
         val notificationId = Random().nextInt(1000 - 1) + 1
         NotificationManagerCompat.from(context).notify(notificationId, notification)
-
-        coroutineScopeProvider.scope.launch {
-            onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(alert.alertId))
-        }
     }
 }

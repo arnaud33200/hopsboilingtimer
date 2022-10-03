@@ -11,6 +11,7 @@ import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenViewModel
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
+import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Duration
 import javax.inject.Inject
 
 
@@ -42,6 +42,7 @@ class MainViewModel @Inject constructor(
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
     private val clockService: ClockService,
     private val dataStore: DataStore<Preferences>, // TODO - put in a peference use case
+    private val permissionService: PermissionService,
 ) : ViewModel(), MainScreenViewModel {
 
     companion object {
@@ -52,6 +53,9 @@ class MainViewModel @Inject constructor(
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
     override val screenModel: StateFlow<MainScreenModel> = _screenModel
+
+    private val _showRequestPermissionDialog = MutableStateFlow(false)
+    override val showRequestPermissionDialog: StateFlow<Boolean> = _showRequestPermissionDialog
 
     private val _darkMode = MutableStateFlow<Boolean?>(null)
     val darkMode: StateFlow<Boolean?> = _darkMode
@@ -190,9 +194,13 @@ class MainViewModel @Inject constructor(
         // TODO - get Delay and reset it
         viewModelScope.launch {
             when (screenModel.value.bottomBarModel.buttonStyle) {
-                ButtonStyle.Start -> startAdditionSchedule.execute(
-                    ScheduleOptions()
-                )
+                ButtonStyle.Start -> {
+                    if (!permissionService.hasNotificationPermission()) {
+                        _showRequestPermissionDialog.value = true
+                        return@launch
+                    }
+                    startAdditionSchedule.execute(ScheduleOptions())
+                }
                 ButtonStyle.Stop -> stopAdditionSchedule.execute()
             }
 
@@ -201,5 +209,12 @@ class MainViewModel @Inject constructor(
 
     override fun onSubButtonClick() {
 
+    }
+
+    override fun onPermissionResult(granted: Boolean) {
+        _showRequestPermissionDialog.value = false
+        if (granted) {
+            startTimerButtonClick()
+        }
     }
 }

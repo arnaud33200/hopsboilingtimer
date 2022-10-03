@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -28,12 +27,15 @@ import ca.arnaud.hopsboilingtimer.app.model.*
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
+import ca.arnaud.hopsboilingtimer.app.view.NotificationPermissionDialog
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface MainScreenViewModel {
+
     val screenModel: StateFlow<MainScreenModel>
+    val showRequestPermissionDialog: StateFlow<Boolean>
 
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
@@ -44,6 +46,8 @@ interface MainScreenViewModel {
 
     fun startTimerButtonClick()
     fun onSubButtonClick()
+
+    fun onPermissionResult(granted: Boolean)
 }
 
 @Composable
@@ -60,6 +64,13 @@ fun MainScreen(viewModel: MainScreenViewModel) {
         viewModel::onThemeIconClick,
         model
     )
+
+    val showRequest = viewModel.showRequestPermissionDialog.collectAsState().value
+    if (showRequest) {
+        NotificationPermissionDialog(
+            onPermissionResult = viewModel::onPermissionResult
+        )
+    }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -383,6 +394,8 @@ fun DefaultPreview() {
                     )
                 )
 
+            override val showRequestPermissionDialog = MutableStateFlow(false)
+
             override fun newAdditionHopsTextChanged(text: String) {
 
             }
@@ -415,6 +428,10 @@ fun DefaultPreview() {
             }
 
             override fun onSubButtonClick() {
+
+            }
+
+            override fun onPermissionResult(granted: Boolean) {
 
             }
 
