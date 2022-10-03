@@ -22,8 +22,8 @@ class AlertNotificationFactory @Inject constructor() {
 
     fun create(additionNotification: AdditionNotification, context: Context): Notification {
         return NotificationCompat.Builder(context, CHANNEL_ID).apply {
-            setSmallIcon(R.drawable.ic_launcher_foreground)
-            setContentTitle("Hops Boiling Timer")
+            setSmallIcon(R.drawable.ic_notification_badge)
+            setContentTitle("Hops Boiling Timer") // TODO - Hardcoded string
             setContentText(additionNotification.message)
             priority = NotificationCompat.PRIORITY_MAX
             setContentIntent(getContentIntent(context))
@@ -39,8 +39,8 @@ class AlertNotificationFactory @Inject constructor() {
     }
 
     fun createChannel(context: Context) {
-        val name = "Hops Additions"
-        val descriptionText = "Add the next additions"
+        val name = "Hops Additions" // TODO - Hardcoded string
+        val descriptionText = "Add the next additions" // TODO - Hardcoded string
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
