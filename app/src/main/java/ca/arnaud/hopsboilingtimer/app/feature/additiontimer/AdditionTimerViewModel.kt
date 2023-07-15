@@ -20,9 +20,12 @@ import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
+import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
+import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.PatchPreferences
+import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.SubscribePreferences
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
@@ -44,18 +47,13 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
     private val updateAdditionAlert: UpdateAdditionAlert,
+    private val patchPreferences: PatchPreferences,
+    private val subscribePreferences: SubscribePreferences,
     private val additionTimerScreenModelFactory: AdditionTimerScreenModelFactory,
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
     private val clockService: ClockService,
-    private val dataStore: DataStore<Preferences>, // TODO - put in a peference use case
     private val permissionService: PermissionService,
 ) : ViewModel(), AdditionTimerScreenActionListener {
-
-    companion object {
-        const val DARK_THEME_PREFERENCES_KEY = "dark_theme"
-    }
-
-    private val darkThemePreferenceKey = booleanPreferencesKey(DARK_THEME_PREFERENCES_KEY)
 
     private val _screenModel = MutableStateFlow(MainScreenModel())
     val screenModel: StateFlow<MainScreenModel> = _screenModel
@@ -63,8 +61,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val _showRequestPermissionDialog = MutableStateFlow(false)
     val showRequestPermissionDialog: StateFlow<Boolean> = _showRequestPermissionDialog
 
-    private val _darkMode = MutableStateFlow<Boolean?>(null)
-    val darkMode: StateFlow<Boolean?> = _darkMode
+    private var darkMode: Boolean? = null
 
     private var currentSchedule: AdditionSchedule? = null
 
@@ -89,12 +86,9 @@ class AdditionTimerViewModel @AssistedInject constructor(
             }
         }
 
-        // TODO - move that in separate unit
         viewModelScope.launch {
-            dataStore.data.collect { preferences ->
-                if (preferences.contains(darkThemePreferenceKey)) {
-                    _darkMode.value = preferences[darkThemePreferenceKey]
-                }
+            subscribePreferences.execute().collect { preferences ->
+                darkMode = preferences.darkMode
             }
         }
     }
@@ -177,10 +171,11 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {
         viewModelScope.launch {
-            dataStore.edit { preferences ->
-                val darkTheme = preferences[darkThemePreferenceKey] ?: isSystemInDarkTheme
-                preferences[darkThemePreferenceKey] = !darkTheme
-            }
+            patchPreferences.execute(
+                params = PatchPreferencesParams(
+                    darkMode = !(darkMode ?: false)
+                )
+            )
         }
     }
 

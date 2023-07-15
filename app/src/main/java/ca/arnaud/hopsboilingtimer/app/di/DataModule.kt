@@ -7,13 +7,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import ca.arnaud.hopsboilingtimer.data.datasource.AdditionLocalDataSource
+import ca.arnaud.hopsboilingtimer.data.datasource.PreferencesLocalDataSource
 import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
 import ca.arnaud.hopsboilingtimer.data.repository.AdditionRepositoryImpl
+import ca.arnaud.hopsboilingtimer.data.repository.PreferencesRepositoryImpl
 import ca.arnaud.hopsboilingtimer.data.repository.ScheduleRepositoryImpl
 import ca.arnaud.hopsboilingtimer.domain.repository.AdditionRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
+import ca.arnaud.hopsboilingtimer.domain.repository.preferences.PreferencesRepository
 import ca.arnaud.hopsboilingtimer.local.AdditionLocalDataSourceImpl
 import ca.arnaud.hopsboilingtimer.local.AppDatabase
+import ca.arnaud.hopsboilingtimer.local.PreferencesLocalDataSourceImpl
 import ca.arnaud.hopsboilingtimer.local.ScheduleLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -63,4 +67,12 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindScheduleLocalDataSource(impl: ScheduleLocalDataSourceImpl): ScheduleLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindPreferencesRepository(impl: PreferencesRepositoryImpl): PreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPreferencesLocalDataSource(impl: PreferencesLocalDataSourceImpl): PreferencesLocalDataSource
 }
