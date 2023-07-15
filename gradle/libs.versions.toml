@@ -17,7 +17,6 @@ composeBomVersion = "2023.05.01"
 composeCoilVersion = "2.2.2"
 composeActivityVersion = "1.7.0"
 composeNavigationVersion = "2.5.3"
-composeAccompanistVersion = "0.30.1"
 
 # Room
 roomVersion = "2.4.3"
@@ -38,6 +37,7 @@ android-datastore = { module = "androidx.datastore:datastore-preferences", versi
 
 # Google
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "googleAccompanistVersion" }
+accompanist-navigationAnimations = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "googleAccompanistVersion" }
 
 # DI
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "daggerHiltVersion" }
@@ -48,6 +48,7 @@ javaxInject = { module = "javax.inject:javax.inject", version.ref = "javaxInject
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "composeActivityVersion" }
+compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigationVersion" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
 compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -67,6 +68,8 @@ compose = [
     "compose-bom",
     "compose-ui",
     "compose-activity",
+    "compose-navigation",
+    "accompanist-navigationAnimations",
     "compose-material3",
     "compose-materialIcons",
 ]
