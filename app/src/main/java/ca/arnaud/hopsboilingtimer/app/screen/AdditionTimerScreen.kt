@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.InvertColors
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -48,7 +47,7 @@ import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
 import ca.arnaud.hopsboilingtimer.app.view.NotificationPermissionDialog
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 
-interface MainScreenActionListener {
+interface AdditionTimerScreenActionListener {
 
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
@@ -64,10 +63,10 @@ interface MainScreenActionListener {
 }
 
 @Composable
-fun MainScreen(
+fun AdditionTimerScreen(
     model: MainScreenModel,
     showRequestPermissionDialog: Boolean,
-    actionListener: MainScreenActionListener,
+    actionListener: AdditionTimerScreenActionListener,
 ) {
     val currentDarkTheme = isSystemInDarkTheme()
     Scaffold(
@@ -337,7 +336,7 @@ private fun AdditionOptions(
 @Composable
 fun DefaultPreview() {
     HopsAppTheme(darkTheme = true) {
-        MainScreen(
+        AdditionTimerScreen(
             model = MainScreenModel(
                 additionRows = listOf(
                     RowModel.AdditionRowModel("", "Amarillo", "60"),
@@ -359,7 +358,7 @@ fun DefaultPreview() {
                 )
             ),
             showRequestPermissionDialog = false,
-            actionListener = object : MainScreenActionListener {
+            actionListener = object : AdditionTimerScreenActionListener {
 
             override fun newAdditionHopsTextChanged(text: String) {
 

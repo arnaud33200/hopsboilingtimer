@@ -8,14 +8,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.hopsboilingtimer.app.factory.MainScreenModelFactory
+import ca.arnaud.hopsboilingtimer.app.factory.AdditionTimerScreenModelFactory
 import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
 import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
 import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.model.RowModel
-import ca.arnaud.hopsboilingtimer.app.screen.MainScreenActionListener
+import ca.arnaud.hopsboilingtimer.app.screen.AdditionTimerScreenActionListener
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel @AssistedInject constructor(
+class AdditionTimerViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     @Assisted private val bundle: Bundle?,
     private val getAdditions: GetAdditions,
@@ -44,12 +44,12 @@ class MainViewModel @AssistedInject constructor(
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
     private val updateAdditionAlert: UpdateAdditionAlert,
-    private val mainScreenModelFactory: MainScreenModelFactory,
+    private val additionTimerScreenModelFactory: AdditionTimerScreenModelFactory,
     private val addNewAdditionParamsMapper: AddNewAdditionParamsMapper,
     private val clockService: ClockService,
     private val dataStore: DataStore<Preferences>, // TODO - put in a peference use case
     private val permissionService: PermissionService,
-) : ViewModel(), MainScreenActionListener {
+) : ViewModel(), AdditionTimerScreenActionListener {
 
     companion object {
         const val DARK_THEME_PREFERENCES_KEY = "dark_theme"
@@ -103,7 +103,7 @@ class MainViewModel @AssistedInject constructor(
         val result = getAdditions.execute(Unit)
         val additions = result.getOrDefault(emptyList())
         val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
-        _screenModel.value = mainScreenModelFactory.create(
+        _screenModel.value = additionTimerScreenModelFactory.create(
             additions, currentSchedule, currentAddNewAddition
         )
     }

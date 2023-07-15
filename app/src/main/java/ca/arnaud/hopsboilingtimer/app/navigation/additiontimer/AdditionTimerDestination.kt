@@ -1,34 +1,33 @@
-package ca.arnaud.hopsboilingtimer.app.navigation.home
+package ca.arnaud.hopsboilingtimer.app.navigation.additiontimer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import ca.arnaud.hopsboilingtimer.app.MainViewModel
+import ca.arnaud.hopsboilingtimer.app.AdditionTimerViewModel
 import ca.arnaud.hopsboilingtimer.app.di.assistedviewmodel.AssistedViewModelProviderFactory
-import ca.arnaud.hopsboilingtimer.app.navigation.common.createViewModel
 import ca.arnaud.hopsboilingtimer.app.navigation.common.navigationComposable
-import ca.arnaud.hopsboilingtimer.app.screen.MainScreen
+import ca.arnaud.hopsboilingtimer.app.screen.AdditionTimerScreen
 
-fun NavGraphBuilder.addHomeDestination(
+fun NavGraphBuilder.addAdditionTimerDestination(
     navController: NavHostController,
     viewModelAssistedFactory: AssistedViewModelProviderFactory,
 ) {
-    navigationComposable<MainViewModel>(
-        screenNavigation = HomeNavigation,
+    navigationComposable<AdditionTimerViewModel>(
+        screenNavigation = AdditionTimerNavigation,
         viewModelAssistedFactory = viewModelAssistedFactory,
     ) { backStackEntry, viewModel ->
-        HomeDestination(viewModel)
+        AdditionTimerDestination(viewModel)
     }
 }
 
 @Composable
-private fun HomeDestination(viewModel: MainViewModel) {
+private fun AdditionTimerDestination(viewModel: AdditionTimerViewModel) {
     val model by viewModel.screenModel.collectAsState()
     val showRequestPermissionDialog by viewModel.showRequestPermissionDialog.collectAsState()
 
-    MainScreen(
+    AdditionTimerScreen(
         model = model,
         showRequestPermissionDialog = showRequestPermissionDialog,
         actionListener = viewModel,

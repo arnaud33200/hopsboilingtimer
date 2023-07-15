@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app.di
 
 import androidx.lifecycle.ViewModel
-import ca.arnaud.hopsboilingtimer.app.MainViewModel
+import ca.arnaud.hopsboilingtimer.app.AdditionTimerViewModel
 import ca.arnaud.hopsboilingtimer.app.di.assistedviewmodel.ViewModelAssistedFactory
 import ca.arnaud.hopsboilingtimer.app.di.assistedviewmodel.ViewModelKey
 import dagger.Binds
@@ -16,10 +16,10 @@ import dagger.multibindings.IntoMap
 abstract class ViewModelModule {
 
     @AssistedFactory
-    interface MainViewModelFactory : ViewModelAssistedFactory<MainViewModel>
+    interface AdditionTimerViewModelFactory : ViewModelAssistedFactory<AdditionTimerViewModel>
 
     @Binds
     @IntoMap
-    @ViewModelKey(MainViewModel::class)
-    abstract fun bindMainViewModel(factory: MainViewModelFactory): ViewModelAssistedFactory<out ViewModel>
+    @ViewModelKey(AdditionTimerViewModel::class)
+    abstract fun bindAdditionTimerViewModel(factory: AdditionTimerViewModelFactory): ViewModelAssistedFactory<out ViewModel>
 }

@@ -8,13 +8,12 @@ import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-class MainScreenModelFactory @Inject constructor(
+class AdditionTimerScreenModelFactory @Inject constructor(
     private val rowModelFactory: RowModelFactory,
     private val timeProvider: TimeProvider,
     private val durationTextMapper: DurationTextMapper,
