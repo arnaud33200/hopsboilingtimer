@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app.alarm
+package ca.arnaud.hopsboilingtimer.app.feature.alarm
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

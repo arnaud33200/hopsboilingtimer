@@ -10,6 +10,6 @@ class CoroutineScopeProvider @Inject constructor(
 ) {
     val scope: CoroutineScope
         get() = CoroutineScope(
-            jobExecutorProvider.executionDispatcher + SupervisorJob()
+            context = jobExecutorProvider.executionDispatcher + SupervisorJob()
         )
 }

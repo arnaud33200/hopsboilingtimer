@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app.screen
+package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -35,12 +35,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
-import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
-import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
-import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
-import ca.arnaud.hopsboilingtimer.app.model.RowModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography

@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app.navigation.additiontimer
+package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.navigation
 
 import ca.arnaud.hopsboilingtimer.app.navigation.common.ScreenNavigation
 

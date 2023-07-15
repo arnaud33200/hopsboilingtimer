@@ -1,8 +1,8 @@
-package ca.arnaud.hopsboilingtimer.app.mapper
+package ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper
 
-import ca.arnaud.hopsboilingtimer.app.alarm.AdditionNotification
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.AdditionNotification
+import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.DurationTextMapper
 import ca.arnaud.hopsboilingtimer.domain.common.DataMapper
-import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import java.time.Duration
 import javax.inject.Inject

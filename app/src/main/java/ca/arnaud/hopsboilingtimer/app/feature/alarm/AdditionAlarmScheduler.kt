@@ -1,9 +1,9 @@
-package ca.arnaud.hopsboilingtimer.app.alarm
+package ca.arnaud.hopsboilingtimer.app.feature.alarm
 
 import android.app.AlarmManager
 import android.content.Context
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
-import ca.arnaud.hopsboilingtimer.app.mapper.AdditionNotificationMapper
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AdditionNotificationMapper
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch

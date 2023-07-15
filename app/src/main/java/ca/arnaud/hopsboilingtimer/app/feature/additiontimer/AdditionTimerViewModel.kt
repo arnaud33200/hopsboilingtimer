@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app
+package ca.arnaud.hopsboilingtimer.app.feature.additiontimer
 
 import android.os.Bundle
 import androidx.datastore.core.DataStore
@@ -8,14 +8,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.hopsboilingtimer.app.factory.AdditionTimerScreenModelFactory
-import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
-import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
-import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
-import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
-import ca.arnaud.hopsboilingtimer.app.model.RowModel
-import ca.arnaud.hopsboilingtimer.app.screen.AdditionTimerScreenActionListener
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory.AdditionTimerScreenModelFactory
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.mapper.AddNewAdditionParamsMapper
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimerScreenActionListener
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule

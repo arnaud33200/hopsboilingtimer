@@ -1,9 +1,9 @@
-package ca.arnaud.hopsboilingtimer.app.factory
+package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
-import ca.arnaud.hopsboilingtimer.app.mapper.DurationTextMapper
-import ca.arnaud.hopsboilingtimer.app.mapper.RemainingTimeTextMapper
-import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
-import ca.arnaud.hopsboilingtimer.app.model.RowModel
+import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.DurationTextMapper
+import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.RemainingTimeTextMapper
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty

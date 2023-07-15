@@ -1,14 +1,14 @@
-package ca.arnaud.hopsboilingtimer.app.navigation.additiontimer
+package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import ca.arnaud.hopsboilingtimer.app.AdditionTimerViewModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.AdditionTimerViewModel
 import ca.arnaud.hopsboilingtimer.app.di.assistedviewmodel.AssistedViewModelProviderFactory
 import ca.arnaud.hopsboilingtimer.app.navigation.common.navigationComposable
-import ca.arnaud.hopsboilingtimer.app.screen.AdditionTimerScreen
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimerScreen
 
 fun NavGraphBuilder.addAdditionTimerDestination(
     navController: NavHostController,

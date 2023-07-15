@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app.mapper
+package ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
-import ca.arnaud.hopsboilingtimer.app.alarm.AdditionNotification
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.AdditionNotification
 import javax.inject.Inject
 
 class AlertNotificationFactory @Inject constructor() {

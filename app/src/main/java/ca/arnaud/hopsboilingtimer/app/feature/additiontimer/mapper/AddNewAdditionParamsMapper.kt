@@ -1,6 +1,6 @@
-package ca.arnaud.hopsboilingtimer.app.mapper
+package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.mapper
 
-import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.domain.common.DataMapper
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import java.time.Duration

@@ -1,11 +1,11 @@
-package ca.arnaud.hopsboilingtimer.app.alarm
+package ca.arnaud.hopsboilingtimer.app.feature.alarm
 
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
-import ca.arnaud.hopsboilingtimer.app.mapper.AlertNotificationFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AlertNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.hilt.android.AndroidEntryPoint
