@@ -51,36 +51,28 @@ android {
 
 dependencies {
 
+    // Android
+    implementation libs.android.core
+    implementation libs.android.lifecycle
+    implementation libs.android.datastore
+
+    // Google Accompanist
+    implementation libs.accompanist.permissions
+
     // DI
     implementation libs.dagger.hilt
     kapt libs.dagger.hiltCompiler
 
+    // Compose + Material
     implementation platform(libs.compose.bom)
     implementation libs.bundles.compose
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    implementation 'androidx.core:core-ktx:1.10.1'
-
-    // Google Accompanist
-    implementation "com.google.accompanist:accompanist-permissions:0.30.1"
-
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-
+    debugImplementation libs.compose.tooling
 
     // Room
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-
-    // Data Store
-    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
+    kapt libs.room.compiler
 
     // Test
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    testImplementation libs.bundles.test
 }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -78,7 +79,7 @@ fun MainScreen(
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = "Hops Boiling Timer",
+                        text = "Hops Boiling Timer", // TODO - put in strings.xml
                         style = LocalAppTypography.current.h1
                     )
 
@@ -86,7 +87,7 @@ fun MainScreen(
                         modifier = Modifier
                             .clickable { actionListener.onThemeIconClick(currentDarkTheme) }
                             .padding(5.dp),
-                        imageVector = Icons.Filled.Settings, // TODO - InvertColors
+                        imageVector = Icons.Filled.InvertColors,
                         contentDescription = null
                     )
                 }
@@ -174,25 +175,6 @@ private fun BottomBar(
                 Text(model.buttonTime)
             }
         }
-
-//        model.subButtonTitle?.let { buttonTitle ->
-//            Button(
-//                modifier = Modifier.padding(5.dp),
-//                onClick = onSubButtonClick,
-//                elevation = null,
-//                colors = ButtonDefaults.buttonColors(
-//                    backgroundColor = Color.Transparent
-//                )
-//            ) {
-//                Row {
-//                    Text(
-//                        text = buttonTitle,
-//                        color = backgroundColor,
-//                        style = LocalAppTypography.current.body1
-//                    )
-//                }
-//            }
-//        }
     }
 }
 

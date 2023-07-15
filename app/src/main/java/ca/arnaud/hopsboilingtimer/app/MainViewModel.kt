@@ -82,6 +82,7 @@ class MainViewModel @Inject constructor(
             }
         }
 
+        // TODO - move that in separate unit
         viewModelScope.launch {
             dataStore.data.collect { preferences ->
                 if (preferences.contains(darkThemePreferenceKey)) {

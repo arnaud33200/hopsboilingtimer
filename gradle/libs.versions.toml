@@ -1,14 +1,16 @@
 [versions]
 
-# Coroutines
-coroutinesCoreVersion = "1.6.4"
+# Android
+androidCoreVersion = "1.10.1"
+androidLifecycleVersion = "1.10.1"
+androidDatastoreVersion = "1.0.0"
+
+# Google
+googleAccompanistVersion = "0.30.1"
 
 # DI
 daggerHiltVersion = "2.44"
 javaxInjectVersion = "1"
-
-# Network
-retrofitVersion = "2.9.0"
 
 # Compose
 composeBomVersion = "2023.05.01"
@@ -16,6 +18,9 @@ composeCoilVersion = "2.2.2"
 composeActivityVersion = "1.7.0"
 composeNavigationVersion = "2.5.3"
 composeAccompanistVersion = "0.30.1"
+
+# Room
+roomVersion = "2.4.3"
 
 # Test
 mockkVersion = "1.13.5"
@@ -26,33 +31,34 @@ coroutinesTestVersion = "1.6.4"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [libraries]
 
+# Android
+android-core = { module = "androidx.core:core-ktx", version.ref = "androidCoreVersion" }
+android-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidLifecycleVersion" }
+android-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidDatastoreVersion" }
+
+# Google
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "googleAccompanistVersion" }
+
 # DI
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "daggerHiltVersion" }
 dagger-hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerHiltVersion" }
 javaxInject = { module = "javax.inject:javax.inject", version.ref = "javaxInjectVersion" }
 
-# Network
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
-retrofit-converterGson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitVersion" }
-
-# Coroutines
-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesCoreVersion" }
-
 # Compose
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 compose-ui = { module = "androidx.compose.ui:ui" }
-compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "composeActivityVersion" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
-compose-materialIcons = { module = "androidx.compose.material3:material3-icons-extended" }
+compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
+compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
+
+# Room
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 
 # Test
 mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
-jUnit5Api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jUnit5Version" }
-jUnit5Engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jUnit5Version" }
-jUnit5Params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jUnit5Version" }
-kotlinCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTestVersion" }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [bundles]
@@ -60,15 +66,13 @@ kotlinCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test
 compose = [
     "compose-bom",
     "compose-ui",
-    "compose-tooling",
-    "compose-material3",
     "compose-activity",
+    "compose-material3",
+    "compose-materialIcons",
 ]
 
 test = [
     "mockk",
     "junit",
-    "jUnit5Api",
-    "kotlinCoroutinesTest",
 ]
 
