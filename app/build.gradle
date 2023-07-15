@@ -7,6 +7,7 @@ plugins {
 }
 
 android {
+    namespace 'ca.arnaud.hopsboilingtimer'
     compileSdk 33
 
     defaultConfig {
