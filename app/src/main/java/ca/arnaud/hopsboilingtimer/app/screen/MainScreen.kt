@@ -1,9 +1,15 @@
 package ca.arnaud.hopsboilingtimer.app.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -11,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -21,7 +26,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
@@ -42,13 +46,8 @@ import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
 import ca.arnaud.hopsboilingtimer.app.view.NotificationPermissionDialog
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
-interface MainScreenViewModel {
-
-    val screenModel: StateFlow<MainScreenModel>
-    val showRequestPermissionDialog: StateFlow<Boolean>
+interface MainScreenActionListener {
 
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
@@ -64,39 +63,10 @@ interface MainScreenViewModel {
 }
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel) {
-    val model = viewModel.screenModel.collectAsState().value
-    MainScreen(
-        viewModel::newAdditionHopsTextChanged,
-        viewModel::newAdditionDurationTextChanged,
-        viewModel::addAdditionClick,
-        viewModel::startTimerButtonClick,
-        viewModel::onSubButtonClick,
-        viewModel::onOptionClick,
-        viewModel::onAlertRowCheckChanged,
-        viewModel::onThemeIconClick,
-        model
-    )
-
-    val showRequest = viewModel.showRequestPermissionDialog.collectAsState().value
-    if (showRequest) {
-        NotificationPermissionDialog(
-            onPermissionResult = viewModel::onPermissionResult
-        )
-    }
-}
-
-@Composable
-private fun MainScreen(
-    newAdditionHopsTextChanged: (String) -> Unit,
-    newAdditionDurationTextChanged: (String) -> Unit,
-    addAdditionClick: () -> Unit,
-    startTimerButtonClick: () -> Unit,
-    onSubButtonClick: () -> Unit,
-    onOptionClick: (RowModel, AdditionOptionType) -> Unit,
-    onAlertRowCheckChanged: (Boolean, String) -> Unit,
-    onThemeIconClick: (Boolean) -> Unit,
+fun MainScreen(
     model: MainScreenModel,
+    showRequestPermissionDialog: Boolean,
+    actionListener: MainScreenActionListener,
 ) {
     val currentDarkTheme = isSystemInDarkTheme()
     Scaffold(
@@ -114,7 +84,7 @@ private fun MainScreen(
 
                     Icon(
                         modifier = Modifier
-                            .clickable { onThemeIconClick(currentDarkTheme) }
+                            .clickable { actionListener.onThemeIconClick(currentDarkTheme) }
                             .padding(5.dp),
                         imageVector = Icons.Filled.Settings, // TODO - InvertColors
                         contentDescription = null
@@ -136,12 +106,12 @@ private fun MainScreen(
                     model.additionRows.forEach { rowModel ->
                         when (rowModel) {
                             is RowModel.AdditionRowModel -> {
-                                AdditionRow(model = rowModel, onOptionClick = onOptionClick)
+                                AdditionRow(model = rowModel, onOptionClick = actionListener::onOptionClick)
                             }
                             is RowModel.AlertRowModel -> {
                                 AlertRow(
                                     model = rowModel,
-                                    onAlertRowCheckChanged = onAlertRowCheckChanged
+                                    onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged
                                 )
                             }
                         }
@@ -154,15 +124,19 @@ private fun MainScreen(
                             Spacer(modifier = Modifier.height(10.dp))
                         }
                         AddNewAddition(
-                            newAdditionHopsTextChanged,
-                            newAdditionDurationTextChanged,
-                            addAdditionClick,
+                            actionListener::newAdditionHopsTextChanged,
+                            actionListener::newAdditionDurationTextChanged,
+                            actionListener::addAdditionClick,
                             newAdditionRow
                         )
                     }
                 })
-            BottomBar(startTimerButtonClick, onSubButtonClick, model.bottomBarModel)
+            BottomBar(actionListener::startTimerButtonClick, actionListener::onSubButtonClick, model.bottomBarModel)
         }
+    }
+
+    if (showRequestPermissionDialog) {
+        NotificationPermissionDialog(onPermissionResult = actionListener::onPermissionResult)
     }
 }
 
@@ -381,32 +355,29 @@ private fun AdditionOptions(
 @Composable
 fun DefaultPreview() {
     HopsAppTheme(darkTheme = true) {
-        MainScreen(viewModel = object : MainScreenViewModel {
-            override val screenModel: StateFlow<MainScreenModel>
-                get() = MutableStateFlow(
-                    MainScreenModel(
-                        additionRows = listOf(
-                            RowModel.AdditionRowModel("", "Amarillo", "60"),
-                            RowModel.AdditionRowModel("", "Mozaic", "45"),
-                            RowModel.AdditionRowModel("", "Saaz", "5"),
-                            RowModel.AdditionRowModel("", "El Dorado", "10"),
-                        ),
-                        newAdditionRow = NewAdditionModel(
-                            title = "new addition",
-                            duration = "30",
-                            buttonEnabled = true
-                        ),
-                        bottomBarModel = BottomBarModel(
-                            buttonTitle = "Start Timer",
-                            buttonTime = "60 Min",
-                            buttonStyle = ButtonStyle.Start,
-                            buttonEnable = true,
-                            subButtonTitle = "Options"
-                        )
-                    )
+        MainScreen(
+            model = MainScreenModel(
+                additionRows = listOf(
+                    RowModel.AdditionRowModel("", "Amarillo", "60"),
+                    RowModel.AdditionRowModel("", "Mozaic", "45"),
+                    RowModel.AdditionRowModel("", "Saaz", "5"),
+                    RowModel.AdditionRowModel("", "El Dorado", "10"),
+                ),
+                newAdditionRow = NewAdditionModel(
+                    title = "new addition",
+                    duration = "30",
+                    buttonEnabled = true
+                ),
+                bottomBarModel = BottomBarModel(
+                    buttonTitle = "Start Timer",
+                    buttonTime = "60 Min",
+                    buttonStyle = ButtonStyle.Start,
+                    buttonEnable = true,
+                    subButtonTitle = "Options"
                 )
-
-            override val showRequestPermissionDialog = MutableStateFlow(false)
+            ),
+            showRequestPermissionDialog = false,
+            actionListener = object : MainScreenActionListener {
 
             override fun newAdditionHopsTextChanged(text: String) {
 
@@ -415,26 +386,12 @@ fun DefaultPreview() {
             override fun newAdditionDurationTextChanged(text: String) {
 
             }
-
-            override fun addAdditionClick() {
-
-            }
-
+            override fun addAdditionClick() { }
             override fun onOptionClick(
-                rowModel: RowModel,
-                optionType: AdditionOptionType,
-            ) {
-
-            }
-
-            override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {
-
-            }
-
-            override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {
-
-            }
-
+                rowModel: RowModel, optionType: AdditionOptionType,
+            ) { }
+            override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) { }
+            override fun onThemeIconClick(isSystemInDarkTheme: Boolean) { }
             override fun startTimerButtonClick() {
 
             }
