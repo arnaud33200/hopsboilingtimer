@@ -7,11 +7,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.InvertColors
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -23,7 +31,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.arnaud.hopsboilingtimer.app.model.*
+import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.model.BottomBarModel
+import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
+import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
@@ -73,7 +86,6 @@ fun MainScreen(viewModel: MainScreenViewModel) {
     }
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun MainScreen(
     newAdditionHopsTextChanged: (String) -> Unit,
@@ -104,7 +116,7 @@ private fun MainScreen(
                         modifier = Modifier
                             .clickable { onThemeIconClick(currentDarkTheme) }
                             .padding(5.dp),
-                        imageVector = Icons.Filled.InvertColors,
+                        imageVector = Icons.Filled.Settings, // TODO - InvertColors
                         contentDescription = null
                     )
                 }
@@ -112,13 +124,14 @@ private fun MainScreen(
             }
 
         }
-    ) { _ ->
+    ) { paddingValues ->
         Column {
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(top = 10.dp),
+                    .padding(top = 10.dp)
+                    .padding(paddingValues),
                 content = {
                     model.additionRows.forEach { rowModel ->
                         when (rowModel) {
@@ -176,7 +189,7 @@ private fun BottomBar(
             enabled = model.buttonEnable,
             onClick = startTimerButtonClick,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = backgroundColor
+                containerColor = backgroundColor
             )
         ) {
             Row {
@@ -255,8 +268,7 @@ fun AddNewAddition(
 
             Button(
                 modifier = Modifier
-                    .height(40.dp)
-                    .width(50.dp),
+                    .height(40.dp),
                 onClick = addAdditionClick,
                 enabled = model.buttonEnabled
             ) {
@@ -309,7 +321,7 @@ fun AlertRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
-        val textAlpha = if (model.disabled) 0.3f else LocalContentAlpha.current
+        val textAlpha = if (model.disabled) 0.3f else 1.0f
         val textColor = LocalContentColor.current.copy(alpha = textAlpha)
         val fontStyle = if (model.disabled) FontStyle.Italic else null
         val fontWeight = if (model.highlighted) FontWeight.Bold else null

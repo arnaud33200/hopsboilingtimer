@@ -1,16 +1,16 @@
 package ca.arnaud.hopsboilingtimer.app.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalMinimumTouchTargetEnforcement
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumTouchTargetEnforcement
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import ca.arnaud.hopsboilingtimer.app.extension.toMaterialColors
+import ca.arnaud.hopsboilingtimer.app.extension.toMaterialColorScheme
 import ca.arnaud.hopsboilingtimer.app.extension.toMaterialTypography
 
-@OptIn(ExperimentalMaterialApi::class) // TODO - put in gradle
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HopsAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -25,7 +25,7 @@ fun HopsAppTheme(
         LocalMinimumTouchTargetEnforcement provides false // remove padding around checkbox
     ) {
         MaterialTheme(
-            colors = LocalAppColors.current.toMaterialColors(),
+            colorScheme = LocalAppColors.current.toMaterialColorScheme(),
             typography = LocalAppTypography.current.toMaterialTypography(),
             shapes = Shapes,
             content = content
