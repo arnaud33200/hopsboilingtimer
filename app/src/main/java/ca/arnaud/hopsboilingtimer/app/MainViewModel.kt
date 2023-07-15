@@ -1,14 +1,20 @@
 package ca.arnaud.hopsboilingtimer.app
 
+import android.os.Bundle
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.hopsboilingtimer.app.factory.MainScreenModelFactory
 import ca.arnaud.hopsboilingtimer.app.mapper.AddNewAdditionParamsMapper
-import ca.arnaud.hopsboilingtimer.app.model.*
+import ca.arnaud.hopsboilingtimer.app.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.model.ButtonStyle
+import ca.arnaud.hopsboilingtimer.app.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.screen.MainScreenActionListener
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
@@ -21,16 +27,16 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-
-@HiltViewModel
-class MainViewModel @Inject constructor(
+class MainViewModel @AssistedInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle,
+    @Assisted private val bundle: Bundle?,
     private val getAdditions: GetAdditions,
     private val addNewAddition: AddNewAddition,
     private val deleteAddition: DeleteAddition,
@@ -70,6 +76,7 @@ class MainViewModel @Inject constructor(
                     null -> {
                         clockService.reset()
                     }
+
                     else -> clockService.start()
                 }
                 updateScreenModel()
@@ -183,6 +190,7 @@ class MainViewModel @Inject constructor(
                 deleteAddition.execute(DeleteAddition.Params(rowModel.id))
                 updateScreenModel()
             }
+
             else -> {
                 // No-op
             }
@@ -202,6 +210,7 @@ class MainViewModel @Inject constructor(
                     }
                     startAdditionSchedule.execute(ScheduleOptions())
                 }
+
                 ButtonStyle.Stop -> stopAdditionSchedule.execute()
             }
 
