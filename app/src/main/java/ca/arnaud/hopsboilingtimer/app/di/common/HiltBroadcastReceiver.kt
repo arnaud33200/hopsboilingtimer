@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app.feature.alarm
+package ca.arnaud.hopsboilingtimer.app.di.common
 
 import android.content.BroadcastReceiver
 import android.content.Context

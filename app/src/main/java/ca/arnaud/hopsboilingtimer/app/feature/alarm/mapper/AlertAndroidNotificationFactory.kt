@@ -10,21 +10,21 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.AdditionNotification
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionNotificationModel
 import javax.inject.Inject
 
-class AlertNotificationFactory @Inject constructor() {
+class AlertAndroidNotificationFactory @Inject constructor() {
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"
         private const val CONTENT_INTENT_REQUEST_CODE = 3750
     }
 
-    fun create(additionNotification: AdditionNotification, context: Context): Notification {
+    fun create(additionNotificationModel: AdditionNotificationModel, context: Context): Notification {
         return NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(R.drawable.ic_notification_badge)
             setContentTitle("Hops Boiling Timer") // TODO - Hardcoded string
-            setContentText(additionNotification.message)
+            setContentText(additionNotificationModel.message)
             priority = NotificationCompat.PRIORITY_MAX
             setContentIntent(getContentIntent(context))
         }.build()

@@ -4,8 +4,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
+import ca.arnaud.hopsboilingtimer.app.di.common.HiltBroadcastReceiver
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AlertNotificationFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AlertAndroidNotificationFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionNotificationModel
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +25,7 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
 
         fun createPendingIntent(
             context: Context,
-            notification: AdditionNotification,
+            notification: AdditionNotificationModel,
         ): PendingIntent? {
             val intent = Intent(context, AdditionAlarmReceiver::class.java).apply {
                 putExtra(NOTIFICATION_EXTRA, notification)
@@ -45,7 +47,7 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
     lateinit var coroutineScopeProvider: CoroutineScopeProvider
 
     @Inject
-    lateinit var alertNotificationFactory: AlertNotificationFactory
+    lateinit var alertAndroidNotificationFactory: AlertAndroidNotificationFactory
 
     @Inject
     lateinit var permissionService: PermissionService
@@ -53,7 +55,7 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        val alert = intent.getParcelableExtra<AdditionNotification>(NOTIFICATION_EXTRA) ?: return
+        val alert = intent.getParcelableExtra<AdditionNotificationModel>(NOTIFICATION_EXTRA) ?: return
 
         showNotification(alert, context)
 
@@ -62,13 +64,13 @@ class AdditionAlarmReceiver : HiltBroadcastReceiver() {
         }
     }
 
-    private fun showNotification(alert: AdditionNotification, context: Context) {
+    private fun showNotification(alert: AdditionNotificationModel, context: Context) {
         if (!permissionService.hasNotificationPermission()) {
             return
         }
 
-        alertNotificationFactory.createChannel(context)
-        val notification = alertNotificationFactory.create(alert, context)
+        alertAndroidNotificationFactory.createChannel(context)
+        val notification = alertAndroidNotificationFactory.create(alert, context)
 
         // TODO - use id from the alert, probably make the id int
         val notificationId = Random().nextInt(1000 - 1) + 1

@@ -3,7 +3,8 @@ package ca.arnaud.hopsboilingtimer.app.feature.alarm
 import android.app.AlarmManager
 import android.content.Context
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AdditionNotificationMapper
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AdditionNotificationModelMapper
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionNotificationModel
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ class AdditionAlarmScheduler @Inject constructor(
     coroutineScopeProvider: CoroutineScopeProvider,
     private val alarmManager: AlarmManager,
     private val context: Context,
-    private val additionNotificationMapper: AdditionNotificationMapper,
+    private val additionNotificationModelMapper: AdditionNotificationModelMapper,
     private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
 ) {
@@ -24,7 +25,7 @@ class AdditionAlarmScheduler @Inject constructor(
         coroutineScopeProvider.scope.launch {
             subscribeNextAdditionAlert.execute().collect { alert ->
                 if (alert != null) {
-                    val notification = additionNotificationMapper.mapTo(alert)
+                    val notification = additionNotificationModelMapper.mapTo(alert)
                     schedule(notification)
                 }
             }
@@ -39,12 +40,12 @@ class AdditionAlarmScheduler @Inject constructor(
     }
 
     private fun cancelAlarm() {
-        val notification = AdditionNotification("", "", 0L)
+        val notification = AdditionNotificationModel("", "", 0L)
         val pendingIntent = AdditionAlarmReceiver.createPendingIntent(context, notification)
         alarmManager.cancel(pendingIntent)
     }
 
-    private fun schedule(notification: AdditionNotification) {
+    private fun schedule(notification: AdditionNotificationModel) {
         val pendingIntent = AdditionAlarmReceiver.createPendingIntent(context, notification)
         alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
