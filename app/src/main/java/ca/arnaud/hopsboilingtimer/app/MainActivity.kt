@@ -5,8 +5,11 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import ca.arnaud.hopsboilingtimer.app.di.assistedviewmodel.AssistedViewModelProviderFactory
 import ca.arnaud.hopsboilingtimer.app.navigation.ApplicationNavigationGraph
+import ca.arnaud.hopsboilingtimer.app.navigation.common.createViewModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,13 +27,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberAnimatedNavController()
 
-            // have an actually main view model with just the theme (for now)
-//            val viewModel = viewModelAssistedFactory.createViewModel<MainViewModel>(
-//                args = savedInstanceState
-//            )
-//            val darkMode by viewModel.darkMode.collectAsState()
+            val viewModel = viewModelAssistedFactory.createViewModel<MainViewModel>(
+                args = savedInstanceState
+            )
+            val darkMode by viewModel.darkMode.collectAsState()
 
-            val darkMode: Boolean? = null
             HopsAppTheme(
                 darkTheme = darkMode ?: isSystemInDarkTheme(),
             ) {
