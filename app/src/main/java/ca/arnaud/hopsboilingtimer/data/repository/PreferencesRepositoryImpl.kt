@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.data.repository
 
+import android.util.Log
 import ca.arnaud.hopsboilingtimer.data.datasource.PreferencesLocalDataSource
 import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
@@ -13,7 +14,7 @@ class PreferencesRepositoryImpl @Inject constructor(
     private val preferencesLocalDataSource: PreferencesLocalDataSource,
 ) : PreferencesRepository {
 
-    private val _preferencesFlow = MutableSharedFlow<Preferences>(replay = 1)
+    private val _preferencesFlow = MutableSharedFlow<Preferences>()
 
     override suspend fun patchPreferences(params: PatchPreferencesParams): Response<Preferences, Throwable> {
         val currentPreferences = preferencesLocalDataSource.getPreferences() ?: Preferences()
@@ -21,7 +22,7 @@ class PreferencesRepositoryImpl @Inject constructor(
             darkMode = params.darkMode ?: currentPreferences.darkMode
         )
         preferencesLocalDataSource.setPreferences(newPreferences)
-        _preferencesFlow.emit(currentPreferences)
+        _preferencesFlow.emit(newPreferences)
         return Response.ofSuccess(newPreferences)
     }
 
