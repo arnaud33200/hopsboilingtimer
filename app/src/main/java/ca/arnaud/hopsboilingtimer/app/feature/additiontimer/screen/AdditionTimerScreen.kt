@@ -23,6 +23,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -169,9 +170,13 @@ private fun BottomBar(
             Row {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = model.buttonTitle
+                    text = model.buttonTitle,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
-                Text(model.buttonTime)
+                Text(
+                    text = model.buttonTime,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }
