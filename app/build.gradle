@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace 'ca.arnaud.hopsboilingtimer'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ca.arnaud.hopsboilingtimer"
         minSdk 28
-        targetSdk 33
+        targetSdk 34
         versionCode 6
         versionName "1.5"
 
@@ -56,9 +56,7 @@ android {
 dependencies {
 
     // Android
-    implementation libs.android.core
-    implementation libs.android.lifecycle
-    implementation libs.android.datastore
+    implementation libs.bundles.android
 
     // Google Accompanist
     implementation libs.accompanist.permissions
@@ -66,6 +64,8 @@ dependencies {
     // DI
     implementation libs.dagger.hilt
     kapt libs.dagger.hiltCompiler
+    implementation libs.android.hiltWork
+    kapt libs.android.hiltCompiler
 
     // Compose + Material
     implementation platform(libs.compose.bom)

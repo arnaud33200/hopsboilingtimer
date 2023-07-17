@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.Application
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
+import androidx.work.WorkManager
 import ca.arnaud.hopsboilingtimer.app.executor.JobExecutorProviderImpl
 import ca.arnaud.hopsboilingtimer.app.provider.TimeProviderImpl
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
@@ -27,6 +28,11 @@ abstract class AppModule {
         @Provides
         fun provideContext(application: Application): Context {
             return application.applicationContext
+        }
+
+        @Provides
+        fun provideWorkManager(application: Application) : WorkManager {
+            return WorkManager.getInstance(application.applicationContext)
         }
     }
 

@@ -10,14 +10,50 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionAlertData
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionAlertDataType
 import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.DurationTextMapper
 import javax.inject.Inject
 
-class AlertAndroidNotificationFactory @Inject constructor() {
+class AlertAndroidNotificationFactory @Inject constructor(
+    private val durationTextMapper: DurationTextMapper,
+) {
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"
         private const val CONTENT_INTENT_REQUEST_CODE = 3750
+    }
+
+    fun create(alert: AdditionAlertData, context: Context): Notification {
+        return NotificationCompat.Builder(context, CHANNEL_ID).apply {
+            setSmallIcon(R.drawable.ic_notification_badge)
+            setContentTitle("Hops Boiling Timer") // TODO - Hardcoded string
+            setContentText(when (alert.type) {
+                AdditionAlertDataType.START -> createStartMessage(alert)
+                AdditionAlertDataType.NEXT -> createNextMessage(alert)
+                AdditionAlertDataType.END -> createEndMessage(alert)
+            })
+            priority = NotificationCompat.PRIORITY_MAX
+            setContentIntent(getContentIntent(context))
+        }.build()
+    }
+
+    private fun createStartMessage(input: AdditionAlertData): String {
+        val additions = input.additions
+        val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
+        return "Start$hops"
+    }
+
+    private fun createNextMessage(input: AdditionAlertData): String {
+        val additions = input.additions
+        val duration = input.duration
+        val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
+        return "Next Additions (${durationTextMapper.mapTo(duration)})$hops"
+    }
+
+    private fun createEndMessage(input: AdditionAlertData): String {
+        return "Stop Boiling!"
     }
 
     fun create(additionNotificationModel: AdditionNotificationModel, context: Context): Notification {

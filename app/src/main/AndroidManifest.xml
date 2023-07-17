@@ -18,6 +18,13 @@
         android:theme="@style/Theme.HopsBoilingTimer"
         tools:targetApi="33">
 
+        <!-- Needed for setting up AssistedInject with Worker -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
+
         <activity
             android:name=".app.MainActivity"
             android:exported="true"

@@ -10,17 +10,34 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper.AlertAndroidNotificationFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionNotificationModel
-import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import java.util.Random
 import javax.inject.Inject
 
 class AdditionNotificationPresenter @Inject constructor(
-    private val permissionService: PermissionService,
     private val alertAndroidNotificationFactory: AlertAndroidNotificationFactory,
 ) {
     // TODO - show one static notification and update on every new
 
+    // TODO - move create channel here
+
+    fun show(additionAlert: AdditionAlertData, context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+
+        val permission = ActivityCompat.checkSelfPermission(context, POST_NOTIFICATIONS)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
+        alertAndroidNotificationFactory.createChannel(context)
+        val notification = alertAndroidNotificationFactory.create(additionAlert, context)
+        show(notification, context)
+    }
+
+    @Deprecated(message = "Use the show with AdditionAlert")
     fun show(model: AdditionNotificationModel, context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return

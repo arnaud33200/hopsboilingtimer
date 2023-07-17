@@ -4,6 +4,7 @@
 androidCoreVersion = "1.10.1"
 androidLifecycleVersion = "1.10.1"
 androidDatastoreVersion = "1.0.0"
+androidWorkVersion = "2.7.0"
 
 # Google
 googleAccompanistVersion = "0.30.1"
@@ -11,6 +12,7 @@ googleAccompanistVersion = "0.30.1"
 # DI
 daggerHiltVersion = "2.44"
 javaxInjectVersion = "1"
+androidHiltVersion = "1.0.0"
 
 # Compose
 composeBomVersion = "2023.05.01"
@@ -33,6 +35,7 @@ coroutinesTestVersion = "1.6.4"
 # Android
 android-core = { module = "androidx.core:core-ktx", version.ref = "androidCoreVersion" }
 android-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidLifecycleVersion" }
+android-work = { module = "androidx.work:work-runtime-ktx", version.ref = "androidWorkVersion" }
 android-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidDatastoreVersion" }
 
 # Google
@@ -43,6 +46,8 @@ accompanist-navigationAnimations = { module = "com.google.accompanist:accompanis
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "daggerHiltVersion" }
 dagger-hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerHiltVersion" }
 javaxInject = { module = "javax.inject:javax.inject", version.ref = "javaxInjectVersion" }
+android-hiltWork = { module = "androidx.hilt:hilt-work", version.ref = "androidHiltVersion" }
+android-hiltCompiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidHiltVersion" }
 
 # Compose
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -63,6 +68,13 @@ junit = { module = "junit:junit", version.ref = "junitVersion" }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [bundles]
+
+android = [
+    "android-core",
+    "android-lifecycle",
+    "android-work",
+    "android-datastore",
+]
 
 compose = [
     "compose-bom",
