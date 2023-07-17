@@ -10,6 +10,7 @@ import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
+import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -28,7 +29,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         val additionRows = when (schedule) {
             null -> additions.map { rowModelFactory.create(it) }
             else -> schedule.alerts.map {
-                val currentAlert = schedule.getNextAlert(timeProvider.getNowTimeMillis())
+                val currentAlert = schedule.getNextAlert(timeProvider.getNowLocalDateTime())
                 rowModelFactory.create(it, currentAlert)
             }
         }
@@ -57,9 +58,11 @@ class AdditionTimerScreenModelFactory @Inject constructor(
                 subButtonTitle = "Options" // TODO hardcoded string
             )
             else -> {
-                val nowTime = timeProvider.getNowTimeMillis()
+                val now = timeProvider.getNowLocalDateTime()
                 val triggerAtTime = schedule.alerts.maxOfOrNull { it.triggerAtTime }
-                val remainingDuration = triggerAtTime?.let { (it - nowTime).milliseconds }
+                val remainingDuration = triggerAtTime?.let { time ->
+                    Duration.between(now, time)
+                }
                 BottomBarModel(
                     buttonTitle = "Stop Timer", // TODO - hardcoded string
                     buttonTime = remainingDuration?.let { remainingTimeTextMapper.mapTo(it) } ?: "",

@@ -1,29 +1,30 @@
 package ca.arnaud.hopsboilingtimer.domain.model
 
 import java.time.Duration
+import java.time.LocalDateTime
 
 sealed interface AdditionAlert {
 
     val id: String
-    val triggerAtTime: Long
+    val triggerAtTime: LocalDateTime
 
     data class Start(
         override val id: String,
-        override val triggerAtTime: Long,
+        override val triggerAtTime: LocalDateTime,
         val additions: List<Addition>,
         val checked: Boolean
     ) : AdditionAlert
 
     data class Next(
         override val id: String,
-        override val triggerAtTime: Long,
+        override val triggerAtTime: LocalDateTime,
         val additions: List<Addition>,
         val checked: Boolean
     ) : AdditionAlert
 
     data class End(
         override val id: String,
-        override val triggerAtTime: Long,
+        override val triggerAtTime: LocalDateTime,
         val duration: Duration
     ) : AdditionAlert
 }

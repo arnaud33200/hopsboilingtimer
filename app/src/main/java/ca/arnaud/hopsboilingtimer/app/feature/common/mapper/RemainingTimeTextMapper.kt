@@ -1,17 +1,18 @@
 package ca.arnaud.hopsboilingtimer.app.feature.common.mapper
 
 import ca.arnaud.hopsboilingtimer.domain.common.DataMapper
+import java.time.Duration
 import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 // TODO - rename it formatter
 class RemainingTimeTextMapper @Inject constructor() : DataMapper<Duration, String> {
 
     override fun mapTo(input: Duration): String {
-        val minutes = input.inWholeMinutes
+        val minutes = input.toMinutes()
         val minutesText = addZeroIfNeeded("$minutes")
-        val seconds = input.inWholeSeconds - minutes.minutes.inWholeSeconds
+        val seconds = input.seconds - minutes.seconds.toLong(DurationUnit.SECONDS)
         val secondsText = addZeroIfNeeded("$seconds")
         return "$minutesText:$secondsText"
     }

@@ -20,10 +20,9 @@ class AdditionAlertDataMapper @Inject constructor(
             is AdditionAlert.Next -> input.additions
             is AdditionAlert.End -> emptyList()
         }
-        val initialDelay = (input.triggerAtTime - timeProvider.getNowTimeMillis())
-            .takeIf { it >= 0L }
-            ?.let { millis -> Duration.ofMillis(millis) } ?: Duration.ZERO
-
+        val initialDelay = Duration.between(
+            timeProvider.getNowLocalDateTime(), input.triggerAtTime
+        ).takeIf { !it.isNegative } ?: Duration.ZERO
 
         return AdditionAlertData(
             id = input.id,

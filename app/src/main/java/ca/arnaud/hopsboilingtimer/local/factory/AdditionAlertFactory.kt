@@ -4,9 +4,13 @@ import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.local.entity.AlertEntity
 import ca.arnaud.hopsboilingtimer.local.entity.AlertTypeEntity
+import ca.arnaud.hopsboilingtimer.local.mapper.EntityTimeMapper
+import java.time.LocalDateTime
 import javax.inject.Inject
 
-class AdditionAlertFactory @Inject constructor() {
+class AdditionAlertFactory @Inject constructor(
+    private val entityTimeMapper: EntityTimeMapper,
+) {
 
     fun create(alertEntity: AlertEntity, additions: List<Addition>): AdditionAlert {
         return when (alertEntity.type) {
@@ -22,7 +26,7 @@ class AdditionAlertFactory @Inject constructor() {
     ): AdditionAlert.Start {
         return AdditionAlert.Start(
             id = alertEntity.id,
-            triggerAtTime = alertEntity.triggerAt,
+            triggerAtTime = alertEntity.triggerAt.toLocalDateTime(),
             additions = additions,
             checked = alertEntity.checked
         )
@@ -34,7 +38,7 @@ class AdditionAlertFactory @Inject constructor() {
     ): AdditionAlert.Next {
         return AdditionAlert.Next(
             id = alertEntity.id,
-            triggerAtTime = alertEntity.triggerAt,
+            triggerAtTime = alertEntity.triggerAt.toLocalDateTime(),
             additions = additions,
             checked = alertEntity.checked
         )
@@ -45,8 +49,12 @@ class AdditionAlertFactory @Inject constructor() {
     ): AdditionAlert.End {
         return AdditionAlert.End(
             id = alertEntity.id,
-            triggerAtTime = alertEntity.triggerAt,
+            triggerAtTime = alertEntity.triggerAt.toLocalDateTime(),
             duration = alertEntity.duration
         )
+    }
+
+    private fun Long.toLocalDateTime(): LocalDateTime {
+        return entityTimeMapper.mapFrom(this)
     }
 }

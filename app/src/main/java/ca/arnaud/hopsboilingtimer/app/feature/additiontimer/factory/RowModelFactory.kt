@@ -9,6 +9,7 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.model.isChecked
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
+import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -31,9 +32,9 @@ class RowModelFactory @Inject constructor(
         alert: AdditionAlert,
         currentAlert: AdditionAlert?,
     ): RowModel {
-        val nowTime = timeProvider.getNowTimeMillis()
-        val expired = alert.triggerAtTime < nowTime
-        val remainingDuration = (alert.triggerAtTime - nowTime).milliseconds
+        val nowTime = timeProvider.getNowLocalDateTime()
+        val remainingDuration = Duration.between(nowTime, alert.triggerAtTime)
+        val expired = remainingDuration.isNegative
         val countdown = remainingTimeTextMapper.mapTo(remainingDuration)
         val highlighted = alert == currentAlert
         if (alert is AdditionAlert.End) {

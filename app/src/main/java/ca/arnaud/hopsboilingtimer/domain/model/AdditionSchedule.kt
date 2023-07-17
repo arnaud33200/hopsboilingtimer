@@ -1,12 +1,14 @@
 package ca.arnaud.hopsboilingtimer.domain.model
 
+import java.time.LocalDateTime
+
 data class AdditionSchedule(
-    val startingTime: Long,
+    val startingTime: LocalDateTime,
     val alerts: List<AdditionAlert>,
 ) {
     val id = "CURRENT_SCHEDULE" // Force to only have one schedule until we support it
 }
 
-fun AdditionSchedule.getNextAlert(time: Long): AdditionAlert? {
+fun AdditionSchedule.getNextAlert(time: LocalDateTime): AdditionAlert? {
     return alerts.firstOrNull { alert -> alert.triggerAtTime > time }
 }

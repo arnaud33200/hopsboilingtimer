@@ -42,7 +42,7 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override suspend fun setAdditionSchedule(additionSchedule: AdditionSchedule?) {
         schedule = additionSchedule
-        val nextAlert = schedule?.getNextAlert(timeProvider.getNowTimeMillis())
+        val nextAlert = schedule?.getNextAlert(timeProvider.getNowLocalDateTime())
         if (additionSchedule == null || nextAlert == null) {
             deleteSchedule()
             return
@@ -58,7 +58,7 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override suspend fun refreshAdditionSchedule() {
         val additionSchedule = schedule ?: return
-        val nextAlert = additionSchedule.getNextAlert(timeProvider.getNowTimeMillis())
+        val nextAlert = additionSchedule.getNextAlert(timeProvider.getNowLocalDateTime())
         if (nextAlert == null) {
             deleteSchedule()
             return
@@ -72,7 +72,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     private fun updateNextAddition() {
         val currentSchedule = schedule ?: return
 
-        val nextAlert = currentSchedule.getNextAlert(timeProvider.getNowTimeMillis())
+        val nextAlert = currentSchedule.getNextAlert(timeProvider.getNowLocalDateTime())
 
         if (nextAdditionAlert.value != nextAlert) {
             nextAdditionAlert.value = nextAlert
