@@ -6,17 +6,14 @@ import java.time.ZoneId
 
 class FakeTimeProvider: TimeProvider {
 
-    var nowMillis = 0L
-
-    override fun getNowTimeMillis(): Long {
-        return nowMillis
-    }
+    var now = LocalDateTime.MIN
+    val zoneId = ZoneId.of("UTC")
 
     override fun getNowLocalDateTime(): LocalDateTime {
-        TODO("Not yet implemented")
+        return now
     }
 
     override fun getCurrentZoneId(): ZoneId {
-        TODO("Not yet implemented")
+        return zoneId
     }
 }

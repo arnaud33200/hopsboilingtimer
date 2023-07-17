@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 class AdditionAlertListMapper @Inject constructor(
     private val timeProvider: TimeProvider,
+    private val idFactory: IdFactory,
 ) : DataMapper<List<Addition>, List<AdditionAlert>> {
 
     override fun mapTo(input: List<Addition>): List<AdditionAlert> {
@@ -20,7 +21,7 @@ class AdditionAlertListMapper @Inject constructor(
         val durationAdditionsMap = input.sortedByDescending { it.duration }.groupBy { it.duration }
 
         return durationAdditionsMap.keys.mapIndexed { index, duration ->
-            val id = UUID.randomUUID().toString()
+            val id = idFactory.createRandomId()
             val additions = durationAdditionsMap[duration] ?: emptyList()
             val countDown = maxDuration - duration
             val triggerAt = timeProvider.getNowLocalDateTime() + countDown
@@ -31,7 +32,7 @@ class AdditionAlertListMapper @Inject constructor(
         }.toMutableList().apply {
             if (isNotEmpty()) {
                 val triggerAt = timeProvider.getNowLocalDateTime() + maxDuration
-                val id = UUID.randomUUID().toString()
+                val id = idFactory.createRandomId()
                 add(AdditionAlert.End(id, triggerAt, maxDuration))
             }
         }

@@ -28,7 +28,7 @@ class StartAdditionSchedule @Inject constructor(
             params.delay < Duration.ZERO -> Duration.ZERO
             else -> params.delay
         }
-        val startTime = timeProvider.getNowTimeMillis() - delay.toMillis()
+        val startTime = timeProvider.getNowLocalDateTime() - delay
 
         val schedule = additionScheduleFactory.create(additions, startTime)
         scheduleRepository.setAdditionSchedule(schedule)

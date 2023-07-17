@@ -8,10 +8,6 @@ import javax.inject.Inject
 
 class TimeProviderImpl @Inject constructor(): TimeProvider {
 
-    override fun getNowTimeMillis(): Long {
-        return getNowLocalDateTime().toEpochMillis(getCurrentZoneId())
-    }
-
     override fun getNowLocalDateTime(): LocalDateTime {
         return LocalDateTime.now()
     }
