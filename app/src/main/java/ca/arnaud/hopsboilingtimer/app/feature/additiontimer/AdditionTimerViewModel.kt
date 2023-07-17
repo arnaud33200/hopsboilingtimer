@@ -1,10 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer
 
 import android.os.Bundle
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -195,18 +191,16 @@ class AdditionTimerViewModel @AssistedInject constructor(
     // endregion
 
     override fun startTimerButtonClick() {
-        // TODO - get Delay and reset it
         viewModelScope.launch {
-            when (screenModel.value.bottomBarModel.buttonStyle) {
-                ButtonStyle.Start -> {
+            when (subscribeAdditionSchedule.execute().value) {
+                null -> {
                     if (!permissionService.hasNotificationPermission()) {
                         showPermissionDialog()
                         return@launch
                     }
                     startAdditionSchedule.execute(ScheduleOptions())
                 }
-
-                ButtonStyle.Stop -> stopAdditionSchedule.execute()
+                else -> stopAdditionSchedule.execute()
             }
 
         }
