@@ -23,10 +23,6 @@ class AdditionAlertScheduler @Inject constructor(
     private val additionAlertDataMapper: AdditionAlertDataMapper,
 ) {
 
-    companion object {
-        const val USE_WORK_MANAGER = true
-    }
-
     init {
         coroutineScopeProvider.scope.launch {
             subscribeNextAdditionAlert.execute().collect { alert ->
@@ -51,7 +47,7 @@ class AdditionAlertScheduler @Inject constructor(
     private fun schedule(alert: AdditionAlert) {
         val additionAlertData = additionAlertDataMapper.mapTo(alert)
         val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
-            .setInitialDelay(additionAlertData.duration)
+            .setInitialDelay(additionAlertData.initialDelay)
             .setInputData(additionAlertWorkerDataMapper.mapTo(additionAlertData))
             .build()
         workManager.enqueue(workRequest)

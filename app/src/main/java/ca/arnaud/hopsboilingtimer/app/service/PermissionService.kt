@@ -7,6 +7,7 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import javax.inject.Inject
 
@@ -20,16 +21,20 @@ class PermissionService @Inject constructor(
     }
 
     fun hasNotificationPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            return true // TODO - probably check disabled from settings
+        val enabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            enabled && context.isPermissionGranted(listOf(NOTIFICATION_PERMISSION))
+        } else {
+            enabled
         }
+    }
 
-        return when (
-            ContextCompat.checkSelfPermission(context, NOTIFICATION_PERMISSION)
-        ) {
-            PERMISSION_GRANTED -> true
-            else -> false
-        }
+    fun Context.isPermissionGranted(permissions: List<String>): Boolean {
+        return permissions.all { isPermissionGranted(it) }
+    }
+
+    fun Context.isPermissionGranted(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
     }
 
     fun shouldShowNotificationRequest(activity: Activity): Boolean {

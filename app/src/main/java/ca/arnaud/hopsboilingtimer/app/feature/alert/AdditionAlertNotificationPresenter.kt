@@ -1,52 +1,43 @@
 package ca.arnaud.hopsboilingtimer.app.feature.alert
 
-import android.Manifest.permission.POST_NOTIFICATIONS
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
-import java.util.Random
+import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import javax.inject.Inject
 
 class AdditionAlertNotificationPresenter @Inject constructor(
     private val notificationManager: NotificationManager,
     private val alertAndroidNotificationFactory: AlertAndroidNotificationFactory,
+    private val permissionService: PermissionService,
 ) {
-    // TODO - show one static notification and update on every new
+    // TODO - setup custom layout
+
+    companion object {
+        private const val NOTIFICATION_ID = 12345
+    }
+
+    init {
+        val channel = alertAndroidNotificationFactory.createChannel()
+        notificationManager.createNotificationChannel(channel)
+    }
 
     fun show(additionAlert: AdditionAlertData, context: Context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        if (!permissionService.hasNotificationPermission()) {
             return
         }
 
-        val permission = ActivityCompat.checkSelfPermission(context, POST_NOTIFICATIONS)
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-
-        // TODO - do it on init?
-        createChannel()
         val notification = alertAndroidNotificationFactory.createNotification(additionAlert, context)
         show(notification, context)
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @RequiresPermission(POST_NOTIFICATIONS)
+    @SuppressLint("MissingPermission", "NewApi")
     private fun show(notification: Notification, context: Context) {
-        // TODO - use id from the alert, probably make the id int
-        val notificationId = Random().nextInt(1000 - 1) + 1
+        val notificationId = NOTIFICATION_ID // force updating the same notification
         NotificationManagerCompat.from(context).notify(notificationId, notification)
-    }
-
-    private fun createChannel() {
-        val channel = alertAndroidNotificationFactory.createChannel()
-        notificationManager.createNotificationChannel(channel)
     }
 }
