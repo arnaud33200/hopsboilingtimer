@@ -1,7 +1,7 @@
-package ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper
+package ca.arnaud.hopsboilingtimer.app.feature.alert.mapper
 
 import androidx.work.Data
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionAlertData
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.domain.common.TwoWayMapper
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream
 import javax.inject.Inject
 import androidx.work.Data as WorkerData
 
-class AdditionAlarmWorkerDataMapper @Inject constructor() :
+class AdditionAlertWorkerDataMapper @Inject constructor() :
     TwoWayMapper<AdditionAlertData, WorkerData> {
 
     companion object {

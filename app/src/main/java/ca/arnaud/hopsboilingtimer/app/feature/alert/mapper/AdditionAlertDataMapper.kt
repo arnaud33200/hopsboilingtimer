@@ -1,8 +1,8 @@
-package ca.arnaud.hopsboilingtimer.app.feature.alarm.mapper
+package ca.arnaud.hopsboilingtimer.app.feature.alert.mapper
 
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionAlertData
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionAlertDataType
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.model.AdditionData
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionData
 import ca.arnaud.hopsboilingtimer.domain.common.DataMapper
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert

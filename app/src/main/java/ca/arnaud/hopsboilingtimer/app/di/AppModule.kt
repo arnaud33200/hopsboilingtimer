@@ -1,9 +1,9 @@
 package ca.arnaud.hopsboilingtimer.app.di
 
-import android.app.AlarmManager
 import android.app.Application
+import android.app.NotificationManager
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
+import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
 import ca.arnaud.hopsboilingtimer.app.executor.JobExecutorProviderImpl
 import ca.arnaud.hopsboilingtimer.app.provider.TimeProviderImpl
@@ -14,16 +14,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
 
     companion object {
-        @Provides
-        fun provideAlarmManager(application: Application): AlarmManager {
-            return application.getSystemService(ALARM_SERVICE) as AlarmManager
-        }
 
         @Provides
         fun provideContext(application: Application): Context {
@@ -31,8 +28,17 @@ abstract class AppModule {
         }
 
         @Provides
-        fun provideWorkManager(application: Application) : WorkManager {
-            return WorkManager.getInstance(application.applicationContext)
+        @Singleton
+        fun provideWorkManager(context: Context) : WorkManager {
+            return WorkManager.getInstance(context)
+        }
+
+        @Provides
+        @Singleton
+        fun provideNotificationManager(context: Context) : NotificationManager {
+            return ContextCompat.getSystemService(
+                context, NotificationManager::class.java
+            ) as NotificationManager
         }
     }
 

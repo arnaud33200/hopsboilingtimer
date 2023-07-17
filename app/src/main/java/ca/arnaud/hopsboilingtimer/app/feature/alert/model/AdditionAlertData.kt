@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.app.feature.alarm.model
+package ca.arnaud.hopsboilingtimer.app.feature.alert.model
 
 import java.io.Serializable
 import java.time.Duration

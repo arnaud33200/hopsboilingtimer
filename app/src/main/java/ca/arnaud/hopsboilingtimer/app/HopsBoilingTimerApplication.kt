@@ -3,7 +3,7 @@ package ca.arnaud.hopsboilingtimer.app
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import ca.arnaud.hopsboilingtimer.app.feature.alarm.AdditionAlarmScheduler
+import ca.arnaud.hopsboilingtimer.app.feature.alert.AdditionAlertScheduler
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class HopsBoilingTimerApplication : Application(), Configuration.Provider {
 
     @Inject
-    lateinit var additionAlarmScheduler: AdditionAlarmScheduler
+    lateinit var additionAlertScheduler: AdditionAlertScheduler
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
