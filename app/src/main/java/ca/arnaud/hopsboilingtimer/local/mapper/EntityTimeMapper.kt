@@ -12,7 +12,11 @@ class EntityTimeMapper @Inject constructor(
 ) : TwoWayMapper<LocalDateTime, Long> {
 
     override fun mapTo(input: LocalDateTime): Long {
-        return input.toEpochMillis()
+        return try {
+            input.toEpochMillis(timeProvider.getCurrentZoneId())
+        } catch (exception: Throwable) {
+            0L
+        }
     }
 
     override fun mapFrom(output: Long): LocalDateTime {

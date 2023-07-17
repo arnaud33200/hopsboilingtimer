@@ -1,6 +1,5 @@
 package ca.arnaud.hopsboilingtimer.domain.extension
 
-import ca.arnaud.hopsboilingtimer.domain.extension.LocalDateTimeConfig.DEFAULT_LOCAL_DATE_TIME_ZONE_ID
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -8,13 +7,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-object LocalDateTimeConfig {
-    const val DEFAULT_LOCAL_DATE_TIME_ZONE_ID = "UTC"
-}
-
-fun LocalDateTime.toEpochMillis(
-    zoneId: ZoneId = ZoneId.of(DEFAULT_LOCAL_DATE_TIME_ZONE_ID)
-): Long {
+fun LocalDateTime.toEpochMillis(zoneId: ZoneId): Long {
     return atZone(zoneId).toInstant().toEpochMilli()
 }
 

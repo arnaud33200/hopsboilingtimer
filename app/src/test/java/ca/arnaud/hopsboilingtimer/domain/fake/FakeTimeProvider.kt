@@ -7,7 +7,7 @@ import java.time.ZoneId
 class FakeTimeProvider: TimeProvider {
 
     var now = LocalDateTime.MIN
-    val zoneId = ZoneId.of("UTC")
+    var zoneId = ZoneId.of("UTC")
 
     override fun getNowLocalDateTime(): LocalDateTime {
         return now

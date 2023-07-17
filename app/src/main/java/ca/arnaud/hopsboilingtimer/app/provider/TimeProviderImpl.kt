@@ -1,6 +1,5 @@
 package ca.arnaud.hopsboilingtimer.app.provider
 
-import ca.arnaud.hopsboilingtimer.domain.extension.toEpochMillis
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import java.time.LocalDateTime
 import java.time.ZoneId
