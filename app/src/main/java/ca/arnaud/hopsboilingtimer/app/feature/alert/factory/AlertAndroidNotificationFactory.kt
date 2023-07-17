@@ -11,11 +11,11 @@ import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
-import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.DurationTextMapper
+import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import javax.inject.Inject
 
 class AlertAndroidNotificationFactory @Inject constructor(
-    private val durationTextMapper: DurationTextMapper,
+    private val durationTextFormatter: DurationTextFormatter,
 ) {
 
     companion object {
@@ -57,7 +57,7 @@ class AlertAndroidNotificationFactory @Inject constructor(
         val additions = input.additions
         val duration = input.duration
         val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
-        return "Next Additions (${durationTextMapper.mapTo(duration)})$hops"
+        return "Next Additions (${durationTextFormatter.format(duration)})$hops"
     }
 
     private fun createEndMessage(input: AdditionAlertData): String {

@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
-import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.DurationTextMapper
-import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.RemainingTimeTextMapper
+import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
+import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.MainScreenModel
@@ -12,13 +12,12 @@ import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import java.time.Duration
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 class AdditionTimerScreenModelFactory @Inject constructor(
     private val rowModelFactory: RowModelFactory,
     private val timeProvider: TimeProvider,
-    private val durationTextMapper: DurationTextMapper,
-    private val remainingTimeTextMapper: RemainingTimeTextMapper,
+    private val durationTextFormatter: DurationTextFormatter,
+    private val remainingTimeTextFormatter: RemainingTimeTextFormatter,
 ) {
 
     fun create(
@@ -52,7 +51,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         return when (schedule) {
             null -> BottomBarModel(
                 buttonTitle = "Start Timer", // TODO - hardcoded string
-                buttonTime = maxDuration?.let { durationTextMapper.mapTo(it) } ?: "",
+                buttonTime = maxDuration?.let { durationTextFormatter.format(it) } ?: "",
                 buttonStyle = ButtonStyle.Start,
                 buttonEnable = additions.isNotEmpty(),
                 subButtonTitle = "Options" // TODO hardcoded string
@@ -65,7 +64,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
                 }
                 BottomBarModel(
                     buttonTitle = "Stop Timer", // TODO - hardcoded string
-                    buttonTime = remainingDuration?.let { remainingTimeTextMapper.mapTo(it) } ?: "",
+                    buttonTime = remainingDuration?.let { remainingTimeTextFormatter.format(it) } ?: "",
                     buttonStyle = ButtonStyle.Stop,
                     buttonEnable = true,
                     subButtonTitle = null

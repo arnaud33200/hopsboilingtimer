@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
-import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.DurationTextMapper
-import ca.arnaud.hopsboilingtimer.app.feature.common.mapper.RemainingTimeTextMapper
+import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
+import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
@@ -11,19 +11,18 @@ import ca.arnaud.hopsboilingtimer.domain.model.isChecked
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import java.time.Duration
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 class RowModelFactory @Inject constructor(
-    private val durationTextMapper: DurationTextMapper,
+    private val durationTextFormatter: DurationTextFormatter,
     private val timeProvider: TimeProvider,
-    private val remainingTimeTextMapper: RemainingTimeTextMapper,
+    private val remainingTimeTextFormatter: RemainingTimeTextFormatter,
 ) {
 
     fun create(addition: Addition): RowModel {
         return RowModel.AdditionRowModel(
             id = addition.id,
             title = addition.name,
-            duration = durationTextMapper.mapTo(addition.duration),
+            duration = durationTextFormatter.format(addition.duration),
             options = listOf(AdditionOptionType.Delete)
         )
     }
@@ -35,7 +34,7 @@ class RowModelFactory @Inject constructor(
         val nowTime = timeProvider.getNowLocalDateTime()
         val remainingDuration = Duration.between(nowTime, alert.triggerAtTime)
         val expired = remainingDuration.isNegative
-        val countdown = remainingTimeTextMapper.mapTo(remainingDuration)
+        val countdown = remainingTimeTextFormatter.format(remainingDuration)
         val highlighted = alert == currentAlert
         if (alert is AdditionAlert.End) {
 
@@ -63,7 +62,7 @@ class RowModelFactory @Inject constructor(
         }
 
         val additionDuration = alert.additionsOrEmpty().firstOrNull()?.let { addition ->
-            durationTextMapper.mapTo(addition.duration)
+            durationTextFormatter.format(addition.duration)
         } ?: ""
 
         return RowModel.AlertRowModel(
