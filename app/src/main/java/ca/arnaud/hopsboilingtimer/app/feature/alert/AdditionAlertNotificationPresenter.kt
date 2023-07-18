@@ -5,6 +5,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
+import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
@@ -14,6 +15,7 @@ class AdditionAlertNotificationPresenter @Inject constructor(
     private val notificationManager: NotificationManager,
     private val alertAndroidNotificationFactory: AlertAndroidNotificationFactory,
     private val permissionService: PermissionService,
+    private val additionAlertNotificationModelFactory: AdditionAlertNotificationModelFactory,
 ) {
     // TODO - setup custom layout
 
@@ -31,7 +33,8 @@ class AdditionAlertNotificationPresenter @Inject constructor(
             return
         }
 
-        val notification = alertAndroidNotificationFactory.createNotification(additionAlert, context)
+        val model = additionAlertNotificationModelFactory.create(additionAlert)
+        val notification = alertAndroidNotificationFactory.createNotification(model, context)
         show(notification, context)
     }
 

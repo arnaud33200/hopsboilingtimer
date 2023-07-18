@@ -9,14 +9,11 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
-import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.view.AdditionAlertNotificationView
 import javax.inject.Inject
 
-class AlertAndroidNotificationFactory @Inject constructor(
-    private val durationTextFormatter: DurationTextFormatter,
-) {
+class AlertAndroidNotificationFactory @Inject constructor() {
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"
@@ -33,35 +30,18 @@ class AlertAndroidNotificationFactory @Inject constructor(
         }
     }
 
-    fun createNotification(alert: AdditionAlertData, context: Context): Notification {
+    fun createNotification(model: AdditionAlertNotificationModel, context: Context): Notification {
+        val notificationLayout = AdditionAlertNotificationView().apply {
+            bind(model = model)
+        }
         return NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(R.drawable.ic_notification_badge)
             setContentTitle("Hops Boiling Timer") // TODO - Hardcoded string
-            setContentText(when (alert.type) {
-                AdditionAlertDataType.START -> createStartMessage(alert)
-                AdditionAlertDataType.NEXT -> createNextMessage(alert)
-                AdditionAlertDataType.END -> createEndMessage(alert)
-            })
-            priority = NotificationCompat.PRIORITY_MAX
+            setCustomContentView(notificationLayout)
             setContentIntent(getContentIntent(context))
+            // setStyle(NotificationCompat.DecoratedCustomViewStyle()) // put back if need the classic notification style
+            // setCustomBigContentView(notificationLayoutExpanded) // use if we need a separate bigger style
         }.build()
-    }
-
-    private fun createStartMessage(input: AdditionAlertData): String {
-        val additions = input.additions
-        val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
-        return "Start$hops"
-    }
-
-    private fun createNextMessage(input: AdditionAlertData): String {
-        val additions = input.additions
-        val duration = input.duration
-        val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
-        return "Next Additions (${durationTextFormatter.format(duration)})$hops"
-    }
-
-    private fun createEndMessage(input: AdditionAlertData): String {
-        return "Stop Boiling!"
     }
 
     private fun getContentIntent(context: Context): PendingIntent? {
