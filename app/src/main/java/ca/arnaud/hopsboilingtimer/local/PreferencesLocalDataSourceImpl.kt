@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import ca.arnaud.hopsboilingtimer.data.datasource.PreferencesLocalDataSource
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.Preferences
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import androidx.datastore.preferences.core.Preferences as AndroidPreferences
@@ -22,12 +22,13 @@ class PreferencesLocalDataSourceImpl @Inject constructor(
 
     // TODO - that will be a pain to add each param individually, let's find a way to store a PreferencesLocalData instead
 
-    override suspend fun getPreferences(): Preferences? {
-        return dataStore.data.map { androidPreferences ->
+    override fun getPreferences(): Flow<Preferences?> {
+        return dataStore.data
+            .map { androidPreferences ->
             Preferences(
                 darkMode = androidPreferences[darkThemePreferenceKey]
             )
-        }.first()
+        }
     }
 
     override suspend fun setPreferences(preferences: Preferences) {
