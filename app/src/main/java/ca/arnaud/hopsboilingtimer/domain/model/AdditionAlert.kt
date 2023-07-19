@@ -60,3 +60,7 @@ fun AdditionAlert.setChecked(checked: Boolean): AdditionAlert {
         is AdditionAlert.End -> this
     }
 }
+
+fun AdditionAlert.isValid(): Boolean {
+    return id.isNotBlank()
+}
