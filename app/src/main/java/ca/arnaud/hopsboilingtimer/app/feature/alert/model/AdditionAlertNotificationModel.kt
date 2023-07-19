@@ -9,6 +9,7 @@ data class AdditionAlertNotificationModel(
 
 @Parcelize
 data class AlertNotificationRowModel(
+    val type: String,
     val title: String,
     val time: String,
 ) : Parcelable

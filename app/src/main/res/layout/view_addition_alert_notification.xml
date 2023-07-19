@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="horizontal"
     android:padding="15dp">
 
     <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/ic_notification_badge" />
 
     <!--    TODO - put back whenever the service is fixed-->
@@ -22,7 +23,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="15dp"
         android:orientation="vertical">
 
         <!--
@@ -34,9 +35,11 @@
             android:id="@+id/row_layout_coming"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/type_text_view"
                 style="@style/TextAppearance.Compat.Notification.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,9 +69,11 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:alpha="0.7"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/type_text_view_after"
                 style="@style/TextAppearance.Compat.Notification.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

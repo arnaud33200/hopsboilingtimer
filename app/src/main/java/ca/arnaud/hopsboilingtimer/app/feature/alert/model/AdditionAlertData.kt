@@ -1,6 +1,5 @@
 package ca.arnaud.hopsboilingtimer.app.feature.alert.model
 
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import java.io.Serializable
 import java.time.Duration
 import java.time.LocalDateTime

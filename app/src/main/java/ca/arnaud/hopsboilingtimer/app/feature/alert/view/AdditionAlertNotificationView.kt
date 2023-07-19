@@ -20,15 +20,21 @@ class AdditionAlertNotificationView(context: Context) : RemoteViews(
         // as mentioned in the layout, this is a bad practice
         // temporary solution until I figured out setRemoteAdapter
         for (i in 0..1) {
+            val layoutRes = when (i) {
+                0 -> R.id.row_layout_coming
+                else -> R.id.row_layout_after
+            }
             when (val rowModel = model.rows.getOrNull(i)) {
-                null -> setViewVisibility(
-                    when (i) {
-                        0 -> R.id.row_layout_coming
-                        else -> R.id.row_layout_after
-                    }, View.GONE
-                )
+                null -> setViewVisibility(layoutRes, View.GONE)
 
                 else -> {
+                    setViewVisibility(layoutRes, View.VISIBLE)
+                    setTextViewText(
+                        when (i) {
+                            0 -> R.id.type_text_view
+                            else -> R.id.type_text_view_after
+                        }, rowModel.type
+                    )
                     setTextViewText(
                         when (i) {
                             0 -> R.id.title_text_view
