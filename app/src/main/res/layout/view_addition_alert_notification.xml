@@ -11,11 +11,88 @@
         android:layout_height="20dp"
         android:src="@drawable/ic_notification_badge" />
 
-    <ListView
-        android:id="@+id/list_view"
+    <!--    TODO - put back whenever the service is fixed-->
+    <!--    <ListView-->
+    <!--        android:id="@+id/list_view"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="5dp"-->
+    <!--        tools:listitem="@layout/view_row_addition_alert_notification" />-->
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        tools:listitem="@layout/view_row_addition_alert_notification" />
+        android:layout_marginStart="10dp"
+        android:orientation="vertical">
+
+        <!--
+            This is a temporary solution until the ListView with service is fixed
+            It's a bad practice the way it is
+        -->
+
+        <LinearLayout
+            android:id="@+id/row_layout_coming"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextAppearance.Compat.Notification.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next: " />
+
+            <TextView
+                android:id="@+id/title_text_view"
+                style="@style/TextAppearance.Compat.Notification.Line2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                tools:text="Start adding hops" />
+
+            <TextView
+                android:id="@+id/duration_text_view"
+                style="@style/TextAppearance.Compat.Notification.Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="12:00" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_layout_after"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:alpha="0.7"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextAppearance.Compat.Notification.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="After: " />
+
+            <TextView
+                android:id="@+id/title_text_view_after"
+                style="@style/TextAppearance.Compat.Notification.Line2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                tools:text="Start adding hops" />
+
+            <TextView
+                android:id="@+id/duration_text_view_after"
+                style="@style/TextAppearance.Compat.Notification.Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="12:00" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
