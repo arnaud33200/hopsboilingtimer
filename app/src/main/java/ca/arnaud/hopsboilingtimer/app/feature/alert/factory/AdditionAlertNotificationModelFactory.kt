@@ -3,6 +3,7 @@ package ca.arnaud.hopsboilingtimer.app.feature.alert.factory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AlertNotificationRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.BaseAdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
@@ -16,12 +17,23 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
     fun create(alert: AdditionAlertData): AdditionAlertNotificationModel {
         val comingAlert = alert.comingAlert
         return AdditionAlertNotificationModel(
-            title = when (comingAlert.type) {
-                AdditionAlertDataType.START -> createStartMessage(comingAlert)
-                AdditionAlertDataType.NEXT -> createNextMessage(comingAlert)
-                AdditionAlertDataType.END -> createEndMessage(comingAlert)
+            listOfNotNull(
+                createRow(comingAlert),
+                alert.nextAlerts.firstOrNull()?.let { nextAlert ->
+                    createRow(nextAlert)
+                }
+            )
+        )
+    }
+
+    private fun createRow(alert: BaseAdditionAlertData): AlertNotificationRowModel {
+        return AlertNotificationRowModel(
+            title = when (alert.type) {
+                AdditionAlertDataType.START -> createStartMessage(alert)
+                AdditionAlertDataType.NEXT -> createNextMessage(alert)
+                AdditionAlertDataType.END -> createEndMessage(alert)
             },
-            duration = "at ${timeHoursTextFormatter.format(comingAlert.scheduleAt)}"
+            time = "at ${timeHoursTextFormatter.format(alert.scheduleAt)}"
         )
     }
 

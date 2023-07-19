@@ -31,8 +31,8 @@ class AlertAndroidNotificationFactory @Inject constructor() {
     }
 
     fun createNotification(model: AdditionAlertNotificationModel, context: Context): Notification {
-        val notificationLayout = AdditionAlertNotificationView().apply {
-            bind(model = model)
+        val notificationLayout = AdditionAlertNotificationView(context.applicationContext).apply {
+            bind(model = model, context = context)
         }
         return NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(R.drawable.ic_notification_badge)
