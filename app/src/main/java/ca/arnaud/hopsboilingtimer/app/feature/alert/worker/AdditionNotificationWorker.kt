@@ -27,7 +27,8 @@ class AdditionNotificationWorker @AssistedInject constructor(
         additionAlertNotificationPresenter.show(additionAlertData, context)
 
         coroutineScopeProvider.scope.launch {
-            onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(additionAlertData.id))
+            val alertId = additionAlertData.comingAlert.id
+            onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(alertId))
         }
 
         return Result.success()

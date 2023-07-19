@@ -4,9 +4,10 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDataMapper
-import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertDataMapper
+import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertDataFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.worker.AdditionNotificationWorker
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch
@@ -15,12 +16,13 @@ import javax.inject.Singleton
 
 @Singleton
 class AdditionAlertScheduler @Inject constructor(
-    coroutineScopeProvider: CoroutineScopeProvider,
+    private val coroutineScopeProvider: CoroutineScopeProvider,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
     private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
+    private val getAdditionSchedule: GetAdditionSchedule,
     private val workManager: WorkManager,
     private val additionAlertWorkerDataMapper: AdditionAlertWorkerDataMapper,
-    private val additionAlertDataMapper: AdditionAlertDataMapper,
+    private val additionAlertDataFactory: AdditionAlertDataFactory,
 ) {
 
     init {
@@ -45,11 +47,14 @@ class AdditionAlertScheduler @Inject constructor(
     }
 
     private fun schedule(alert: AdditionAlert) {
-        val additionAlertData = additionAlertDataMapper.mapTo(alert)
-        val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
-            .setInitialDelay(additionAlertData.initialDelay)
-            .setInputData(additionAlertWorkerDataMapper.mapTo(additionAlertData))
-            .build()
-        workManager.enqueue(workRequest)
+        coroutineScopeProvider.scope.launch() { // TODO - better to put a context
+            val schedule = getAdditionSchedule.execute()
+            val additionAlertData = additionAlertDataFactory.create(alert, schedule)
+            val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
+                .setInitialDelay(additionAlertData.initialDelay)
+                .setInputData(additionAlertWorkerDataMapper.mapTo(additionAlertData))
+                .build()
+            workManager.enqueue(workRequest)
+        }
     }
 }
