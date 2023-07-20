@@ -73,7 +73,7 @@ dependencies {
     // Compose + Material
     implementation platform(libs.compose.bom)
     implementation libs.bundles.compose
-    debugImplementation libs.compose.tooling
+    implementation libs.compose.tooling // figure out debugImplementation for release build
 
     // Room
     implementation libs.room.runtime
