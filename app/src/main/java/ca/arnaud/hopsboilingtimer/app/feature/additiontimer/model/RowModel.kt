@@ -8,11 +8,20 @@ data class AdditionRowModel(
     val options: List<AdditionOptionType> = emptyList()
 )
 
-data class AlertRowModel(
-    val id: String = "",
-    val title: String = "",
-    val duration: String = "",
-    val disabled: Boolean = false,
-    val highlighted: Boolean = false,
-    val addChecked: Boolean? = null // only show when not null
-)
+sealed interface AlertRowModel {
+
+    val id: String
+    data class Next(
+        override val id: String = "",
+        val title: String = "",
+        val time: String = "",
+        val highlighted: Boolean = false,
+    ) : AlertRowModel
+
+    data class Added(
+        override val id: String = "",
+        val title: String = "",
+        val time: String = "",
+        val checked: Boolean
+    ) : AlertRowModel
+}

@@ -154,10 +154,7 @@ private fun EditContent(
             }
 
             if (model.additionRows.isNotEmpty()) {
-                TitleRow(
-                    modifier = Modifier.padding(top = 10.dp),
-                    text = "New Addition"
-                )
+                TitleRow(text = "New Addition")
             }
             AddNewAddition(
                 actionListener::newAdditionHopsTextChanged,
@@ -180,10 +177,16 @@ private fun ScheduleContent(
             .verticalScroll(rememberScrollState())
             .padding(top = 10.dp),
         content = {
-            model.additionRows.forEach { rowModel ->
-                AlertRow(
+            model.nextRows.forEach { rowModel ->
+                AlertNextRow(model = rowModel)
+            }
+
+            TitleRow(text = "Added")
+
+            model.addedRows.forEach { rowModel ->
+                AlertAddedRow(
                     model = rowModel,
-                    onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged
+                    onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged,
                 )
             }
         })
@@ -194,12 +197,12 @@ private fun TitleRow(
     modifier: Modifier = Modifier,
     text: String,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(top = 20.dp)) {
         Divider()
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             modifier = Modifier.padding(horizontal = AdditionTimerScreenConfig.contentPadding),
-            text = text, // TODO - hardcoded string
+            text = text,
             style = LocalAppTypography.current.h2
         )
     }
@@ -293,9 +296,35 @@ fun AdditionRow(
 }
 
 @Composable
-fun AlertRow(
+fun AlertNextRow(
+    model: AlertRowModel.Next,
+) {
+    Row(
+        // TODO - setup dimension in theme
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val fontWeight = if (model.highlighted) FontWeight.Bold else null
+
+        Text(
+            modifier = Modifier.weight(1f),
+            text = model.title,
+            fontWeight = fontWeight,
+            style = LocalAppTypography.current.body2
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = model.time,
+            fontWeight = fontWeight,
+            style = LocalAppTypography.current.body2
+        )
+    }
+}
+
+@Composable
+fun AlertAddedRow(
     onAlertRowCheckChanged: (Boolean, String) -> Unit,
-    model: AlertRowModel,
+    model: AlertRowModel.Added,
 ) {
     Row(
         // TODO - setup dimension in theme
@@ -303,40 +332,35 @@ fun AlertRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
-        val textAlpha = if (model.disabled) 0.3f else 1.0f
+        val textAlpha = 0.3f
         val textColor = LocalContentColor.current.copy(alpha = textAlpha)
-        val fontStyle = if (model.disabled) FontStyle.Italic else null
-        val fontWeight = if (model.highlighted) FontWeight.Bold else null
-        val textDecoration = if (model.addChecked == true) TextDecoration.LineThrough else null
+        val fontStyle = FontStyle.Italic
+        val textDecoration = if (model.checked) TextDecoration.LineThrough else null
 
         Text(
             modifier = Modifier.weight(1f),
             text = model.title,
             fontStyle = fontStyle,
-            fontWeight = fontWeight,
             textDecoration = textDecoration,
             color = textColor,
             style = LocalAppTypography.current.body2
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = model.duration,
+            text = model.time,
             fontStyle = fontStyle,
-            fontWeight = fontWeight,
             textDecoration = textDecoration,
             color = textColor,
             style = LocalAppTypography.current.body2
         )
 
-        model.addChecked?.let { checked ->
-            Spacer(modifier = Modifier.width(10.dp))
-            Checkbox(
-                checked = checked,
-                onCheckedChange = { newChecked ->
-                    onAlertRowCheckChanged(newChecked, model.id)
-                }
-            )
-        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Checkbox(
+            checked = model.checked,
+            onCheckedChange = { newChecked ->
+                onAlertRowCheckChanged(newChecked, model.id)
+            }
+        )
     }
 }
 

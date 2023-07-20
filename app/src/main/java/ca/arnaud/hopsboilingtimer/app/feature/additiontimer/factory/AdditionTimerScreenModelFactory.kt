@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
@@ -36,13 +37,17 @@ class AdditionTimerScreenModelFactory @Inject constructor(
                 bottomBarModel = bottomBarModel
             )
 
-            else -> AdditionTimerScreenModel.Schedule(
-                additionRows = schedule.alerts.map { additionAlert ->
+            else -> {
+                val rows = schedule.alerts.map { additionAlert ->
                     val currentAlert = schedule.getNextAlert(timeProvider.getNowLocalDateTime())
                     alertRowModelFactory.create(additionAlert, currentAlert)
-                },
-                bottomBarModel = createBottomModel(schedule, additions)
-            )
+                }
+                AdditionTimerScreenModel.Schedule(
+                    nextRows = rows.filterIsInstance(AlertRowModel.Next::class.java),
+                    addedRows = rows.filterIsInstance(AlertRowModel.Added::class.java),
+                    bottomBarModel = createBottomModel(schedule, additions)
+                )
+            }
         }
     }
 

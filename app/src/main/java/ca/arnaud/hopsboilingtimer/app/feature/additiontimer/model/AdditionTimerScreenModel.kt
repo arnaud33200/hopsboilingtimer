@@ -10,7 +10,8 @@ sealed interface AdditionTimerScreenModel {
     ) : AdditionTimerScreenModel
 
     data class Schedule(
-        val additionRows: List<AlertRowModel> = emptyList(),
+        val nextRows: List<AlertRowModel.Next> = emptyList(),
+        val addedRows: List<AlertRowModel.Added> = emptyList(),
         val bottomBarModel: BottomBarModel = BottomBarModel()
     ) : AdditionTimerScreenModel
 }
