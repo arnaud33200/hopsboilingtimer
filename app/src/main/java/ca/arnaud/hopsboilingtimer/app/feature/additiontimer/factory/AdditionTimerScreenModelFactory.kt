@@ -1,11 +1,12 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
+import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
@@ -50,12 +51,16 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         val maxDuration = additions.maxOfOrNull { it.duration }
         return when (schedule) {
             null -> BottomBarModel(
-                buttonTitle = "Start Timer", // TODO - hardcoded string
-                buttonTime = maxDuration?.let { durationTextFormatter.format(it) } ?: "",
-                buttonStyle = ButtonStyle.Start,
-                buttonEnable = additions.isNotEmpty(),
-                subButtonTitle = "Options" // TODO hardcoded string
+                timeButton = TimeButtonModel(
+                    title = "Start Timer", // TODO - hardcoded string
+                    time = maxDuration?.let { duration ->
+                        durationTextFormatter.format(duration)
+                    } ?: "",
+                    style = TimeButtonStyle.Start,
+                    enabled = additions.isNotEmpty(),
+                ),
             )
+
             else -> {
                 val now = timeProvider.getNowLocalDateTime()
                 val triggerAtTime = schedule.alerts.maxOfOrNull { it.triggerAtTime }
@@ -63,11 +68,14 @@ class AdditionTimerScreenModelFactory @Inject constructor(
                     Duration.between(now, time)
                 }
                 BottomBarModel(
-                    buttonTitle = "Stop Timer", // TODO - hardcoded string
-                    buttonTime = remainingDuration?.let { remainingTimeTextFormatter.format(it) } ?: "",
-                    buttonStyle = ButtonStyle.Stop,
-                    buttonEnable = true,
-                    subButtonTitle = null
+                    timeButton = TimeButtonModel(
+                        title = "Stop Timer", // TODO - hardcoded string
+                        time = remainingDuration?.let { duration ->
+                            remainingTimeTextFormatter.format(duration)
+                        } ?: "",
+                        style = TimeButtonStyle.Stop,
+                        enabled = true,
+                    )
                 )
             }
         }

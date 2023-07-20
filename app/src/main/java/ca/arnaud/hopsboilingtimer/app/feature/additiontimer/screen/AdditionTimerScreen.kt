@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -39,11 +38,12 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
+import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
+import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
+import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
-import ca.arnaud.hopsboilingtimer.app.theme.LocalAppColors
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
 import ca.arnaud.hopsboilingtimer.app.view.NotificationPermissionDialog
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
@@ -352,34 +352,14 @@ private fun BottomBar(
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val backgroundColor = when (model.buttonStyle) {
-            ButtonStyle.Start -> LocalAppColors.current.primary
-            ButtonStyle.Stop -> LocalAppColors.current.secondary
-        }
 
-        Button(
-            // TODO - setup dimension
+        TimeButton(
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth(),
-            enabled = model.buttonEnable,
             onClick = startTimerButtonClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = backgroundColor
-            )
-        ) {
-            Row {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = model.buttonTitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    text = model.buttonTime,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
+            model = model.timeButton
+        )
     }
 }
 
@@ -401,11 +381,12 @@ fun DefaultPreview() {
                     buttonEnabled = true
                 ),
                 bottomBarModel = BottomBarModel(
-                    buttonTitle = "Start Timer",
-                    buttonTime = "60 Min",
-                    buttonStyle = ButtonStyle.Start,
-                    buttonEnable = true,
-                    subButtonTitle = "Options"
+                    timeButton = TimeButtonModel(
+                        title = "Start Timer",
+                        time = "60 Min",
+                        style = TimeButtonStyle.Start,
+                        enabled = true,
+                    ),
                 )
             ),
             showRequestPermissionDialog = false,
