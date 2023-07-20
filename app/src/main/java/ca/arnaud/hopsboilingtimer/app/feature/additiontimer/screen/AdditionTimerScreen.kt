@@ -36,10 +36,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
@@ -53,7 +54,7 @@ interface AdditionTimerScreenActionListener {
     fun newAdditionHopsTextChanged(text: String)
     fun newAdditionDurationTextChanged(text: String)
     fun addAdditionClick()
-    fun onOptionClick(rowModel: RowModel, optionType: AdditionOptionType)
+    fun onAdditionRowOptionClick(rowModel: AdditionRowModel, optionType: AdditionOptionType)
     fun onAlertRowCheckChanged(checked: Boolean, alertId: String)
     fun onThemeIconClick(isSystemInDarkTheme: Boolean)
 
@@ -100,16 +101,15 @@ fun AdditionTimerScreen(
 
         },
         bottomBar = {
-            when (model) {
-                is AdditionTimerScreenModel.Edit -> BottomBar(
-                    actionListener::startTimerButtonClick,
-                    actionListener::onSubButtonClick,
-                    model.bottomBarModel
-                )
-
-                is AdditionTimerScreenModel.Schedule -> TODO()
+            val bottomBarModel = when (model) {
+                is AdditionTimerScreenModel.Edit -> model.bottomBarModel
+                is AdditionTimerScreenModel.Schedule -> model.bottomBarModel
             }
-
+            BottomBar(
+                actionListener::startTimerButtonClick,
+                actionListener::onSubButtonClick,
+                bottomBarModel
+            )
         },
         content = { paddingValues ->
             when (model) {
@@ -119,7 +119,13 @@ fun AdditionTimerScreen(
                     actionListener = actionListener,
                 )
 
-                is AdditionTimerScreenModel.Schedule -> TODO()
+                is AdditionTimerScreenModel.Schedule -> {
+                    ScheduleContent(
+                        modifier = Modifier.padding(paddingValues),
+                        model = model,
+                        actionListener = actionListener,
+                    )
+                }
             }
         }
     )
@@ -141,32 +147,43 @@ private fun EditContent(
             .padding(top = 10.dp),
         content = {
             model.additionRows.forEach { rowModel ->
-                when (rowModel) {
-                    is RowModel.AdditionRowModel -> {
-                        AdditionRow(model = rowModel, onOptionClick = actionListener::onOptionClick)
-                    }
-
-                    is RowModel.AlertRowModel -> {
-                        AlertRow(
-                            model = rowModel,
-                            onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged
-                        )
-                    }
-                }
+                AdditionRow(
+                    model = rowModel,
+                    onOptionClick = actionListener::onAdditionRowOptionClick
+                )
             }
 
-            model.newAdditionRow?.let { newAdditionRow ->
-                if (model.additionRows.isNotEmpty()) {
-                    TitleRow(
-                        modifier = Modifier.padding(top = 10.dp),
-                        text = "New Addition"
-                    )
-                }
-                AddNewAddition(
-                    actionListener::newAdditionHopsTextChanged,
-                    actionListener::newAdditionDurationTextChanged,
-                    actionListener::addAdditionClick,
-                    newAdditionRow
+            if (model.additionRows.isNotEmpty()) {
+                TitleRow(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = "New Addition"
+                )
+            }
+            AddNewAddition(
+                actionListener::newAdditionHopsTextChanged,
+                actionListener::newAdditionDurationTextChanged,
+                actionListener::addAdditionClick,
+                model.newAdditionRow
+            )
+
+        })
+}
+
+@Composable
+private fun ScheduleContent(
+    modifier: Modifier = Modifier,
+    model: AdditionTimerScreenModel.Schedule,
+    actionListener: AdditionTimerScreenActionListener,
+) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = 10.dp),
+        content = {
+            model.additionRows.forEach { rowModel ->
+                AlertRow(
+                    model = rowModel,
+                    onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged
                 )
             }
         })
@@ -245,8 +262,8 @@ fun AddNewAddition(
 
 @Composable
 fun AdditionRow(
-    onOptionClick: (RowModel, AdditionOptionType) -> Unit,
-    model: RowModel.AdditionRowModel,
+    onOptionClick: (AdditionRowModel, AdditionOptionType) -> Unit,
+    model: AdditionRowModel,
 ) {
     Row(
         // TODO - setup dimension in theme
@@ -278,7 +295,7 @@ fun AdditionRow(
 @Composable
 fun AlertRow(
     onAlertRowCheckChanged: (Boolean, String) -> Unit,
-    model: RowModel.AlertRowModel,
+    model: AlertRowModel,
 ) {
     Row(
         // TODO - setup dimension in theme
@@ -370,10 +387,10 @@ fun DefaultPreview() {
         AdditionTimerScreen(
             model = AdditionTimerScreenModel.Edit(
                 additionRows = listOf(
-                    RowModel.AdditionRowModel("", "Amarillo", "60"),
-                    RowModel.AdditionRowModel("", "Mozaic", "45"),
-                    RowModel.AdditionRowModel("", "Saaz", "5"),
-                    RowModel.AdditionRowModel("", "El Dorado", "10"),
+                    AdditionRowModel("", "Amarillo", "60"),
+                    AdditionRowModel("", "Mozaic", "45"),
+                    AdditionRowModel("", "Saaz", "5"),
+                    AdditionRowModel("", "El Dorado", "10"),
                 ),
                 newAdditionRow = NewAdditionModel(
                     title = "new addition",
@@ -401,8 +418,8 @@ fun DefaultPreview() {
                 }
 
                 override fun addAdditionClick() {}
-                override fun onOptionClick(
-                    rowModel: RowModel, optionType: AdditionOptionType,
+                override fun onAdditionRowOptionClick(
+                    rowModel: AdditionRowModel, optionType: AdditionOptionType,
                 ) {
                 }
 

@@ -15,7 +15,8 @@ import java.time.Duration
 import javax.inject.Inject
 
 class AdditionTimerScreenModelFactory @Inject constructor(
-    private val rowModelFactory: RowModelFactory,
+    private val additionRowModelFactory: AdditionRowModelFactory,
+    private val alertRowModelFactory: AlertRowModelFactory,
     private val timeProvider: TimeProvider,
     private val durationTextFormatter: DurationTextFormatter,
     private val remainingTimeTextFormatter: RemainingTimeTextFormatter,
@@ -26,22 +27,23 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         schedule: AdditionSchedule?,
         newAdditionModel: NewAdditionModel = NewAdditionModel(),
     ): AdditionTimerScreenModel {
-        val additionRows = when (schedule) {
-            null -> additions.map { rowModelFactory.create(it) }
-            else -> schedule.alerts.map {
-                val currentAlert = schedule.getNextAlert(timeProvider.getNowLocalDateTime())
-                rowModelFactory.create(it, currentAlert)
-            }
-        }
+        val bottomBarModel = createBottomModel(schedule, additions)
 
-        return AdditionTimerScreenModel.Edit(
-            additionRows = additionRows,
-            newAdditionRow = when (schedule) {
-                null -> newAdditionModel
-                else -> null
-            },
-            bottomBarModel = createBottomModel(schedule, additions)
-        )
+        return when (schedule) {
+            null -> AdditionTimerScreenModel.Edit(
+                additionRows = additions.map { additionRowModelFactory.create(it) },
+                newAdditionRow = newAdditionModel,
+                bottomBarModel = bottomBarModel
+            )
+
+            else -> AdditionTimerScreenModel.Schedule(
+                additionRows = schedule.alerts.map { additionAlert ->
+                    val currentAlert = schedule.getNextAlert(timeProvider.getNowLocalDateTime())
+                    alertRowModelFactory.create(additionAlert, currentAlert)
+                },
+                bottomBarModel = createBottomModel(schedule, additions)
+            )
+        }
     }
 
     private fun createBottomModel(

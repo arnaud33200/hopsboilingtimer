@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory.AdditionTimerScreenModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimerScreenActionListener
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
@@ -98,10 +98,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private suspend fun updateScreenModel() {
         val result = getAdditions.execute(Unit)
         val additions = result.getOrDefault(emptyList())
-        val currentAddNewAddition = when (val model = screenModel.value) {
-            is AdditionTimerScreenModel.Edit -> model.newAdditionRow
-            is AdditionTimerScreenModel.Schedule -> null
-        } ?: NewAdditionModel()
+        val currentAddNewAddition = newAdditionRow ?: NewAdditionModel()
         _screenModel.value = additionTimerScreenModelFactory.create(
             additions, currentSchedule, currentAddNewAddition
         )
@@ -112,13 +109,15 @@ class AdditionTimerViewModel @AssistedInject constructor(
     override fun newAdditionHopsTextChanged(text: String) {
         when (val model = screenModel.value) {
             is AdditionTimerScreenModel.Edit -> {
-                val newAddition = model.newAdditionRow ?: return
+                val newAddition = model.newAdditionRow
                 updateNewAdditionModel(
                     title = text,
                     duration = newAddition.duration
                 )
             }
-            is AdditionTimerScreenModel.Schedule -> TODO()
+            is AdditionTimerScreenModel.Schedule -> {
+                // No-op, cannot add while schedule ... not yet
+            }
         }
     }
 
@@ -145,9 +144,11 @@ class AdditionTimerViewModel @AssistedInject constructor(
                         )
                     )
                 }
-                is AdditionTimerScreenModel.Schedule -> TODO()
+                is AdditionTimerScreenModel.Schedule -> {
+                    // No-op, no new addition in schedule mode
+                    model
+                }
             }
-
         }
     }
 
@@ -163,7 +164,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
                             is AdditionTimerScreenModel.Edit -> {
                                 model.copy(newAdditionRow = NewAdditionModel())
                             }
-                            is AdditionTimerScreenModel.Schedule -> TODO()
+                            is AdditionTimerScreenModel.Schedule -> {
+                                // No-op
+                                model
+                            }
                         }
                     }
                     updateScreenModel()
@@ -171,8 +175,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
             }
         }
     }
-
-    override fun onOptionClick(rowModel: RowModel, optionType: AdditionOptionType) {
+    override fun onAdditionRowOptionClick(rowModel: AdditionRowModel, optionType: AdditionOptionType) {
         viewModelScope.launch {
             when (optionType) {
                 AdditionOptionType.Delete -> deleteAddition(rowModel)
@@ -200,17 +203,9 @@ class AdditionTimerViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun deleteAddition(rowModel: RowModel) {
-        when (rowModel) {
-            is RowModel.AdditionRowModel -> {
-                deleteAddition.execute(DeleteAddition.Params(rowModel.id))
-                updateScreenModel()
-            }
-
-            else -> {
-                // No-op
-            }
-        }
+    private suspend fun deleteAddition(rowModel: AdditionRowModel) {
+        deleteAddition.execute(DeleteAddition.Params(rowModel.id))
+        updateScreenModel()
     }
 
     // endregion
