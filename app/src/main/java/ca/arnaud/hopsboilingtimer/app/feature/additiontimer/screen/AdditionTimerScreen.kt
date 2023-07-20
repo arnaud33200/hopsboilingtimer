@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -172,19 +174,30 @@ private fun ScheduleContent(
     model: AdditionTimerScreenModel.Schedule,
     actionListener: AdditionTimerScreenActionListener,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
             .padding(top = 10.dp),
         content = {
-            model.nextRows.forEach { rowModel ->
-                AlertNextRow(model = rowModel)
+            items(
+                items = model.nextRows,
+                key = { rowItem -> rowItem.id }
+            ) { rowModel ->
+                AlertNextRow(
+                    modifier = Modifier.animateItemPlacement(),
+                    model = rowModel,
+                )
             }
 
-            TitleRow(text = "Added")
+            item(key = "added") {
+                TitleRow(text = "Added")
+            }
 
-            model.addedRows.forEach { rowModel ->
+            items(
+                items = model.addedRows,
+                key = { rowItem -> rowItem.id }
+            ) { rowModel ->
                 AlertAddedRow(
+                    modifier = Modifier.animateItemPlacement(),
                     model = rowModel,
                     onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged,
                 )
@@ -297,11 +310,12 @@ fun AdditionRow(
 
 @Composable
 fun AlertNextRow(
+    modifier: Modifier = Modifier,
     model: AlertRowModel.Next,
 ) {
     Row(
         // TODO - setup dimension in theme
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+        modifier = modifier.padding(horizontal = 15.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val fontWeight = if (model.highlighted) FontWeight.Bold else null
@@ -323,12 +337,13 @@ fun AlertNextRow(
 
 @Composable
 fun AlertAddedRow(
+    modifier: Modifier = Modifier,
     onAlertRowCheckChanged: (Boolean, String) -> Unit,
     model: AlertRowModel.Added,
 ) {
     Row(
         // TODO - setup dimension in theme
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+        modifier = modifier.padding(horizontal = 15.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
