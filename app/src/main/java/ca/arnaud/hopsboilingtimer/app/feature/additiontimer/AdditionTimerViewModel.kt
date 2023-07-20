@@ -7,8 +7,7 @@ import androidx.lifecycle.viewModelScope
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory.AdditionTimerScreenModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.mapper.AddNewAdditionParamsMapper
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.MainScreenModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimerScreenActionListener
@@ -51,8 +50,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val permissionService: PermissionService,
 ) : ViewModel(), AdditionTimerScreenActionListener {
 
-    private val _screenModel = MutableStateFlow(MainScreenModel())
-    val screenModel: StateFlow<MainScreenModel> = _screenModel
+    private val _screenModel = MutableStateFlow<AdditionTimerScreenModel>(
+        AdditionTimerScreenModel.Edit()
+    )
+    val screenModel: StateFlow<AdditionTimerScreenModel> = _screenModel
 
     private val _showRequestPermissionDialog = MutableStateFlow(false)
     val showRequestPermissionDialog: StateFlow<Boolean> = _showRequestPermissionDialog
@@ -60,6 +61,11 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private var darkMode: Boolean? = null
 
     private var currentSchedule: AdditionSchedule? = null
+
+    private val newAdditionRow get() = when (val model = screenModel.value) {
+        is AdditionTimerScreenModel.Edit -> model.newAdditionRow
+        is AdditionTimerScreenModel.Schedule -> null
+    }
 
     init {
         viewModelScope.launch {
@@ -92,7 +98,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private suspend fun updateScreenModel() {
         val result = getAdditions.execute(Unit)
         val additions = result.getOrDefault(emptyList())
-        val currentAddNewAddition = screenModel.value.newAdditionRow ?: NewAdditionModel()
+        val currentAddNewAddition = when (val model = screenModel.value) {
+            is AdditionTimerScreenModel.Edit -> model.newAdditionRow
+            is AdditionTimerScreenModel.Schedule -> null
+        } ?: NewAdditionModel()
         _screenModel.value = additionTimerScreenModelFactory.create(
             additions, currentSchedule, currentAddNewAddition
         )
@@ -101,15 +110,20 @@ class AdditionTimerViewModel @AssistedInject constructor(
     // region new addition action
 
     override fun newAdditionHopsTextChanged(text: String) {
-        val newAddition = screenModel.value.newAdditionRow ?: return
-        updateNewAdditionModel(
-            title = text,
-            duration = newAddition.duration
-        )
+        when (val model = screenModel.value) {
+            is AdditionTimerScreenModel.Edit -> {
+                val newAddition = model.newAdditionRow ?: return
+                updateNewAdditionModel(
+                    title = text,
+                    duration = newAddition.duration
+                )
+            }
+            is AdditionTimerScreenModel.Schedule -> TODO()
+        }
     }
 
     override fun newAdditionDurationTextChanged(text: String) {
-        val newAddition = screenModel.value.newAdditionRow ?: return
+        val newAddition = newAdditionRow ?: return
         updateNewAdditionModel(
             title = newAddition.title,
             duration = text
@@ -117,29 +131,40 @@ class AdditionTimerViewModel @AssistedInject constructor(
     }
 
     private fun updateNewAdditionModel(title: String, duration: String) {
-        val newAddition = screenModel.value.newAdditionRow ?: return
-        _screenModel.update {
-            // TODO - setup validator & formatter
-            val enabled = title.isNotBlank() && duration.isNotBlank()
-            it.copy(
-                newAdditionRow = newAddition.copy(
-                    title = title,
-                    duration = duration,
-                    buttonEnabled = enabled
-                )
-            )
+        val newAddition = newAdditionRow ?: return
+        _screenModel.update { model ->
+            when (model) {
+                is AdditionTimerScreenModel.Edit -> {
+                    // TODO - setup validator & formatter
+                    val enabled = title.isNotBlank() && duration.isNotBlank()
+                    model.copy(
+                        newAdditionRow = newAddition.copy(
+                            title = title,
+                            duration = duration,
+                            buttonEnabled = enabled
+                        )
+                    )
+                }
+                is AdditionTimerScreenModel.Schedule -> TODO()
+            }
+
         }
     }
 
     override fun addAdditionClick() {
-        val newAddition = screenModel.value.newAdditionRow ?: return
+        val newAddition = newAdditionRow ?: return
         viewModelScope.launch {
             val params = addNewAdditionParamsMapper.mapTo(newAddition)
             val result = addNewAddition.execute(params)
             when {
                 result.isSuccess -> {
-                    _screenModel.update {
-                        it.copy(newAdditionRow = NewAdditionModel())
+                    _screenModel.update { model ->
+                        when (model) {
+                            is AdditionTimerScreenModel.Edit -> {
+                                model.copy(newAdditionRow = NewAdditionModel())
+                            }
+                            is AdditionTimerScreenModel.Schedule -> TODO()
+                        }
                     }
                     updateScreenModel()
                 }

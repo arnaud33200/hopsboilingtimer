@@ -1,10 +1,17 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model
 
-data class MainScreenModel(
-    val additionRows: List<RowModel> = emptyList(),
-    val newAdditionRow: NewAdditionModel? = NewAdditionModel(),
-    val bottomBarModel: BottomBarModel = BottomBarModel()
-)
+sealed interface AdditionTimerScreenModel {
+    data class Edit(
+        val additionRows: List<RowModel> = emptyList(),
+        val newAdditionRow: NewAdditionModel? = NewAdditionModel(),
+        val bottomBarModel: BottomBarModel = BottomBarModel()
+    ) : AdditionTimerScreenModel
+
+    data class Schedule(
+        val bottomBarModel: BottomBarModel = BottomBarModel()
+    ) : AdditionTimerScreenModel
+}
+
 
 data class BottomBarModel(
     // TODO probably better to have a button model

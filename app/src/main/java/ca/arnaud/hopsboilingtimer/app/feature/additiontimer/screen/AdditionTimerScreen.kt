@@ -37,9 +37,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.ButtonStyle
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.MainScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.RowModel
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
@@ -69,7 +69,7 @@ object AdditionTimerScreenConfig {
 
 @Composable
 fun AdditionTimerScreen(
-    model: MainScreenModel,
+    model: AdditionTimerScreenModel,
     showRequestPermissionDialog: Boolean,
     actionListener: AdditionTimerScreenActionListener,
 ) {
@@ -98,52 +98,78 @@ fun AdditionTimerScreen(
                 Divider()
             }
 
-        }
-    ) { paddingValues ->
-        Column {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(top = 10.dp)
-                    .padding(paddingValues),
-                content = {
-                    model.additionRows.forEach { rowModel ->
-                        when (rowModel) {
-                            is RowModel.AdditionRowModel -> {
-                                AdditionRow(model = rowModel, onOptionClick = actionListener::onOptionClick)
-                            }
-                            is RowModel.AlertRowModel -> {
-                                AlertRow(
-                                    model = rowModel,
-                                    onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged
-                                )
-                            }
-                        }
-                    }
+        },
+        bottomBar = {
+            when (model) {
+                is AdditionTimerScreenModel.Edit -> BottomBar(
+                    actionListener::startTimerButtonClick,
+                    actionListener::onSubButtonClick,
+                    model.bottomBarModel
+                )
 
-                    model.newAdditionRow?.let { newAdditionRow ->
-                        if (model.additionRows.isNotEmpty()) {
-                            TitleRow(
-                                modifier = Modifier.padding(top = 10.dp),
-                                text = "New Addition"
-                            )
-                        }
-                        AddNewAddition(
-                            actionListener::newAdditionHopsTextChanged,
-                            actionListener::newAdditionDurationTextChanged,
-                            actionListener::addAdditionClick,
-                            newAdditionRow
-                        )
-                    }
-                })
-            BottomBar(actionListener::startTimerButtonClick, actionListener::onSubButtonClick, model.bottomBarModel)
+                is AdditionTimerScreenModel.Schedule -> TODO()
+            }
+
+        },
+        content = { paddingValues ->
+            when (model) {
+                is AdditionTimerScreenModel.Edit -> EditContent(
+                    modifier = Modifier.padding(paddingValues),
+                    model = model,
+                    actionListener = actionListener,
+                )
+
+                is AdditionTimerScreenModel.Schedule -> TODO()
+            }
         }
-    }
+    )
 
     if (showRequestPermissionDialog) {
         NotificationPermissionDialog(onPermissionResult = actionListener::onPermissionResult)
     }
+}
+
+@Composable
+private fun EditContent(
+    modifier: Modifier = Modifier,
+    model: AdditionTimerScreenModel.Edit,
+    actionListener: AdditionTimerScreenActionListener,
+) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = 10.dp),
+        content = {
+            model.additionRows.forEach { rowModel ->
+                when (rowModel) {
+                    is RowModel.AdditionRowModel -> {
+                        AdditionRow(model = rowModel, onOptionClick = actionListener::onOptionClick)
+                    }
+
+                    is RowModel.AlertRowModel -> {
+                        AlertRow(
+                            model = rowModel,
+                            onAlertRowCheckChanged = actionListener::onAlertRowCheckChanged
+                        )
+                    }
+                }
+            }
+
+            model.newAdditionRow?.let { newAdditionRow ->
+                if (model.additionRows.isNotEmpty()) {
+                    TitleRow(
+                        modifier = Modifier.padding(top = 10.dp),
+                        text = "New Addition"
+                    )
+                }
+                AddNewAddition(
+                    actionListener::newAdditionHopsTextChanged,
+                    actionListener::newAdditionDurationTextChanged,
+                    actionListener::addAdditionClick,
+                    newAdditionRow
+                )
+            }
+        })
 }
 
 @Composable
@@ -224,7 +250,10 @@ fun AdditionRow(
 ) {
     Row(
         // TODO - setup dimension in theme
-        modifier = Modifier.padding(horizontal = AdditionTimerScreenConfig.contentPadding, vertical = 10.dp),
+        modifier = Modifier.padding(
+            horizontal = AdditionTimerScreenConfig.contentPadding,
+            vertical = 10.dp
+        ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
@@ -359,7 +388,7 @@ private fun BottomBar(
 fun DefaultPreview() {
     HopsAppTheme(darkTheme = true) {
         AdditionTimerScreen(
-            model = MainScreenModel(
+            model = AdditionTimerScreenModel.Edit(
                 additionRows = listOf(
                     RowModel.AdditionRowModel("", "Amarillo", "60"),
                     RowModel.AdditionRowModel("", "Mozaic", "45"),
@@ -382,31 +411,34 @@ fun DefaultPreview() {
             showRequestPermissionDialog = false,
             actionListener = object : AdditionTimerScreenActionListener {
 
-            override fun newAdditionHopsTextChanged(text: String) {
+                override fun newAdditionHopsTextChanged(text: String) {
 
-            }
+                }
 
-            override fun newAdditionDurationTextChanged(text: String) {
+                override fun newAdditionDurationTextChanged(text: String) {
 
-            }
-            override fun addAdditionClick() { }
-            override fun onOptionClick(
-                rowModel: RowModel, optionType: AdditionOptionType,
-            ) { }
-            override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) { }
-            override fun onThemeIconClick(isSystemInDarkTheme: Boolean) { }
-            override fun startTimerButtonClick() {
+                }
 
-            }
+                override fun addAdditionClick() {}
+                override fun onOptionClick(
+                    rowModel: RowModel, optionType: AdditionOptionType,
+                ) {
+                }
 
-            override fun onSubButtonClick() {
+                override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {}
+                override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {}
+                override fun startTimerButtonClick() {
 
-            }
+                }
 
-            override fun onPermissionResult(granted: Boolean) {
+                override fun onSubButtonClick() {
 
-            }
+                }
 
-        })
+                override fun onPermissionResult(granted: Boolean) {
+
+                }
+
+            })
     }
 }
