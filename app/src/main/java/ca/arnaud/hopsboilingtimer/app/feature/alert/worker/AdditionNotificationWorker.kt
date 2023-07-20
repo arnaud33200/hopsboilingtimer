@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.feature.alert.AdditionAlertNotificationPresenter
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDataMapper
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -16,18 +17,19 @@ import kotlinx.coroutines.launch
 class AdditionNotificationWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val onAdditionAlertReceived: OnAdditionAlertReceived,
     private val coroutineScopeProvider: CoroutineScopeProvider,
+    private val onAdditionAlertReceived: OnAdditionAlertReceived,
+    private val getAdditionSchedule: GetAdditionSchedule,
     private val additionAlertWorkerDataMapper: AdditionAlertWorkerDataMapper,
     private val additionAlertNotificationPresenter: AdditionAlertNotificationPresenter,
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val additionAlertData = additionAlertWorkerDataMapper.mapFrom(inputData)
-        additionAlertNotificationPresenter.show(additionAlertData, context)
-
         coroutineScopeProvider.scope.launch {
-            val alertId = additionAlertData.comingAlert.id
+            val additionAlertData = additionAlertWorkerDataMapper.mapFrom(inputData)
+            val schedule = getAdditionSchedule.execute()
+            additionAlertNotificationPresenter.show(additionAlertData, schedule, context)
+            val alertId = additionAlertData.id
             onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(alertId))
         }
 

@@ -9,6 +9,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotific
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import javax.inject.Inject
 
 class AdditionAlertNotificationPresenter @Inject constructor(
@@ -28,12 +29,16 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun show(additionAlert: AdditionAlertData, context: Context) {
-        if (!permissionService.hasNotificationPermission()) {
+    fun show(
+        additionAlert: AdditionAlertData,
+        schedule: AdditionSchedule?,
+        context: Context
+    ) {
+        if (schedule == null || !permissionService.hasNotificationPermission()) {
             return
         }
 
-        val model = additionAlertNotificationModelFactory.create(additionAlert)
+        val model = additionAlertNotificationModelFactory.create(additionAlert, schedule)
         val notification = alertAndroidNotificationFactory.createNotification(model, context)
         show(notification, context)
     }

@@ -47,14 +47,11 @@ class AdditionAlertScheduler @Inject constructor(
     }
 
     private fun schedule(alert: AdditionAlert) {
-        coroutineScopeProvider.scope.launch {
-            val schedule = getAdditionSchedule.execute()
-            val additionAlertData = additionAlertDataFactory.create(alert, schedule)
-            val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
-                .setInitialDelay(additionAlertData.initialDelay)
-                .setInputData(additionAlertWorkerDataMapper.mapTo(additionAlertData))
-                .build()
-            workManager.enqueue(workRequest)
-        }
+        val additionAlertData = additionAlertDataFactory.create(alert)
+        val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
+            .setInitialDelay(additionAlertData.initialDelay)
+            .setInputData(additionAlertWorkerDataMapper.mapTo(additionAlertData))
+            .build()
+        workManager.enqueue(workRequest)
     }
 }
