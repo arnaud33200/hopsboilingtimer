@@ -63,6 +63,10 @@ interface AdditionTimerScreenActionListener {
     fun onPermissionResult(granted: Boolean)
 }
 
+object AdditionTimerScreenConfig {
+    val contentPadding = 15.dp
+}
+
 @Composable
 fun AdditionTimerScreen(
     model: MainScreenModel,
@@ -80,7 +84,7 @@ fun AdditionTimerScreen(
                     Text(
                         modifier = Modifier.weight(1f),
                         text = "Hops Boiling Timer", // TODO - put in strings.xml
-                        style = LocalAppTypography.current.h1
+                        style = MaterialTheme.typography.titleMedium,
                     )
 
                     Icon(
@@ -116,13 +120,14 @@ fun AdditionTimerScreen(
                                 )
                             }
                         }
-
                     }
 
                     model.newAdditionRow?.let { newAdditionRow ->
                         if (model.additionRows.isNotEmpty()) {
-                            Divider()
-                            Spacer(modifier = Modifier.height(10.dp))
+                            TitleRow(
+                                modifier = Modifier.padding(top = 10.dp),
+                                text = "New Addition"
+                            )
                         }
                         AddNewAddition(
                             actionListener::newAdditionHopsTextChanged,
@@ -142,43 +147,18 @@ fun AdditionTimerScreen(
 }
 
 @Composable
-private fun BottomBar(
-    startTimerButtonClick: () -> Unit,
-    onSubButtonClick: () -> Unit,
-    model: BottomBarModel,
+private fun TitleRow(
+    modifier: Modifier = Modifier,
+    text: String,
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        val backgroundColor = when (model.buttonStyle) {
-            ButtonStyle.Start -> LocalAppColors.current.primary
-            ButtonStyle.Stop -> LocalAppColors.current.secondary
-        }
-
-        Button(
-            // TODO - setup dimension
-            modifier = Modifier
-                .height(50.dp)
-                .fillMaxWidth(),
-            enabled = model.buttonEnable,
-            onClick = startTimerButtonClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = backgroundColor
-            )
-        ) {
-            Row {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = model.buttonTitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    text = model.buttonTime,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
+    Column(modifier = modifier) {
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            modifier = Modifier.padding(horizontal = AdditionTimerScreenConfig.contentPadding),
+            text = text, // TODO - hardcoded string
+            style = LocalAppTypography.current.h2
+        )
     }
 }
 
@@ -190,12 +170,8 @@ fun AddNewAddition(
     model: NewAdditionModel,
 ) {
     Column(
-        Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+        Modifier.padding(horizontal = AdditionTimerScreenConfig.contentPadding, vertical = 10.dp),
     ) {
-        Text(
-            "New Addition", // TODO - hardcoded string
-            style = LocalAppTypography.current.h2
-        )
         Row(
             // TODO - setup dimension in theme
             modifier = Modifier.padding(vertical = 5.dp),
@@ -248,7 +224,7 @@ fun AdditionRow(
 ) {
     Row(
         // TODO - setup dimension in theme
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+        modifier = Modifier.padding(horizontal = AdditionTimerScreenConfig.contentPadding, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO - setup typography
@@ -334,6 +310,47 @@ private fun AdditionOptions(
             imageVector = imageVector,
             contentDescription = null
         )
+    }
+}
+
+@Composable
+private fun BottomBar(
+    startTimerButtonClick: () -> Unit,
+    onSubButtonClick: () -> Unit,
+    model: BottomBarModel,
+) {
+    Column(
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        val backgroundColor = when (model.buttonStyle) {
+            ButtonStyle.Start -> LocalAppColors.current.primary
+            ButtonStyle.Stop -> LocalAppColors.current.secondary
+        }
+
+        Button(
+            // TODO - setup dimension
+            modifier = Modifier
+                .height(50.dp)
+                .fillMaxWidth(),
+            enabled = model.buttonEnable,
+            onClick = startTimerButtonClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = backgroundColor
+            )
+        ) {
+            Row {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = model.buttonTitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    text = model.buttonTime,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
 }
 

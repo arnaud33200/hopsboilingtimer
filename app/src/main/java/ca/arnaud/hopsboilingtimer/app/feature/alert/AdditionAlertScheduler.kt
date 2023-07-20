@@ -47,7 +47,7 @@ class AdditionAlertScheduler @Inject constructor(
     }
 
     private fun schedule(alert: AdditionAlert) {
-        coroutineScopeProvider.scope.launch() { // TODO - better to put a context
+        coroutineScopeProvider.scope.launch {
             val schedule = getAdditionSchedule.execute()
             val additionAlertData = additionAlertDataFactory.create(alert, schedule)
             val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
