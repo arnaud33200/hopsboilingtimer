@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
+import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTypography
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 
@@ -126,13 +128,15 @@ private fun TopBar(
 ) {
     Column(modifier) {
         Row(
-            modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 15.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Hops Boiling Timer", // TODO - put in strings.xml
-                style = MaterialTheme.typography.titleMedium,
+                style = HopsAppTypography.h1,
             )
 
             Icon(
