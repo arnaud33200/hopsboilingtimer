@@ -46,6 +46,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerS
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.TimerTextUpdateModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
@@ -76,8 +77,7 @@ object AdditionTimerScreenConfig {
 fun AdditionTimerScreen(
     model: AdditionTimerScreenModel,
     actionListener: AdditionTimerScreenActionListener,
-    buttonTime: () -> String?,
-    highlightedTime: () -> String?,
+    timerTextUpdate: () -> TimerTextUpdateModel,
 ) {
     Scaffold(
         topBar = {
@@ -92,7 +92,7 @@ fun AdditionTimerScreen(
                 actionListener::startTimerButtonClick,
                 actionListener::onSubButtonClick,
                 bottomBarModel,
-                buttonTime
+                buttonTime = { timerTextUpdate().buttonTimer }
             )
         },
         content = { paddingValues ->
@@ -107,7 +107,7 @@ fun AdditionTimerScreen(
                     ScheduleContent(
                         modifier = Modifier.padding(paddingValues),
                         model = model,
-                        highlightedTime = highlightedTime,
+                        highlightedTime = { timerTextUpdate().highlightRowTimer } ,
                         actionListener = actionListener,
                     )
                 }
@@ -506,8 +506,7 @@ fun DefaultPreview() {
                 override fun onPermissionResult(granted: Boolean) {}
 
             },
-            buttonTime = { null },
-            highlightedTime = { null }
+            timerTextUpdate = { TimerTextUpdateModel() },
         )
     }
 }

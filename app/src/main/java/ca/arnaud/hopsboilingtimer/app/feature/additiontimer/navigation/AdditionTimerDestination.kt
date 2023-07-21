@@ -31,8 +31,7 @@ private fun AdditionTimerDestination(viewModel: AdditionTimerViewModel) {
 
     AdditionTimerScreen(
         model = model,
-        buttonTime = { timerTextUpdate.buttonTimer },
-        highlightedTime = { timerTextUpdate.highlightRowTimer },
+        timerTextUpdate = { timerTextUpdate },
         actionListener = viewModel,
     )
 
