@@ -18,7 +18,6 @@ class AdditionAlertNotificationPresenter @Inject constructor(
     private val permissionService: PermissionService,
     private val additionAlertNotificationModelFactory: AdditionAlertNotificationModelFactory,
 ) {
-    // TODO - setup custom layout
 
     companion object {
         private const val NOTIFICATION_ID = 12345

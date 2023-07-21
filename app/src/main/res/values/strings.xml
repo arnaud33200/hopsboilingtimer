@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">HopsBoilingTimer</string>
+    <string name="app_name">Hops Boiling Timer</string>
+
+    <!-- Notification -->
+    <string name="notification_channel_name">Hops Additions</string>
+    <string name="notification_channel_description">Add the next additions\n</string>
+    <string name="notification_title">Hops Boiling Timer</string>
+
 </resources>

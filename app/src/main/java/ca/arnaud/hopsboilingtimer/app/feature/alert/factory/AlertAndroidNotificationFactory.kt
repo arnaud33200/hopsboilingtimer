@@ -11,9 +11,12 @@ import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.view.AdditionAlertNotificationView
+import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import javax.inject.Inject
 
-class AlertAndroidNotificationFactory @Inject constructor() {
+class AlertAndroidNotificationFactory @Inject constructor(
+    private val stringProvider: StringProvider,
+) {
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"
@@ -21,8 +24,8 @@ class AlertAndroidNotificationFactory @Inject constructor() {
     }
 
     fun createChannel(): NotificationChannel {
-        val name = "Hops Additions" // TODO - Hardcoded string
-        val descriptionText = "Add the next additions" // TODO - Hardcoded string
+        val name = stringProvider.get(R.string.notification_channel_name)
+        val descriptionText = stringProvider.get(R.string.notification_channel_description)
         val importance = NotificationManager.IMPORTANCE_HIGH
 
         return NotificationChannel(CHANNEL_ID, name, importance).apply {
@@ -36,7 +39,7 @@ class AlertAndroidNotificationFactory @Inject constructor() {
         }
         return NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(R.drawable.ic_notification_badge)
-            setContentTitle("Hops Boiling Timer") // TODO - Hardcoded string
+            setContentTitle(stringProvider.get(R.string.notification_title))
             setCustomContentView(notificationLayout)
             setContentIntent(getContentIntent(context))
             // setStyle(NotificationCompat.DecoratedCustomViewStyle()) // put back if need the classic notification style
