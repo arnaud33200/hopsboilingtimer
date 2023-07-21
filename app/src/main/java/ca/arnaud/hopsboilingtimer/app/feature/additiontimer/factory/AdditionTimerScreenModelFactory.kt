@@ -9,6 +9,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
@@ -51,6 +52,22 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         }
     }
 
+    fun getButtonTime(schedule: AdditionSchedule?): String {
+        val now = timeProvider.getNowLocalDateTime()
+        val triggerAtTime = schedule?.alerts?.maxOfOrNull { it.triggerAtTime }
+        val remainingDuration = triggerAtTime?.let { time ->
+            Duration.between(now, time)
+        }
+
+        return remainingDuration?.let { duration ->
+            remainingTimeTextFormatter.format(duration)
+        } ?: ""
+    }
+
+    fun getHighlightedTimeText(alert: AdditionAlert): String {
+        return alertRowModelFactory.getHighlightedTimeText(alert)
+    }
+
     private fun createBottomModel(
         schedule: AdditionSchedule?,
         additions: List<Addition>,
@@ -69,17 +86,10 @@ class AdditionTimerScreenModelFactory @Inject constructor(
             )
 
             else -> {
-                val now = timeProvider.getNowLocalDateTime()
-                val triggerAtTime = schedule.alerts.maxOfOrNull { it.triggerAtTime }
-                val remainingDuration = triggerAtTime?.let { time ->
-                    Duration.between(now, time)
-                }
                 BottomBarModel(
                     timeButton = TimeButtonModel(
                         title = "Stop Timer", // TODO - hardcoded string
-                        time = remainingDuration?.let { duration ->
-                            remainingTimeTextFormatter.format(duration)
-                        } ?: "",
+                        time = getButtonTime(schedule),
                         style = TimeButtonStyle.Stop,
                         enabled = true,
                     )

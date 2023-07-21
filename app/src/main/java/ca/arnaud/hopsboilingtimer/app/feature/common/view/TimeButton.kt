@@ -16,6 +16,7 @@ fun TimeButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     model: TimeButtonModel,
+    time: () -> String?,
 ) {
     val backgroundColor = when (model.style) {
         TimeButtonStyle.Start -> LocalAppColors.current.primary
@@ -34,13 +35,23 @@ fun TimeButton(
             Text(
                 modifier = Modifier.weight(1f),
                 text = model.title,
+                maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium,
             )
 
-            Text(
+            TimeText(
                 text = model.time,
-                style = MaterialTheme.typography.bodyMedium
+                time = time,
             )
         }
     }
+}
+
+@Composable
+private fun TimeText(text: String, time: () -> String?) {
+    Text(
+        text = time() ?: text,
+        maxLines = 1,
+        style = MaterialTheme.typography.bodyMedium
+    )
 }

@@ -1,7 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +51,6 @@ import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
-import ca.arnaud.hopsboilingtimer.app.view.NotificationPermissionDialog
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 
 interface AdditionTimerScreenActionListener {
@@ -62,7 +60,7 @@ interface AdditionTimerScreenActionListener {
     fun addAdditionClick()
     fun onAdditionRowOptionClick(rowModel: AdditionRowModel, optionType: AdditionOptionType)
     fun onAlertRowCheckChanged(checked: Boolean, alertId: String)
-    fun onThemeIconClick(isSystemInDarkTheme: Boolean)
+    fun onThemeIconClick()
 
     fun startTimerButtonClick()
     fun onSubButtonClick()
@@ -77,34 +75,13 @@ object AdditionTimerScreenConfig {
 @Composable
 fun AdditionTimerScreen(
     model: AdditionTimerScreenModel,
-    showRequestPermissionDialog: Boolean,
     actionListener: AdditionTimerScreenActionListener,
+    buttonTime: () -> String?,
+    highlightedTime: () -> String?,
 ) {
-    val currentDarkTheme = isSystemInDarkTheme()
     Scaffold(
         topBar = {
-            Column {
-                Row(
-                    modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = "Hops Boiling Timer", // TODO - put in strings.xml
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-
-                    Icon(
-                        modifier = Modifier
-                            .clickable { actionListener.onThemeIconClick(currentDarkTheme) }
-                            .padding(5.dp),
-                        imageVector = Icons.Filled.InvertColors,
-                        contentDescription = null
-                    )
-                }
-                Divider()
-            }
-
+            TopBar(actionListener = actionListener)
         },
         bottomBar = {
             val bottomBarModel = when (model) {
@@ -114,7 +91,8 @@ fun AdditionTimerScreen(
             BottomBar(
                 actionListener::startTimerButtonClick,
                 actionListener::onSubButtonClick,
-                bottomBarModel
+                bottomBarModel,
+                buttonTime
             )
         },
         content = { paddingValues ->
@@ -129,15 +107,40 @@ fun AdditionTimerScreen(
                     ScheduleContent(
                         modifier = Modifier.padding(paddingValues),
                         model = model,
+                        highlightedTime = highlightedTime,
                         actionListener = actionListener,
                     )
                 }
             }
         }
     )
+}
 
-    if (showRequestPermissionDialog) {
-        NotificationPermissionDialog(onPermissionResult = actionListener::onPermissionResult)
+@Composable
+private fun TopBar(
+    modifier: Modifier = Modifier,
+    actionListener: AdditionTimerScreenActionListener,
+) {
+    Column(modifier) {
+        Row(
+            modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Hops Boiling Timer", // TODO - put in strings.xml
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Icon(
+                modifier = Modifier
+                    .clickable { actionListener.onThemeIconClick() }
+                    .padding(5.dp),
+                imageVector = Icons.Filled.InvertColors,
+                contentDescription = null
+            )
+        }
+        Divider()
     }
 }
 
@@ -177,6 +180,7 @@ private fun ScheduleContent(
     modifier: Modifier = Modifier,
     model: AdditionTimerScreenModel.Schedule,
     actionListener: AdditionTimerScreenActionListener,
+    highlightedTime: () -> String?,
 ) {
     LazyColumn(
         modifier = modifier
@@ -188,7 +192,10 @@ private fun ScheduleContent(
             ) { rowModel ->
                 AlertNextRow(
                     modifier = Modifier.animateItemPlacement(),
-                    model = rowModel,
+                    title = rowModel.title,
+                    time = rowModel.time,
+                    highlighted = rowModel.highlighted,
+                    highlightedTime = highlightedTime,
                 )
             }
 
@@ -324,28 +331,46 @@ fun AdditionRow(
 @Composable
 fun AlertNextRow(
     modifier: Modifier = Modifier,
-    model: AlertRowModel.Next,
+    title: String,
+    time: String,
+    highlighted: Boolean,
+    highlightedTime: () -> String?,
 ) {
     Row(
         // TODO - setup dimension in theme
         modifier = modifier.padding(horizontal = 15.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val fontWeight = if (model.highlighted) FontWeight.Bold else null
+        val fontWeight = if (highlighted) FontWeight.Bold else null
 
         Text(
             modifier = Modifier.weight(1f),
-            text = model.title,
+            text = title,
             fontWeight = fontWeight,
             style = LocalAppTypography.current.body2
         )
+
         Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = model.time,
+
+        TimeText(
+            text = time,
             fontWeight = fontWeight,
-            style = LocalAppTypography.current.body2
+            highlightedTime = if (highlighted) highlightedTime else ({ null })
         )
     }
+}
+
+@Composable
+private fun TimeText(
+    text: String,
+    fontWeight: FontWeight?,
+    highlightedTime: () -> String?,
+) {
+    Text(
+        text = highlightedTime() ?: text,
+        fontWeight = fontWeight,
+        style = LocalAppTypography.current.body2
+    )
 }
 
 @Composable
@@ -416,6 +441,7 @@ private fun BottomBar(
     startTimerButtonClick: () -> Unit,
     onSubButtonClick: () -> Unit,
     model: BottomBarModel,
+    buttonTime: () -> String?,
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
@@ -427,7 +453,8 @@ private fun BottomBar(
                 .height(50.dp)
                 .fillMaxWidth(),
             onClick = startTimerButtonClick,
-            model = model.timeButton
+            model = model.timeButton,
+            time = buttonTime,
         )
     }
 }
@@ -458,16 +485,11 @@ fun DefaultPreview() {
                     ),
                 )
             ),
-            showRequestPermissionDialog = false,
             actionListener = object : AdditionTimerScreenActionListener {
 
-                override fun newAdditionHopsTextChanged(text: String) {
+                override fun newAdditionHopsTextChanged(text: String) {}
 
-                }
-
-                override fun newAdditionDurationTextChanged(text: String) {
-
-                }
+                override fun newAdditionDurationTextChanged(text: String) {}
 
                 override fun addAdditionClick() {}
                 override fun onAdditionRowOptionClick(
@@ -476,19 +498,16 @@ fun DefaultPreview() {
                 }
 
                 override fun onAlertRowCheckChanged(checked: Boolean, alertId: String) {}
-                override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {}
-                override fun startTimerButtonClick() {
+                override fun onThemeIconClick() {}
+                override fun startTimerButtonClick() {}
 
-                }
+                override fun onSubButtonClick() {}
 
-                override fun onSubButtonClick() {
+                override fun onPermissionResult(granted: Boolean) {}
 
-                }
-
-                override fun onPermissionResult(granted: Boolean) {
-
-                }
-
-            })
+            },
+            buttonTime = { null },
+            highlightedTime = { null }
+        )
     }
 }

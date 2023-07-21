@@ -10,9 +10,11 @@ import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOption
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.TimerTextUpdateModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimerScreenActionListener
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
@@ -24,6 +26,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.SubscribePreference
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -41,6 +44,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
+    private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
     private val updateAdditionAlert: UpdateAdditionAlert,
     private val patchPreferences: PatchPreferences,
     private val subscribePreferences: SubscribePreferences,
@@ -55,27 +59,29 @@ class AdditionTimerViewModel @AssistedInject constructor(
     )
     val screenModel: StateFlow<AdditionTimerScreenModel> = _screenModel
 
+    private val _timerTextUpdate = MutableStateFlow(TimerTextUpdateModel())
+    val timerTextUpdate: StateFlow<TimerTextUpdateModel> = _timerTextUpdate
+
     private val _showRequestPermissionDialog = MutableStateFlow(false)
     val showRequestPermissionDialog: StateFlow<Boolean> = _showRequestPermissionDialog
 
     private var darkMode: Boolean? = null
 
     private var currentSchedule: AdditionSchedule? = null
+    private var highlightedAlert: AdditionAlert? = null
 
-    private val newAdditionRow get() = when (val model = screenModel.value) {
-        is AdditionTimerScreenModel.Edit -> model.newAdditionRow
-        is AdditionTimerScreenModel.Schedule -> null
-    }
+    private val newAdditionRow
+        get() = when (val model = screenModel.value) {
+            is AdditionTimerScreenModel.Edit -> model.newAdditionRow
+            is AdditionTimerScreenModel.Schedule -> null
+        }
 
     init {
         viewModelScope.launch {
             subscribeAdditionSchedule.execute().collect { schedule ->
                 currentSchedule = schedule
                 when (schedule) {
-                    null -> {
-                        clockService.reset()
-                    }
-
+                    null -> clockService.reset()
                     else -> clockService.start()
                 }
                 updateScreenModel()
@@ -83,8 +89,17 @@ class AdditionTimerViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
+            subscribeNextAdditionAlert.execute().collect { additionAlert ->
+                highlightedAlert = additionAlert
+                if (additionAlert != null) {
+                    updateScreenModel()
+                }
+            }
+        }
+
+        viewModelScope.launch {
             clockService.getTickFlow().collect { tick ->
-                updateScreenModel()
+                onClockTick()
             }
         }
 
@@ -93,6 +108,17 @@ class AdditionTimerViewModel @AssistedInject constructor(
                 darkMode = preferences.darkMode
             }
         }
+    }
+
+    private suspend fun onClockTick() {
+        _timerTextUpdate.value = TimerTextUpdateModel(
+            buttonTimer = currentSchedule?.let { schedule ->
+                additionTimerScreenModelFactory.getButtonTime(schedule)
+            },
+            highlightRowTimer = highlightedAlert?.let { alert ->
+                additionTimerScreenModelFactory.getHighlightedTimeText(alert)
+            }
+        )
     }
 
     private suspend fun updateScreenModel() {
@@ -115,6 +141,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
                     duration = newAddition.duration
                 )
             }
+
             is AdditionTimerScreenModel.Schedule -> {
                 // No-op, cannot add while schedule ... not yet
             }
@@ -144,6 +171,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
                         )
                     )
                 }
+
                 is AdditionTimerScreenModel.Schedule -> {
                     // No-op, no new addition in schedule mode
                     model
@@ -164,6 +192,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
                             is AdditionTimerScreenModel.Edit -> {
                                 model.copy(newAdditionRow = NewAdditionModel())
                             }
+
                             is AdditionTimerScreenModel.Schedule -> {
                                 // No-op
                                 model
@@ -175,7 +204,11 @@ class AdditionTimerViewModel @AssistedInject constructor(
             }
         }
     }
-    override fun onAdditionRowOptionClick(rowModel: AdditionRowModel, optionType: AdditionOptionType) {
+
+    override fun onAdditionRowOptionClick(
+        rowModel: AdditionRowModel,
+        optionType: AdditionOptionType
+    ) {
         viewModelScope.launch {
             when (optionType) {
                 AdditionOptionType.Delete -> deleteAddition(rowModel)
@@ -193,7 +226,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
         }
     }
 
-    override fun onThemeIconClick(isSystemInDarkTheme: Boolean) {
+    override fun onThemeIconClick() {
         viewModelScope.launch {
             patchPreferences.execute(
                 params = PatchPreferencesParams(
@@ -220,6 +253,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
                     }
                     startAdditionSchedule.execute(ScheduleOptions())
                 }
+
                 else -> stopAdditionSchedule.execute()
             }
 

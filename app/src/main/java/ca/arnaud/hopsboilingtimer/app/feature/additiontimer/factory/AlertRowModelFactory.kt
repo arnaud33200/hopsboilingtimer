@@ -19,8 +19,7 @@ class AlertRowModelFactory @Inject constructor(
         alert: AdditionAlert,
         currentAlert: AdditionAlert?,
     ): AlertRowModel {
-        val nowTime = timeProvider.getNowLocalDateTime()
-        val remainingDuration = Duration.between(nowTime, alert.triggerAtTime)
+        val remainingDuration = getRemainingDuration(alert)
         val highlighted = alert == currentAlert
 
         return when {
@@ -38,11 +37,25 @@ class AlertRowModelFactory @Inject constructor(
             id = alert.id,
             title = getTitle(alert),
             time = when {
-                highlighted -> "In ${remainingTimeTextFormatter.format(remainingDuration)}"
+                highlighted -> getHighlightedTimeText(remainingDuration)
                 else -> "At ${timeHoursTextFormatter.format(alert.triggerAtTime)}"
             },
             highlighted = highlighted,
         )
+    }
+
+    fun getHighlightedTimeText(alert: AdditionAlert): String {
+        val remainingDuration = getRemainingDuration(alert)
+        return getHighlightedTimeText(remainingDuration)
+    }
+
+    private fun getRemainingDuration(alert: AdditionAlert): Duration {
+        val nowTime = timeProvider.getNowLocalDateTime()
+        return Duration.between(nowTime, alert.triggerAtTime)
+    }
+
+    private fun getHighlightedTimeText(remainingDuration: Duration): String {
+        return "In ${remainingTimeTextFormatter.format(remainingDuration)}"
     }
 
     private fun createAdded(alert: AdditionAlert): AlertRowModel.Added {
