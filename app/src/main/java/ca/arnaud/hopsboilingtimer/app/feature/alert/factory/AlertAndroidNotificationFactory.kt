@@ -19,25 +19,23 @@ class AlertAndroidNotificationFactory @Inject constructor(
 ) {
 
     companion object {
-        private const val CHANNEL_ID = "CHANNEL_ID"
         private const val CONTENT_INTENT_REQUEST_CODE = 3750
     }
 
-    fun createChannel(): NotificationChannel {
+    fun createChannel(channelId: String): NotificationChannel {
         val name = stringProvider.get(R.string.notification_channel_name)
-        val descriptionText = stringProvider.get(R.string.notification_channel_description)
         val importance = NotificationManager.IMPORTANCE_HIGH
 
-        return NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
+        return NotificationChannel(channelId, name, importance).apply {
+            description = stringProvider.get(R.string.notification_channel_description)
         }
     }
 
-    fun createNotification(model: AdditionAlertNotificationModel, context: Context): Notification {
+    fun createNotification(model: AdditionAlertNotificationModel, channelId: String, context: Context): Notification {
         val notificationLayout = AdditionAlertNotificationView(context.applicationContext).apply {
             bind(model = model, context = context)
         }
-        return NotificationCompat.Builder(context, CHANNEL_ID).apply {
+        return NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.ic_notification_badge)
             setContentTitle(stringProvider.get(R.string.notification_title))
             setCustomContentView(notificationLayout)
