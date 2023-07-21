@@ -1,8 +1,10 @@
 package ca.arnaud.hopsboilingtimer.app.di
 
 import android.app.Application
+import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
 import ca.arnaud.hopsboilingtimer.app.executor.JobExecutorProviderImpl
 import ca.arnaud.hopsboilingtimer.app.provider.TimeProviderImpl
@@ -34,8 +36,16 @@ abstract class AppModule {
 
         @Provides
         @Singleton
-        fun provideNotificationManager(context: Context) : NotificationManagerCompat {
+        fun provideNotificationManagerCompat(context: Context) : NotificationManagerCompat {
             return NotificationManagerCompat.from(context)
+        }
+
+        @Provides
+        @Singleton
+        fun provideNotificationManager(context: Context) : NotificationManager {
+            return ContextCompat.getSystemService(
+                context, NotificationManager::class.java
+            ) as NotificationManager
         }
     }
 
