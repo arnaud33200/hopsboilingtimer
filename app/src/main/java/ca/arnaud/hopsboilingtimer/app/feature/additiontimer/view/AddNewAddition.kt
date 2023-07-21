@@ -45,6 +45,10 @@ fun AddNewAddition(
             horizontalArrangement = Arrangement.Center
         ) {
             val focusRequester = remember { FocusRequester() }
+            val buttonAction = {
+                addAdditionClick()
+                focusRequester.requestFocus()
+            }
 
             TitleTextField(
                 modifier = Modifier
@@ -61,10 +65,7 @@ fun AddNewAddition(
                 duration = duration,
                 onValueChange = newAdditionDurationTextChanged,
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        addAdditionClick()
-                        focusRequester.requestFocus()
-                    }
+                    onDone = { buttonAction() }
                 )
             )
 
@@ -73,7 +74,7 @@ fun AddNewAddition(
             Button(
                 modifier = Modifier
                     .height(40.dp),
-                onClick = addAdditionClick,
+                onClick = buttonAction,
                 enabled = buttonEnabled(),
             ) {
                 Icon(
