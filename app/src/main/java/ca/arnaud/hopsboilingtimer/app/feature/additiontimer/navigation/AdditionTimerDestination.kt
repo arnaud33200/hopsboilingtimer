@@ -27,11 +27,13 @@ fun NavGraphBuilder.addAdditionTimerDestination(
 private fun AdditionTimerDestination(viewModel: AdditionTimerViewModel) {
     val model by viewModel.screenModel.collectAsState()
     val timerTextUpdate by viewModel.timerTextUpdate.collectAsState()
+    val newAddition by viewModel.newAddition.collectAsState()
     val showRequestPermissionDialog by viewModel.showRequestPermissionDialog.collectAsState()
 
     AdditionTimerScreen(
         model = model,
         timerTextUpdate = { timerTextUpdate },
+        newAddition = { newAddition },
         actionListener = viewModel,
     )
 

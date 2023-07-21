@@ -3,7 +3,6 @@ package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
-import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
@@ -27,14 +26,12 @@ class AdditionTimerScreenModelFactory @Inject constructor(
     fun create(
         additions: List<Addition>,
         schedule: AdditionSchedule?,
-        newAdditionModel: NewAdditionModel = NewAdditionModel(),
     ): AdditionTimerScreenModel {
         val bottomBarModel = createBottomModel(schedule, additions)
 
         return when (schedule) {
             null -> AdditionTimerScreenModel.Edit(
                 additionRows = additions.map { additionRowModelFactory.create(it) },
-                newAdditionRow = newAdditionModel,
                 bottomBarModel = bottomBarModel
             )
 

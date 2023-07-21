@@ -47,6 +47,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.NewAdditionModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.TimerTextUpdateModel
+import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.view.AddNewAddition
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
@@ -78,6 +79,7 @@ fun AdditionTimerScreen(
     model: AdditionTimerScreenModel,
     actionListener: AdditionTimerScreenActionListener,
     timerTextUpdate: () -> TimerTextUpdateModel,
+    newAddition: () -> NewAdditionModel,
 ) {
     Scaffold(
         topBar = {
@@ -100,6 +102,7 @@ fun AdditionTimerScreen(
                 is AdditionTimerScreenModel.Edit -> EditContent(
                     modifier = Modifier.padding(paddingValues),
                     model = model,
+                    newAddition = newAddition,
                     actionListener = actionListener,
                 )
 
@@ -107,7 +110,7 @@ fun AdditionTimerScreen(
                     ScheduleContent(
                         modifier = Modifier.padding(paddingValues),
                         model = model,
-                        highlightedTime = { timerTextUpdate().highlightRowTimer } ,
+                        highlightedTime = { timerTextUpdate().highlightRowTimer },
                         actionListener = actionListener,
                     )
                 }
@@ -149,6 +152,7 @@ private fun EditContent(
     modifier: Modifier = Modifier,
     model: AdditionTimerScreenModel.Edit,
     actionListener: AdditionTimerScreenActionListener,
+    newAddition: () -> NewAdditionModel,
 ) {
     Column(
         modifier = modifier
@@ -166,12 +170,13 @@ private fun EditContent(
                 TitleRow(text = "New Addition")
             }
             AddNewAddition(
-                actionListener::newAdditionHopsTextChanged,
-                actionListener::newAdditionDurationTextChanged,
-                actionListener::addAdditionClick,
-                model.newAdditionRow
+                newAdditionHopsTextChanged = actionListener::newAdditionHopsTextChanged,
+                newAdditionDurationTextChanged = actionListener::newAdditionDurationTextChanged,
+                addAdditionClick = actionListener::addAdditionClick,
+                title = { newAddition().title },
+                duration = { newAddition().duration },
+                buttonEnabled = { newAddition().buttonEnabled },
             )
-
         })
 }
 
@@ -229,70 +234,6 @@ private fun TitleRow(
             text = text,
             style = LocalAppTypography.current.h2
         )
-    }
-}
-
-@Composable
-fun AddNewAddition(
-    newAdditionHopsTextChanged: (String) -> Unit,
-    newAdditionDurationTextChanged: (String) -> Unit,
-    addAdditionClick: () -> Unit,
-    model: NewAdditionModel,
-) {
-    Column(
-        Modifier.padding(horizontal = AdditionTimerScreenConfig.contentPadding, vertical = 10.dp),
-    ) {
-        Row(
-            // TODO - setup dimension in theme
-            modifier = Modifier.padding(vertical = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            val focusRequester = remember { FocusRequester() }
-            TransparentTextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .focusRequester(focusRequester),
-                value = model.title,
-                label = { Text("Hops") },
-                singleLine = true,
-                onValueChange = newAdditionHopsTextChanged,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
-                )
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            TransparentTextField(
-                modifier = Modifier.width(80.dp),
-                value = model.duration,
-                label = { Text("Min") },
-                singleLine = true,
-                onValueChange = newAdditionDurationTextChanged,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        addAdditionClick()
-                        focusRequester.requestFocus()
-                    }
-                )
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Button(
-                modifier = Modifier
-                    .height(40.dp),
-                onClick = addAdditionClick,
-                enabled = model.buttonEnabled
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = ""
-                )
-            }
-        }
     }
 }
 
@@ -471,11 +412,6 @@ fun DefaultPreview() {
                     AdditionRowModel("", "Saaz", "5"),
                     AdditionRowModel("", "El Dorado", "10"),
                 ),
-                newAdditionRow = NewAdditionModel(
-                    title = "new addition",
-                    duration = "30",
-                    buttonEnabled = true
-                ),
                 bottomBarModel = BottomBarModel(
                     timeButton = TimeButtonModel(
                         title = "Start Timer",
@@ -507,6 +443,7 @@ fun DefaultPreview() {
 
             },
             timerTextUpdate = { TimerTextUpdateModel() },
+            newAddition = { NewAdditionModel() }
         )
     }
 }

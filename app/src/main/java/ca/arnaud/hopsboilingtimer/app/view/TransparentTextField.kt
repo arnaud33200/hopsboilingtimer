@@ -20,7 +20,7 @@ import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 
 @Composable
 fun TransparentTextField(
-    value: String,
+    value: () -> String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -43,7 +43,7 @@ fun TransparentTextField(
     )
 ) {
     TextField(
-        value = value,
+        value = value(),
         onValueChange = onValueChange,
         modifier = modifier,
         enabled = enabled,
@@ -75,7 +75,7 @@ fun TransparentTextField(
 fun TransparentTextFieldPreview() {
     HopsAppTheme {
         TransparentTextField(
-            value = "this is a textFied",
+            value = { "this is a textFied" },
             onValueChange = {}
         )
     }
