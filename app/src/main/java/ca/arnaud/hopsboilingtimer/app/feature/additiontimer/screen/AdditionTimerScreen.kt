@@ -88,16 +88,18 @@ fun AdditionTimerScreen(
             TopBar(actionListener = actionListener)
         },
         bottomBar = {
-            val bottomBarModel = when (model) {
+            when (model) {
                 is AdditionTimerScreenModel.Edit -> model.bottomBarModel
                 is AdditionTimerScreenModel.Schedule -> model.bottomBarModel
+                AdditionTimerScreenModel.Loading -> null
+            }?.let { bottomBarModel ->
+                BottomBar(
+                    actionListener::startTimerButtonClick,
+                    actionListener::onSubButtonClick,
+                    bottomBarModel,
+                    buttonTime = { timerTextUpdate().buttonTimer }
+                )
             }
-            BottomBar(
-                actionListener::startTimerButtonClick,
-                actionListener::onSubButtonClick,
-                bottomBarModel,
-                buttonTime = { timerTextUpdate().buttonTimer }
-            )
         },
         content = { paddingValues ->
             when (model) {
@@ -115,6 +117,10 @@ fun AdditionTimerScreen(
                         highlightedTime = { timerTextUpdate().highlightRowTimer },
                         actionListener = actionListener,
                     )
+                }
+
+                AdditionTimerScreenModel.Loading -> {
+                    // TODO - setup a loading content
                 }
             }
         }

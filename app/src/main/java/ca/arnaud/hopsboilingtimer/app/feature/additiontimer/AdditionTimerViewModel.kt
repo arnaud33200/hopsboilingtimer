@@ -55,7 +55,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
 ) : ViewModel(), AdditionTimerScreenActionListener {
 
     private val _screenModel = MutableStateFlow<AdditionTimerScreenModel>(
-        AdditionTimerScreenModel.Edit()
+        AdditionTimerScreenModel.Loading
     )
     val screenModel: StateFlow<AdditionTimerScreenModel> = _screenModel
 
@@ -76,19 +76,14 @@ class AdditionTimerViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             subscribeAdditionSchedule.execute().collect { schedule ->
-                currentSchedule = schedule
-                when (schedule) {
-                    null -> clockService.reset()
-                    else -> clockService.start()
-                }
-                updateScreenModel()
+                onScheduleUpdated(schedule)
             }
         }
 
         viewModelScope.launch {
             subscribeNextAdditionAlert.execute().collect { additionAlert ->
-                highlightedAlert = additionAlert
-                if (additionAlert != null) {
+                if (additionAlert != null && highlightedAlert != additionAlert) {
+                    highlightedAlert = additionAlert
                     updateScreenModel()
                 }
             }
@@ -125,6 +120,42 @@ class AdditionTimerViewModel @AssistedInject constructor(
             additions, currentSchedule,
         )
     }
+
+    // region Schedule
+
+    private suspend fun onScheduleUpdated(schedule: AdditionSchedule?) {
+        if (schedule == currentSchedule && screenModel.value !is AdditionTimerScreenModel.Loading) {
+            return
+        }
+        currentSchedule = schedule
+        when (schedule) {
+            null -> clockService.reset()
+            else -> clockService.start()
+        }
+        updateScreenModel()
+    }
+
+    private suspend fun startSchedule() {
+        if (!permissionService.hasNotificationPermission()) {
+            showPermissionDialog()
+            return
+        }
+
+        if (!permissionService.willNotificationBeVisible()) {
+            // TODO - show warning, either a toast or a message at the bottom bar
+        }
+
+        startAdditionSchedule.execute(ScheduleOptions())
+    }
+
+    private suspend fun stopSchedule() {
+        // TODO - instead of calling onScheduleUpdated, better to have a "Stopping" state
+        //  show a loader on the button and stop the timer
+        onScheduleUpdated(null)
+        stopAdditionSchedule.execute()
+    }
+
+    // endregion
 
     // region new addition action
 
@@ -207,17 +238,9 @@ class AdditionTimerViewModel @AssistedInject constructor(
     override fun startTimerButtonClick() {
         viewModelScope.launch {
             when (subscribeAdditionSchedule.execute().value) {
-                null -> {
-                    if (!permissionService.hasNotificationPermission()) {
-                        showPermissionDialog()
-                        return@launch
-                    }
-                    startAdditionSchedule.execute(ScheduleOptions())
-                }
-
-                else -> stopAdditionSchedule.execute()
+                null -> startSchedule()
+                else -> stopSchedule()
             }
-
         }
     }
 

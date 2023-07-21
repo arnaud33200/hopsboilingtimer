@@ -3,6 +3,9 @@ package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 
 sealed interface AdditionTimerScreenModel {
+
+    object Loading : AdditionTimerScreenModel
+
     data class Edit(
         val additionRows: List<AdditionRowModel> = emptyList(),
         val bottomBarModel: BottomBarModel = BottomBarModel()
