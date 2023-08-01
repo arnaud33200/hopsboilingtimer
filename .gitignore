@@ -16,3 +16,5 @@
 local.properties
 /.idea/inspectionProfiles/Project_Default.xml
 /app/release/*
+/.idea/.name
+/.idea/kotlinc.xml
