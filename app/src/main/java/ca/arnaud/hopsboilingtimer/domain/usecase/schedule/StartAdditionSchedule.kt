@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
-import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions

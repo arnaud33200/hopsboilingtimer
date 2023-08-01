@@ -7,7 +7,7 @@ import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
 import ca.arnaud.hopsboilingtimer.domain.extension.getNextAlerts
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.model.getDuration
 import java.time.Duration

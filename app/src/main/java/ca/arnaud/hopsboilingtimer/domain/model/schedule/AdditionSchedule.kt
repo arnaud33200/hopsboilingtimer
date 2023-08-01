@@ -1,5 +1,6 @@
-package ca.arnaud.hopsboilingtimer.domain.model
+package ca.arnaud.hopsboilingtimer.domain.model.schedule
 
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import java.time.LocalDateTime
 
 data class AdditionSchedule(

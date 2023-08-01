@@ -15,8 +15,8 @@ import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimer
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.model.ScheduleOptions
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition

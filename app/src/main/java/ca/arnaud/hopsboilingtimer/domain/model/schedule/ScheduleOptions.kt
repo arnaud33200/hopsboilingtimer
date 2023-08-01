@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.domain.model
+package ca.arnaud.hopsboilingtimer.domain.model.schedule
 
 import java.time.Duration
 

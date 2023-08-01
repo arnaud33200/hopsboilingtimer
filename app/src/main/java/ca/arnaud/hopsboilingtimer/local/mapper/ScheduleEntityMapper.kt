@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.local.mapper
 
 import ca.arnaud.hopsboilingtimer.domain.common.DataMapper
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.local.entity.ScheduleEntity
 import javax.inject.Inject
 

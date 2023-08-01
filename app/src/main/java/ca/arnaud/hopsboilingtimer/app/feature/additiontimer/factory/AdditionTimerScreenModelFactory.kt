@@ -9,8 +9,8 @@ import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import java.time.Duration
 import javax.inject.Inject

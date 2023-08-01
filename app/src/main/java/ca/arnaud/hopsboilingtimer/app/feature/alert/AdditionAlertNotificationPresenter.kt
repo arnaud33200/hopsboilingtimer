@@ -7,7 +7,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotific
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import javax.inject.Inject
 
 class AdditionAlertNotificationPresenter @Inject constructor(

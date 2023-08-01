@@ -2,7 +2,7 @@ package ca.arnaud.hopsboilingtimer.domain.repository
 
 import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import kotlinx.coroutines.flow.StateFlow
 

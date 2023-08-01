@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.extension
 
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.isValid
 
 fun AdditionAlert.getNextAlerts(schedule: AdditionSchedule?): List<AdditionAlert> {

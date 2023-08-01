@@ -4,8 +4,8 @@ import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
 import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.common.doOnSuccess
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.model.getNextAlert
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
