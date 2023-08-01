@@ -40,6 +40,10 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
+    fun cancel() {
+        notificationManager.cancel(NOTIFICATION_ID)
+    }
+
     private fun createChannelIfNeeded() {
         val channel = notificationManager.notificationChannels.find { channel ->
             channel.id == CHANNEL_ID
