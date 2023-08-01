@@ -29,10 +29,12 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         val alerts = (listOf(comingAlert) + nextAlerts)
             .filter { it !is AdditionAlert.Start }
             .filterIndexed { index, _ -> index <= 1 }
+        val dismissible = alerts.filterNot { it is AdditionAlert.End }.isEmpty()
         return AdditionAlertNotificationModel(
             rows = alerts.map { baseAlertData ->
                 createRow(baseAlertData, getRowType(baseAlertData, alerts))
-            }
+            },
+            dismissible = dismissible,
         )
     }
 
@@ -73,7 +75,7 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
                 }
 
                 RowType.Now -> ""
-            }
+            },
         )
     }
 

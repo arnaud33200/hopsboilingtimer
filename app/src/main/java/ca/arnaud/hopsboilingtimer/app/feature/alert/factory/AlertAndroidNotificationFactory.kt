@@ -40,6 +40,7 @@ class AlertAndroidNotificationFactory @Inject constructor(
             setContentTitle(stringProvider.get(R.string.notification_title))
             setCustomContentView(notificationLayout)
             setContentIntent(getContentIntent(context))
+            setOngoing(!model.dismissible)
             // setStyle(NotificationCompat.DecoratedCustomViewStyle()) // put back if need the classic notification style
             // setCustomBigContentView(notificationLayoutExpanded) // use if we need a separate bigger style
         }.build()
