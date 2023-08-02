@@ -31,6 +31,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionA
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -83,29 +84,13 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            subscribeAdditionSchedule.execute().collect { status ->
-                onScheduleUpdated(status)
-            }
-        }
+            val scheduleFlow = subscribeAdditionSchedule.execute()
+            val nextAlertFlow = subscribeNextAdditionAlert.execute()
 
-        viewModelScope.launch {
-            subscribeNextAdditionAlert.execute().collect { additionAlert ->
-                if (additionAlert != null) {
-                    updateScreenModel()
-                }
-            }
-        }
 
-        viewModelScope.launch {
-            combine(
-                clockService.getTickFlow(),
-                subscribeAdditionSchedule.execute(),
-                subscribeNextAdditionAlert.execute()
-            ) { tick, status, nextAddition ->
-                AdditionClockEvent(status, nextAddition)
-            }.collect { event ->
-                onClockTick(event)
-            }
+            subscribeSchedule(scheduleFlow)
+            subscribeNextAlert(nextAlertFlow)
+            subscribeClockService(scheduleFlow, nextAlertFlow)
         }
 
         // TODO - to remove, handled in MainViewModel
@@ -132,6 +117,45 @@ class AdditionTimerViewModel @AssistedInject constructor(
             additions, currentSchedule,
         )
     }
+
+    // region Subscription
+
+    private fun subscribeSchedule(scheduleFlow: Flow<ScheduleStatus>) {
+        viewModelScope.launch {
+            scheduleFlow.collect { status ->
+                onScheduleUpdated(status)
+            }
+        }
+    }
+
+    private fun subscribeNextAlert(nextAlertFlow: Flow<AdditionAlert?>) {
+        viewModelScope.launch {
+            nextAlertFlow.collect { additionAlert ->
+                if (additionAlert != null) {
+                    updateScreenModel()
+                }
+            }
+        }
+    }
+
+    private fun subscribeClockService(
+        scheduleFlow: Flow<ScheduleStatus>,
+        nextAlertFlow: Flow<AdditionAlert?>,
+    ) {
+        viewModelScope.launch {
+            combine(
+                clockService.getTickFlow(),
+                scheduleFlow,
+                nextAlertFlow
+            ) { tick, status, nextAddition ->
+                AdditionClockEvent(status, nextAddition)
+            }.collect { event ->
+                onClockTick(event)
+            }
+        }
+    }
+
+    // endregion
 
     // region Schedule
 
