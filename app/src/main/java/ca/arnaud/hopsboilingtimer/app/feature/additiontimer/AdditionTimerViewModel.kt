@@ -105,7 +105,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun onClockTick() {
+    private fun onClockTick() {
         _timerTextUpdate.value = TimerTextUpdateModel(
             buttonTimer = currentSchedule?.let { schedule ->
                 additionTimerScreenModelFactory.getButtonTime(schedule)
@@ -135,7 +135,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
         when (status) {
             is ScheduleStatus.Started -> clockService.start()
             ScheduleStatus.Canceled,
-            ScheduleStatus.Stopped -> clockService.reset()
+            ScheduleStatus.Stopped -> {
+                clockService.reset()
+                _timerTextUpdate.value = TimerTextUpdateModel()
+            }
         }
         updateScreenModel()
     }
