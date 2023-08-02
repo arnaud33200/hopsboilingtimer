@@ -7,9 +7,9 @@ import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
 import ca.arnaud.hopsboilingtimer.domain.extension.getNextAlerts
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.model.getDuration
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import java.time.Duration
 import javax.inject.Inject
 
@@ -19,14 +19,13 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
 ) {
 
     fun create(
-        alert: AdditionAlertData,
+        currentAlertData: AdditionAlertData,
         schedule: AdditionSchedule
     ): AdditionAlertNotificationModel {
-        val comingAlert = schedule.alerts.find { it.id == alert.id }
+        val currentAlert = schedule.alerts.find { it.id == currentAlertData.id }
             ?: return AdditionAlertNotificationModel()
 
-        val nextAlerts = comingAlert.getNextAlerts(schedule)
-        val alerts = (listOf(comingAlert) + nextAlerts)
+        val alerts = currentAlert.getNextAlerts(schedule)
             .filter { it !is AdditionAlert.Start }
             .filterIndexed { index, _ -> index <= 1 }
         val dismissible = alerts.filterNot { it is AdditionAlert.End }.isEmpty()
@@ -56,6 +55,7 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
 
     private fun createRow(alert: AdditionAlert, type: RowType): AlertNotificationRowModel {
         return AlertNotificationRowModel(
+            id = alert.id,
             type = when (type) {
                 // TODO - hardcoded string
                 RowType.Next -> "Next"
