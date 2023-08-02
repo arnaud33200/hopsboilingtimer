@@ -17,23 +17,38 @@ class OnAdditionAlertReceived @Inject constructor(
     )
 
     override suspend fun buildRequest(params: Params) {
-        val alert = scheduleRepository.getAdditionSchedule()?.alerts?.find {
-            it.id == params.alertId
-        }
-        when (alert) {
+        val alerts = scheduleRepository.getAdditionSchedule()?.alerts ?: emptyList()
+        when (
+            val receivedAlert = alerts.find { alert -> alert.id == params.alertId }
+        ) {
             is AdditionAlert.Start,
-            is AdditionAlert.Next,
-            -> {
-                // TODO - get the next event and pass it
-                scheduleRepository.refreshAdditionSchedule()
+            is AdditionAlert.Next -> {
+                val nextAlertIndex = alerts.indexOf(receivedAlert) + 1
+                val nextAlert = alerts.getOrNull(nextAlertIndex)
+                setNextAlert(nextAlert)
             }
+
             is AdditionAlert.End -> {
                 scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Stopped)
             }
+
             null -> {
                 // No-op
             }
         }
+    }
 
+    private suspend fun setNextAlert(nextAlert: AdditionAlert?) {
+        when (nextAlert) {
+            null -> {
+                scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Stopped)
+            }
+
+            is AdditionAlert.End,
+            is AdditionAlert.Next,
+            is AdditionAlert.Start -> {
+                scheduleRepository.setNextAlert(nextAlert)
+            }
+        }
     }
 }

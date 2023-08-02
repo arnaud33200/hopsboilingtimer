@@ -14,8 +14,8 @@ interface ScheduleRepository {
     suspend fun getScheduleFlow(): Flow<ScheduleStatus>
 
     suspend fun setAdditionScheduleStatus(status: ScheduleStatus)
-    
-    suspend fun refreshAdditionSchedule()
+
+    suspend fun setNextAlert(nextAlert: AdditionAlert)
     suspend fun getAdditionSchedule(): AdditionSchedule?
 
     suspend fun updateAdditionAlert(newAlert: AdditionAlert): Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException>
