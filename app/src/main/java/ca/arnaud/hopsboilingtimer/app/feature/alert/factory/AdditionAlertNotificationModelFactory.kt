@@ -28,12 +28,24 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         val alerts = currentAlert.getNextAlerts(schedule)
             .filter { it !is AdditionAlert.Start }
             .filterIndexed { index, _ -> index <= 1 }
-        val dismissible = alerts.filterNot { it is AdditionAlert.End }.isEmpty()
+        val dismissible = false
         return AdditionAlertNotificationModel(
             rows = alerts.map { baseAlertData ->
                 createRow(baseAlertData, getRowType(baseAlertData, alerts))
             },
             dismissible = dismissible,
+        )
+    }
+
+    fun createEnd(): AdditionAlertNotificationModel {
+        return AdditionAlertNotificationModel(
+            rows = listOf(
+                AlertNotificationRowModel(
+                    type = RowType.Now.toTypeText(),
+                    title = "Stop boiling!"
+                )
+            ),
+            dismissible = true,
         )
     }
 
@@ -53,15 +65,19 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         Next, After, Now
     }
 
+    private fun RowType.toTypeText(): String {
+        return when (this) {
+            // TODO - hardcoded string
+            RowType.Next -> "Next"
+            RowType.After -> "After"
+            RowType.Now -> "Now"
+        }
+    }
+
     private fun createRow(alert: AdditionAlert, type: RowType): AlertNotificationRowModel {
         return AlertNotificationRowModel(
             id = alert.id,
-            type = when (type) {
-                // TODO - hardcoded string
-                RowType.Next -> "Next"
-                RowType.After -> "After"
-                RowType.Now -> "Now"
-            },
+            type = type.toTypeText(),
             title = when (alert) {
                 is AdditionAlert.Start -> createStartMessage(alert)
                 is AdditionAlert.Next -> createNextMessage(alert)

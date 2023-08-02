@@ -6,11 +6,13 @@ import androidx.core.app.NotificationManagerCompat
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import javax.inject.Inject
 
 class AdditionAlertNotificationPresenter @Inject constructor(
+    private val context: Context,
     private val notificationManager: NotificationManagerCompat,
     private val alertAndroidNotificationFactory: AlertAndroidNotificationFactory,
     private val permissionService: PermissionService,
@@ -22,26 +24,42 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         private const val NOTIFICATION_ID = 12345
     }
 
-    @SuppressLint("MissingPermission") // Already check in permission service
     fun show(
         additionAlert: AdditionAlertData,
         schedule: AdditionSchedule?,
-        context: Context
+        context: Context,
     ) {
-        if (schedule == null || !permissionService.hasNotificationPermission()) {
+        if (schedule == null) {
             return
         }
 
         val model = additionAlertNotificationModelFactory.create(additionAlert, schedule)
+        showNotification(model, context)
+    }
+
+    fun showEnd() {
+        val model = additionAlertNotificationModelFactory.createEnd()
+        showNotification(model, context)
+    }
+
+    fun cancel() {
+        notificationManager.cancel(NOTIFICATION_ID)
+    }
+
+    @SuppressLint("MissingPermission") // Already check in permission service
+    private fun showNotification(
+        model: AdditionAlertNotificationModel,
+        context: Context,
+    ) {
+        if (!permissionService.hasNotificationPermission()) {
+            return
+        }
+
         val notification = alertAndroidNotificationFactory.createNotification(
             model, CHANNEL_ID, context
         )
         createChannelIfNeeded()
         notificationManager.notify(NOTIFICATION_ID, notification)
-    }
-
-    fun cancel() {
-        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     private fun createChannelIfNeeded() {

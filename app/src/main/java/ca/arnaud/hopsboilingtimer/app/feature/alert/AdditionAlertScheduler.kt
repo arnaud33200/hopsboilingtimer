@@ -8,7 +8,6 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDa
 import ca.arnaud.hopsboilingtimer.app.feature.alert.worker.AdditionNotificationWorker
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch
@@ -25,31 +24,36 @@ class AdditionAlertScheduler @Inject constructor(
     private val additionAlertWorkerDataMapper: AdditionAlertWorkerDataMapper,
     private val additionAlertDataFactory: AdditionAlertDataFactory,
 ) {
+    private var currentSchedule: ScheduleStatus? = null
 
     init {
         coroutineScopeProvider.scope.launch {
             subscribeNextAdditionAlert.execute().collect { alert ->
-                if (alert != null) {
-                    schedule(alert)
-                }
+                schedule(alert)
             }
         }
         coroutineScopeProvider.scope.launch {
             subscribeAdditionSchedule.execute().collect { status ->
-                when (status) {
-                    is ScheduleStatus.Started -> {} // No-op
-                    ScheduleStatus.Stopped -> {
-                        cancelAlarm()
-                        // TODO - show stop boiling notification
-                    }
-                    ScheduleStatus.Iddle,
-                    ScheduleStatus.Canceled -> cancelAlarm()
-                }
-                if (status.getSchedule() == null) {
+                onScheduleStatusUpdate(status)
+            }
+        }
+    }
+
+    private fun onScheduleStatusUpdate(status: ScheduleStatus) {
+        when (status) {
+            is ScheduleStatus.Started -> {} // No-op
+            ScheduleStatus.Stopped -> {
+                if (currentSchedule is ScheduleStatus.Started) {
+                    additionAlertNotificationPresenter.showEnd()
+                } else {
                     cancelAlarm()
                 }
             }
+
+            ScheduleStatus.Iddle,
+            ScheduleStatus.Canceled -> cancelAlarm()
         }
+        currentSchedule = status
     }
 
     private fun cancelAlarm() {
@@ -57,7 +61,11 @@ class AdditionAlertScheduler @Inject constructor(
         workManager.cancelAllWork()
     }
 
-    private fun schedule(alert: AdditionAlert) {
+    private fun schedule(alert: AdditionAlert?) {
+        if (alert == null) {
+            return
+        }
+
         val additionAlertData = additionAlertDataFactory.create(alert)
         val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
             .setInitialDelay(additionAlertData.initialDelay)
