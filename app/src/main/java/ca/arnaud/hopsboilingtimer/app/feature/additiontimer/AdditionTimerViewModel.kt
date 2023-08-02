@@ -16,6 +16,7 @@ import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
+import ca.arnaud.hopsboilingtimer.domain.model.preferences.Preferences
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
@@ -72,7 +73,6 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val _showRequestPermissionDialog = MutableStateFlow(false)
     val showRequestPermissionDialog: StateFlow<Boolean> = _showRequestPermissionDialog
 
-    private var darkMode: Boolean? = null
 
     private var scheduleStatus: ScheduleStatus? = null
     private val currentSchedule get() = scheduleStatus?.getSchedule()
@@ -87,17 +87,9 @@ class AdditionTimerViewModel @AssistedInject constructor(
             val scheduleFlow = subscribeAdditionSchedule.execute()
             val nextAlertFlow = subscribeNextAdditionAlert.execute()
 
-
             subscribeSchedule(scheduleFlow)
             subscribeNextAlert(nextAlertFlow)
             subscribeClockService(scheduleFlow, nextAlertFlow)
-        }
-
-        // TODO - to remove, handled in MainViewModel
-        viewModelScope.launch {
-            subscribePreferences.execute().collect { preferences ->
-                darkMode = preferences.darkMode
-            }
         }
     }
 
@@ -261,9 +253,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     override fun onThemeIconClick() {
         viewModelScope.launch {
+            val preferences = subscribePreferences.execute().first()
             patchPreferences.execute(
                 params = PatchPreferencesParams(
-                    darkMode = !(darkMode ?: false)
+                    darkMode = !(preferences.darkMode ?: false)
                 )
             )
         }
