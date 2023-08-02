@@ -5,12 +5,15 @@ import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.common.doOnSuccess
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
@@ -23,14 +26,19 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     private var schedule: AdditionSchedule? = null
 
-    override suspend fun getScheduleFlow(): StateFlow<AdditionSchedule?> {
+    override suspend fun getScheduleFlow(): Flow<ScheduleStatus> {
         if (scheduleStatusFlow.value == null) {
             getAdditionSchedule()
             refreshAdditionSchedule()
             scheduleStatusFlow.value = schedule
         }
 
-        return scheduleStatusFlow
+        return scheduleStatusFlow.map {  schedule ->
+            when (schedule) {
+                null -> ScheduleStatus.Stopped
+                else -> ScheduleStatus.Started(schedule)
+            }
+        }
     }
 
     override suspend fun getNextAlertFLow(): StateFlow<AdditionAlert?> {

@@ -7,6 +7,8 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertDataFact
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDataMapper
 import ca.arnaud.hopsboilingtimer.app.feature.alert.worker.AdditionNotificationWorker
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch
@@ -33,8 +35,13 @@ class AdditionAlertScheduler @Inject constructor(
             }
         }
         coroutineScopeProvider.scope.launch {
-            subscribeAdditionSchedule.execute().collect { schedule ->
-                if (schedule == null) {
+            subscribeAdditionSchedule.execute().collect { status ->
+                when (status) {
+                    ScheduleStatus.Canceled -> cancelAlarm()
+                    is ScheduleStatus.Started -> {} // No-op
+                    ScheduleStatus.Stopped -> cancelAlarm()
+                }
+                if (status.getSchedule() == null) {
                     cancelAlarm()
                 }
             }

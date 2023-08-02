@@ -15,9 +15,10 @@ import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimer
 import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
-import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -32,6 +33,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -75,8 +77,8 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            subscribeAdditionSchedule.execute().collect { schedule ->
-                onScheduleUpdated(schedule)
+            subscribeAdditionSchedule.execute().collect { status ->
+                onScheduleUpdated(status.getSchedule())
             }
         }
 
@@ -237,7 +239,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     override fun startTimerButtonClick() {
         viewModelScope.launch {
-            when (subscribeAdditionSchedule.execute().value) {
+            when (subscribeAdditionSchedule.execute().first().getSchedule()) {
                 null -> startSchedule()
                 else -> stopSchedule()
             }
