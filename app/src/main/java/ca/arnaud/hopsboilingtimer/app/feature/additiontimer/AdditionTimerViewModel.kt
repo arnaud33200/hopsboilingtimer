@@ -16,8 +16,8 @@ import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
@@ -72,13 +72,14 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     private var darkMode: Boolean? = null
 
-    private var currentSchedule: AdditionSchedule? = null
+    private var scheduleStatus: ScheduleStatus? = null
+    private val currentSchedule get() = scheduleStatus?.getSchedule()
     private var highlightedAlert: AdditionAlert? = null
 
     init {
         viewModelScope.launch {
             subscribeAdditionSchedule.execute().collect { status ->
-                onScheduleUpdated(status.getSchedule())
+                onScheduleUpdated(status)
             }
         }
 
@@ -125,14 +126,16 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     // region Schedule
 
-    private suspend fun onScheduleUpdated(schedule: AdditionSchedule?) {
-        if (schedule == currentSchedule && screenModel.value !is AdditionTimerScreenModel.Loading) {
+    private suspend fun onScheduleUpdated(status: ScheduleStatus) {
+        if (status == scheduleStatus && screenModel.value !is AdditionTimerScreenModel.Loading) {
             return
         }
-        currentSchedule = schedule
-        when (schedule) {
-            null -> clockService.reset()
-            else -> clockService.start()
+
+        scheduleStatus = status
+        when (status) {
+            is ScheduleStatus.Started -> clockService.start()
+            ScheduleStatus.Canceled,
+            ScheduleStatus.Stopped -> clockService.reset()
         }
         updateScreenModel()
     }
@@ -153,7 +156,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private suspend fun stopSchedule() {
         // TODO - instead of calling onScheduleUpdated, better to have a "Stopping" state
         //  show a loader on the button and stop the timer
-        onScheduleUpdated(null)
+        onScheduleUpdated(ScheduleStatus.Canceled)
         stopAdditionSchedule.execute()
     }
 
@@ -239,9 +242,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     override fun startTimerButtonClick() {
         viewModelScope.launch {
-            when (subscribeAdditionSchedule.execute().first().getSchedule()) {
-                null -> startSchedule()
-                else -> stopSchedule()
+            when (subscribeAdditionSchedule.execute().first()) {
+                is ScheduleStatus.Started -> stopSchedule()
+                ScheduleStatus.Canceled,
+                ScheduleStatus.Stopped -> startSchedule()
             }
         }
     }
