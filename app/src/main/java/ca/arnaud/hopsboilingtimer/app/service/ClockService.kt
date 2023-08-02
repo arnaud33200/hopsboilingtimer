@@ -1,9 +1,11 @@
 package ca.arnaud.hopsboilingtimer.app.service
 
+import android.util.Log
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
@@ -23,28 +25,30 @@ class ClockService @Inject constructor(
     private var progressDuration: Duration = Duration.ZERO
     private var clockFlow: Flow<Duration>? = null
 
-    private val tickFlow = MutableStateFlow(Duration.ZERO)
+    private val tickFlow = MutableSharedFlow<Duration>()
+    private var currentJob: Job? = null
 
     fun getTickFlow(): Flow<Duration> {
         return tickFlow
     }
 
     fun start() {
-        coroutineScopeProvider.scope.launch {
+        currentJob = coroutineScopeProvider.scope.launch {
             if (clockFlow != null) {
                 return@launch
             }
-            clockFlow = flow<Duration> {
+            clockFlow = flow {
                 delay(duration = initialDelay)
                 progressDuration += initialDelay
                 while (true) {
+                    Log.d("ClockService", "tick")
                     emit(progressDuration)
                     delay(period)
                     progressDuration += period
                 }
             }.also { flow ->
                 flow.collect { duration ->
-                    tickFlow.value = duration
+                    tickFlow.emit(duration)
                 }
             }
         }
@@ -55,6 +59,8 @@ class ClockService @Inject constructor(
             progressDuration = Duration.ZERO
             clockFlow?.lastOrNull()
             clockFlow = null
+            currentJob?.cancel()
+            currentJob = null
         }
     }
 }
