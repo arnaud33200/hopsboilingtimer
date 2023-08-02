@@ -16,7 +16,6 @@ import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
-import ca.arnaud.hopsboilingtimer.domain.model.preferences.Preferences
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
@@ -159,6 +158,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
         scheduleStatus = status
         when (status) {
             is ScheduleStatus.Started -> clockService.start()
+            ScheduleStatus.Iddle,
             ScheduleStatus.Canceled,
             ScheduleStatus.Stopped -> {
                 clockService.reset()
@@ -273,6 +273,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
         viewModelScope.launch {
             when (subscribeAdditionSchedule.execute().first()) {
                 is ScheduleStatus.Started -> stopSchedule()
+                ScheduleStatus.Iddle,
                 ScheduleStatus.Canceled,
                 ScheduleStatus.Stopped -> startSchedule()
             }

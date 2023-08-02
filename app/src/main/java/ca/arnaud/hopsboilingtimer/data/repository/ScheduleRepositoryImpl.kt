@@ -7,12 +7,12 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
@@ -20,24 +20,18 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val timeProvider: TimeProvider,
 ) : ScheduleRepository {
 
-    private val scheduleStatusFlow = MutableStateFlow<AdditionSchedule?>(null)
-    private val schedule: AdditionSchedule? get() = scheduleStatusFlow.value
+    private val scheduleStatusFlow = MutableStateFlow<ScheduleStatus>(ScheduleStatus.Iddle)
+    private val schedule: AdditionSchedule? get() = scheduleStatusFlow.value.getSchedule()
 
     private val nextAdditionAlert = MutableStateFlow<AdditionAlert?>(null)
 
     override suspend fun getScheduleFlow(): Flow<ScheduleStatus> {
-        if (scheduleStatusFlow.value == null) {
+        if (scheduleStatusFlow.value == ScheduleStatus.Iddle) {
             getAdditionSchedule()
             refreshAdditionSchedule()
-            scheduleStatusFlow.value = schedule
         }
 
-        return scheduleStatusFlow.map {  schedule ->
-            when (schedule) {
-                null -> ScheduleStatus.Stopped
-                else -> ScheduleStatus.Started(schedule)
-            }
-        }
+        return scheduleStatusFlow
     }
 
     override suspend fun getNextAlertFLow(): Flow<AdditionAlert?> {
@@ -47,26 +41,36 @@ class ScheduleRepositoryImpl @Inject constructor(
         return nextAdditionAlert
     }
 
-    override suspend fun setAdditionSchedule(additionSchedule: AdditionSchedule?) {
-        val nextAlert = additionSchedule?.getNextAlert(timeProvider.getNowLocalDateTime())
-        if (additionSchedule == null || nextAlert == null) {
-            deleteSchedule()
+    override suspend fun setAdditionScheduleStatus(status: ScheduleStatus) {
+        if (status == scheduleStatusFlow.value) {
             return
         }
 
-        scheduleLocalDataSource.setSchedule(additionSchedule)
-        if (additionSchedule != scheduleStatusFlow.value) {
-            scheduleStatusFlow.value = additionSchedule
-        }
+        when (status) {
+            is ScheduleStatus.Started -> {
+                val schedule = status.schedule
+                scheduleLocalDataSource.setSchedule(schedule)
+                nextAdditionAlert.value = schedule.alerts.firstOrNull()
+            }
 
-        nextAdditionAlert.value = additionSchedule.alerts.firstOrNull()
+            ScheduleStatus.Iddle,
+            ScheduleStatus.Canceled,
+            ScheduleStatus.Stopped -> {
+                schedule?.let {
+                    scheduleLocalDataSource.deleteSchedule(it)
+                }
+                nextAdditionAlert.value = null
+            }
+
+        }
+        scheduleStatusFlow.value = status
     }
 
     override suspend fun refreshAdditionSchedule() {
         val additionSchedule = schedule ?: return
         val nextAlert = additionSchedule.getNextAlert(timeProvider.getNowLocalDateTime())
         if (nextAlert == null) {
-            deleteSchedule()
+            setAdditionScheduleStatus(ScheduleStatus.Stopped)
             return
         }
 
@@ -86,18 +90,14 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAdditionSchedule(): AdditionSchedule? {
-        return schedule ?: scheduleLocalDataSource.getSchedule()?.also {
+        return schedule ?: scheduleLocalDataSource.getSchedule().also {
             updateCachedSchedule(it)
         }
     }
 
-    override suspend fun deleteSchedule() {
-        schedule?.let { scheduleLocalDataSource.deleteSchedule(it) }
-        scheduleStatusFlow.value = null
-        nextAdditionAlert.value = null
-    }
-
-    override suspend fun updateAdditionAlert(newAlert: AdditionAlert): Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException> {
+    override suspend fun updateAdditionAlert(
+        newAlert: AdditionAlert
+    ): Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException> {
         return scheduleLocalDataSource.updateAdditionAlert(newAlert).also { response ->
             response.doOnSuccess { updateCachedSchedule(it) }
         }
@@ -107,8 +107,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         val currentSchedule = schedule ?: return
         val newAlerts = currentSchedule.alerts.toMutableList().apply {
             replaceAll { alert ->
-                when {
-                    alert.id == updatedAlert.id -> updatedAlert
+                when (alert.id) {
+                    updatedAlert.id -> updatedAlert
                     else -> alert
                 }
             }
@@ -116,10 +116,10 @@ class ScheduleRepositoryImpl @Inject constructor(
         updateCachedSchedule(currentSchedule.copy(alerts = newAlerts))
     }
 
-    private fun updateCachedSchedule(schedule: AdditionSchedule) {
-        if (this.schedule == schedule) {
-            return
+    private fun updateCachedSchedule(schedule: AdditionSchedule?) {
+        scheduleStatusFlow.value = when (schedule) {
+            null -> ScheduleStatus.Stopped
+            else -> ScheduleStatus.Started(schedule)
         }
-        scheduleStatusFlow.value = schedule
     }
 }

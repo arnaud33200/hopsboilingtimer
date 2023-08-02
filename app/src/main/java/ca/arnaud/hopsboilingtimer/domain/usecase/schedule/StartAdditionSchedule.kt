@@ -2,6 +2,7 @@ package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -31,6 +32,6 @@ class StartAdditionSchedule @Inject constructor(
         val startTime = timeProvider.getNowLocalDateTime() - delay
 
         val schedule = additionScheduleFactory.create(additions, startTime)
-        scheduleRepository.setAdditionSchedule(schedule)
+        scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Started(schedule))
     }
 }

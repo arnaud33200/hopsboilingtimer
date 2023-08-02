@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
@@ -27,7 +28,7 @@ class OnAdditionAlertReceived @Inject constructor(
                 scheduleRepository.refreshAdditionSchedule()
             }
             is AdditionAlert.End -> {
-                scheduleRepository.deleteSchedule()
+                scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Stopped)
             }
             null -> {
                 // No-op

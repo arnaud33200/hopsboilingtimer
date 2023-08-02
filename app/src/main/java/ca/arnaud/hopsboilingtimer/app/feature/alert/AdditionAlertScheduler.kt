@@ -37,9 +37,13 @@ class AdditionAlertScheduler @Inject constructor(
         coroutineScopeProvider.scope.launch {
             subscribeAdditionSchedule.execute().collect { status ->
                 when (status) {
-                    ScheduleStatus.Canceled -> cancelAlarm()
                     is ScheduleStatus.Started -> {} // No-op
-                    ScheduleStatus.Stopped -> cancelAlarm()
+                    ScheduleStatus.Stopped -> {
+                        cancelAlarm()
+                        // TODO - show stop boiling notification
+                    }
+                    ScheduleStatus.Iddle,
+                    ScheduleStatus.Canceled -> cancelAlarm()
                 }
                 if (status.getSchedule() == null) {
                     cancelAlarm()
