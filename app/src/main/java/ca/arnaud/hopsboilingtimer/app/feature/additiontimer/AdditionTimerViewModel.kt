@@ -33,6 +33,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -74,7 +75,11 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     private var scheduleStatus: ScheduleStatus? = null
     private val currentSchedule get() = scheduleStatus?.getSchedule()
-    private var highlightedAlert: AdditionAlert? = null
+
+    data class AdditionClockEvent(
+        val scheduleStatus: ScheduleStatus,
+        val nextAlert: AdditionAlert?,
+    )
 
     init {
         viewModelScope.launch {
@@ -85,19 +90,25 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
         viewModelScope.launch {
             subscribeNextAdditionAlert.execute().collect { additionAlert ->
-                if (additionAlert != null && highlightedAlert != additionAlert) {
-                    highlightedAlert = additionAlert
+                if (additionAlert != null) {
                     updateScreenModel()
                 }
             }
         }
 
         viewModelScope.launch {
-            clockService.getTickFlow().collect { tick ->
-                onClockTick()
+            combine(
+                clockService.getTickFlow(),
+                subscribeAdditionSchedule.execute(),
+                subscribeNextAdditionAlert.execute()
+            ) { tick, status, nextAddition ->
+                AdditionClockEvent(status, nextAddition)
+            }.collect { event ->
+                onClockTick(event)
             }
         }
 
+        // TODO - to remove, handled in MainViewModel
         viewModelScope.launch {
             subscribePreferences.execute().collect { preferences ->
                 darkMode = preferences.darkMode
@@ -105,14 +116,12 @@ class AdditionTimerViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onClockTick() {
+    private fun onClockTick(event: AdditionClockEvent) {
+        val schedule = event.scheduleStatus.getSchedule() ?: return
+        val nextAlert = event.nextAlert ?: return
         _timerTextUpdate.value = TimerTextUpdateModel(
-            buttonTimer = currentSchedule?.let { schedule ->
-                additionTimerScreenModelFactory.getButtonTime(schedule)
-            },
-            highlightRowTimer = highlightedAlert?.let { alert ->
-                additionTimerScreenModelFactory.getHighlightedTimeText(alert)
-            }
+            buttonTimer = additionTimerScreenModelFactory.getButtonTime(schedule),
+            highlightRowTimer = additionTimerScreenModelFactory.getHighlightedTimeText(nextAlert)
         )
     }
 
