@@ -12,7 +12,6 @@ import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -41,7 +40,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNextAlertFLow(): StateFlow<AdditionAlert?> {
+    override suspend fun getNextAlertFLow(): Flow<AdditionAlert?> {
         if (nextAdditionAlert.value == null) {
             updateNextAddition()
         }
