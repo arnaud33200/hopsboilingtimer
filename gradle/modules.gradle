@@ -2,4 +2,5 @@ ext {
 
     domainModule = project(":domain")
     dataModule = project(":data")
+    localModule = project(":local")
 }

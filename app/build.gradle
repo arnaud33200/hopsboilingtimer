@@ -63,6 +63,7 @@ dependencies {
     // Modules
     implementation domainModule
     implementation dataModule
+    implementation localModule
 
     // Android
     implementation libs.bundles.android
