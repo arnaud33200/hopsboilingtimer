@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.feature.alert.AdditionAlertNotificationPresenter
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDataMapper
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.assisted.Assisted
@@ -29,8 +30,15 @@ class AdditionNotificationWorker @AssistedInject constructor(
             val additionAlertData = additionAlertWorkerDataMapper.mapFrom(inputData)
             val schedule = getAdditionSchedule.execute()
             additionAlertNotificationPresenter.show(additionAlertData, schedule, context)
-            val alertId = additionAlertData.id
-            onAdditionAlertReceived.execute(OnAdditionAlertReceived.Params(alertId))
+
+            when (additionAlertData.type) {
+                AdditionAlertDataType.Alert -> {
+                    val params = OnAdditionAlertReceived.Params(additionAlertData.id)
+                    onAdditionAlertReceived.execute(params)
+                }
+                AdditionAlertDataType.Reminder -> {} // No-op
+            }
+
         }
 
         return Result.success()

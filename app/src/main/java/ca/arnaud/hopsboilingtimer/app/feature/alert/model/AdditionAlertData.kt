@@ -6,4 +6,9 @@ import java.time.Duration
 data class AdditionAlertData(
     val id: String,
     val initialDelay: Duration,
+    val type: AdditionAlertDataType,
 ) : Serializable
+
+enum class AdditionAlertDataType {
+    Alert, Reminder
+}

@@ -5,12 +5,14 @@ import androidx.work.WorkManager
 import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertDataFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDataMapper
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.worker.AdditionNotificationWorker
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import kotlinx.coroutines.launch
+import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,6 +69,15 @@ class AdditionAlertScheduler @Inject constructor(
         }
 
         val additionAlertData = additionAlertDataFactory.create(alert)
+        schedule(additionAlertData)
+
+        if (additionAlertData.initialDelay >= Duration.ofSeconds(50)) {
+            val reminderAlertData = additionAlertDataFactory.createReminder(additionAlertData)
+            schedule(reminderAlertData)
+        }
+    }
+
+    private fun schedule(additionAlertData: AdditionAlertData) {
         val workRequest = OneTimeWorkRequestBuilder<AdditionNotificationWorker>()
             .setInitialDelay(additionAlertData.initialDelay)
             .setInputData(additionAlertWorkerDataMapper.mapTo(additionAlertData))
