@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
+
+def gradleDir = "$rootDir/gradle"
+apply from: "$gradleDir/modules.gradle"
 
 android {
     namespace 'ca.arnaud.hopsboilingtimer.local'
@@ -32,4 +36,20 @@ android {
 
 dependencies {
 
+    // Modules
+    implementation domainModule
+    implementation dataModule
+
+    implementation libs.coroutines.core
+    implementation libs.javaxInject
+
+    // Android
+    implementation libs.android.datastore
+
+    // Room
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
+    kapt libs.room.compiler
+
+    testImplementation libs.bundles.test
 }

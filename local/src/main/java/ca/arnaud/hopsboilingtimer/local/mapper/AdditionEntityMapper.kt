@@ -3,7 +3,6 @@ package ca.arnaud.hopsboilingtimer.local.mapper
 import ca.arnaud.hopsboilingtimer.domain.common.TwoWayMapper
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.local.entity.AdditionEntity
-import java.time.Duration
 import javax.inject.Inject
 
 class AdditionEntityMapper @Inject constructor() : TwoWayMapper<Addition, AdditionEntity> {

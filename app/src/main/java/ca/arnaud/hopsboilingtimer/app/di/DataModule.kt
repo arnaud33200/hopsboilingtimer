@@ -62,11 +62,11 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindAdditionLocalDataSource(impl: AdditionLocalDataSourceImpl): AdditionLocalDataSource
+    abstract fun bindAdditionLocalDataSource(impl: ca.arnaud.hopsboilingtimer.local.AdditionLocalDataSourceImpl): AdditionLocalDataSource
 
     @Binds
     @Singleton
-    abstract fun bindScheduleLocalDataSource(impl: ScheduleLocalDataSourceImpl): ScheduleLocalDataSource
+    abstract fun bindScheduleLocalDataSource(impl: ca.arnaud.hopsboilingtimer.local.ScheduleLocalDataSourceImpl): ScheduleLocalDataSource
 
     @Binds
     @Singleton
@@ -74,5 +74,5 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindPreferencesLocalDataSource(impl: PreferencesLocalDataSourceImpl): PreferencesLocalDataSource
+    abstract fun bindPreferencesLocalDataSource(impl: ca.arnaud.hopsboilingtimer.local.PreferencesLocalDataSourceImpl): PreferencesLocalDataSource
 }
