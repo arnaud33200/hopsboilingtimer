@@ -12,7 +12,7 @@ class EntityTimeMapperTest {
 
     private lateinit var subject: EntityTimeMapper
 
-    private val timeProvider = FakeTimeProvider()
+    private val timeProvider = ca.arnaud.hopsboilingtimer.domain.fake.FakeTimeProvider()
 
     @Before
     fun setup() {

@@ -7,6 +7,9 @@ androidDatastoreVersion = "1.0.0"
 androidWorkVersion = "2.7.0"
 androidCoreLibraryDesugaringVersion = "2.0.3"
 
+# Coroutines
+coroutinesCoreVersion = "1.6.4"
+
 # Google
 googleAccompanistVersion = "0.30.1"
 
@@ -39,6 +42,9 @@ android-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", versi
 android-work = { module = "androidx.work:work-runtime-ktx", version.ref = "androidWorkVersion" }
 android-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidDatastoreVersion" }
 android-coreLibraryDesugaring = { module = "com.android.tools:desugar_jdk_libs", version.ref = "androidCoreLibraryDesugaringVersion" }
+
+# Coroutines
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesCoreVersion" }
 
 # Google
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "googleAccompanistVersion" }

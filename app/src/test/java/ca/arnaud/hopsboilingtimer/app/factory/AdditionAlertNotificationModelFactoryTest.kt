@@ -35,12 +35,12 @@ class AdditionAlertNotificationModelFactoryTest {
     @Test
     fun `GIVEN current alert and schedule with next alerts WHEN creating VERIFY current alert excluded`() {
         val currentAlert = additionAlertDataDefault.copy(id = "2")
-        val schedule = additionScheduleDefault.copy(
+        val schedule = ca.arnaud.hopsboilingtimer.domain.model.additionScheduleDefault.copy(
             alerts = listOf(
-                additionAlertStartDefault.copy(id = "1"),
-                additionAlertNextDefault.copy(id = "2"),
-                additionAlertNextDefault.copy(id = "3"),
-                additionAlertEndDefault.copy(id = "4"),
+                ca.arnaud.hopsboilingtimer.domain.model.additionAlertStartDefault.copy(id = "1"),
+                ca.arnaud.hopsboilingtimer.domain.model.additionAlertNextDefault.copy(id = "2"),
+                ca.arnaud.hopsboilingtimer.domain.model.additionAlertNextDefault.copy(id = "3"),
+                ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault.copy(id = "4"),
             )
         )
 

@@ -13,7 +13,7 @@ class AdditionAlertDataFactoryTest {
 
     private lateinit var subject: AdditionAlertDataFactory
 
-    private val timeProvider = FakeTimeProvider()
+    private val timeProvider = ca.arnaud.hopsboilingtimer.domain.fake.FakeTimeProvider()
 
     @Before
     fun setup() {
@@ -28,7 +28,7 @@ class AdditionAlertDataFactoryTest {
     fun `GIVEN trigger at same time as now WHEN creating VERIFY zero initial delay`() {
         timeProvider.now = LocalDateTime.of(2023, 7, 19, 12, 0)
         val triggerAt = timeProvider.getNowLocalDateTime()
-        val alert = additionAlertEndDefault.copy(triggerAtTime = triggerAt)
+        val alert = ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault.copy(triggerAtTime = triggerAt)
 
         val result = subject.create(alert)
         assertEquals(Duration.ZERO, result.initialDelay)
@@ -39,7 +39,7 @@ class AdditionAlertDataFactoryTest {
         timeProvider.now = LocalDateTime.of(2023, 7, 19, 12, 0)
         val delay = Duration.ofMinutes(1)
         val triggerAt = timeProvider.getNowLocalDateTime() - delay
-        val alert = additionAlertEndDefault.copy(triggerAtTime = triggerAt)
+        val alert = ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault.copy(triggerAtTime = triggerAt)
 
         val result = subject.create(alert)
         assertEquals(Duration.ZERO, result.initialDelay)
@@ -50,7 +50,7 @@ class AdditionAlertDataFactoryTest {
         timeProvider.now = LocalDateTime.of(2023, 7, 19, 12, 0)
         val delay = Duration.ofMinutes(1)
         val triggerAt = timeProvider.getNowLocalDateTime() + delay
-        val alert = additionAlertEndDefault.copy(triggerAtTime = triggerAt)
+        val alert = ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault.copy(triggerAtTime = triggerAt)
 
         val result = subject.create(alert)
         assertEquals(delay, result.initialDelay)
