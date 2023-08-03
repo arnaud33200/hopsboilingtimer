@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "HopsBoilingTimer"
 include ':app'
 include ':domain'
+include ':data'
