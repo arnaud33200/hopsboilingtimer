@@ -1,0 +1,4 @@
+ext {
+
+    domainModule = project(":domain")
+}

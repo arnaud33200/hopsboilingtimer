@@ -6,6 +6,9 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+def gradleDir = "$rootDir/gradle"
+apply from: "$gradleDir/modules.gradle"
+
 android {
     namespace 'ca.arnaud.hopsboilingtimer'
     compileSdk 34
@@ -56,6 +59,9 @@ android {
 }
 
 dependencies {
+
+    // Modules
+    implementation domainModule
 
     // Android
     implementation libs.bundles.android
