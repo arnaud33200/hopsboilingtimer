@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
-      <module name="HopsBoilingTimer.app" target="17" />
-      <module name="HopsBoilingTimer.data" target="17" />
-      <module name="HopsBoilingTimer.data.main" target="17" />
-      <module name="HopsBoilingTimer.data.test" target="17" />
-      <module name="HopsBoilingTimer.domain" target="17" />
-      <module name="HopsBoilingTimer.domain.main" target="17" />
-      <module name="HopsBoilingTimer.domain.test" target="17" />
-      <module name="HopsBoilingTimer.local" target="17" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17" />
   </component>
 </project>

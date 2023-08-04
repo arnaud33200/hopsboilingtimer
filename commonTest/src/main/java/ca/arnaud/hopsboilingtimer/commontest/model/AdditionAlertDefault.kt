@@ -1,5 +1,6 @@
-package ca.arnaud.hopsboilingtimer.domain.model
+package ca.arnaud.hopsboilingtimer.commontest.model
 
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import java.time.Duration
 import java.time.LocalDateTime
 

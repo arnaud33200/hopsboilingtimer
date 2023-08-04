@@ -4,10 +4,10 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotific
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
 import ca.arnaud.hopsboilingtimer.app.model.additionAlertDataDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertNextDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertStartDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionScheduleDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertEndDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertNextDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertStartDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionScheduleDefault
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -35,12 +35,12 @@ class AdditionAlertNotificationModelFactoryTest {
     @Test
     fun `GIVEN current alert and schedule with next alerts WHEN creating VERIFY current alert excluded`() {
         val currentAlert = additionAlertDataDefault.copy(id = "2")
-        val schedule = ca.arnaud.hopsboilingtimer.domain.model.additionScheduleDefault.copy(
+        val schedule = additionScheduleDefault.copy(
             alerts = listOf(
-                ca.arnaud.hopsboilingtimer.domain.model.additionAlertStartDefault.copy(id = "1"),
-                ca.arnaud.hopsboilingtimer.domain.model.additionAlertNextDefault.copy(id = "2"),
-                ca.arnaud.hopsboilingtimer.domain.model.additionAlertNextDefault.copy(id = "3"),
-                ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault.copy(id = "4"),
+                additionAlertStartDefault.copy(id = "1"),
+                additionAlertNextDefault.copy(id = "2"),
+                additionAlertNextDefault.copy(id = "3"),
+                additionAlertEndDefault.copy(id = "4"),
             )
         )
 

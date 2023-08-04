@@ -3,12 +3,17 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
+def gradleDir = "$rootDir/gradle"
+apply from: "$gradleDir/modules.gradle"
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
+
+    testImplementation commonTestModule
 
     implementation libs.coroutines.core
     implementation libs.javaxInject

@@ -1,9 +1,9 @@
 package ca.arnaud.hopsboilingtimer.domain.ext
 
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertEndDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionScheduleDefault
 import ca.arnaud.hopsboilingtimer.domain.extension.getNextAlerts
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionScheduleDefault
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -39,6 +39,7 @@ dependencies {
     // Modules
     implementation domainModule
     implementation dataModule
+    testImplementation commonTestModule
 
     implementation libs.coroutines.core
     implementation libs.javaxInject

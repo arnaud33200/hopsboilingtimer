@@ -64,6 +64,7 @@ dependencies {
     implementation domainModule
     implementation dataModule
     implementation localModule
+    testImplementation commonTestModule
 
     // Android
     implementation libs.bundles.android

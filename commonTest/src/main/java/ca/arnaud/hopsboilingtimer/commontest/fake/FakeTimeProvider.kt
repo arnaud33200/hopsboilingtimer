@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.domain.fake
+package ca.arnaud.hopsboilingtimer.commontest.fake
 
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import java.time.LocalDateTime

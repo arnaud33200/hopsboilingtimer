@@ -1,6 +1,6 @@
 package ca.arnaud.hopsboilingtimer.local
 
-import ca.arnaud.hopsboilingtimer.domain.fake.FakeTimeProvider
+import ca.arnaud.hopsboilingtimer.commontest.fake.FakeTimeProvider
 import ca.arnaud.hopsboilingtimer.local.mapper.EntityTimeMapper
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -12,7 +12,7 @@ class EntityTimeMapperTest {
 
     private lateinit var subject: EntityTimeMapper
 
-    private val timeProvider = ca.arnaud.hopsboilingtimer.domain.fake.FakeTimeProvider()
+    private val timeProvider = FakeTimeProvider()
 
     @Before
     fun setup() {

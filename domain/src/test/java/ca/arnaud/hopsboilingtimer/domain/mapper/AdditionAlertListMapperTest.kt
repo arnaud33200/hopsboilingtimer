@@ -1,11 +1,11 @@
 package ca.arnaud.hopsboilingtimer.domain.mapper
 
-import ca.arnaud.hopsboilingtimer.domain.fake.FakeTimeProvider
+import ca.arnaud.hopsboilingtimer.commontest.fake.FakeTimeProvider
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertEndDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertNextDefault
+import ca.arnaud.hopsboilingtimer.commontest.model.additionAlertStartDefault
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertEndDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertNextDefault
-import ca.arnaud.hopsboilingtimer.domain.model.additionAlertStartDefault
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import io.mockk.every
 import io.mockk.mockk
