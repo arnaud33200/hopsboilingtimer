@@ -7,54 +7,37 @@ plugins {
 }
 
 def gradleDir = "$rootDir/gradle"
+apply from: "$gradleDir/android_dependencies.gradle"
 apply from: "$gradleDir/modules.gradle"
 
 android {
+
     namespace 'ca.arnaud.hopsboilingtimer'
-    compileSdk 34
 
     defaultConfig {
         applicationId "ca.arnaud.hopsboilingtimer"
-        minSdk 28
-        targetSdk 34
         versionCode 6
         versionName "1.5"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-        coreLibraryDesugaringEnabled true
-    }
     kotlinOptions {
-        jvmTarget = '17'
 
         freeCompilerArgs += [
                 '-opt-in=androidx.compose.animation.ExperimentalAnimationApi',
                 '-opt-in=androidx.compose.foundation.ExperimentalFoundationApi',
         ]
     }
-    buildFeatures {
-        compose true
-    }
+
     composeOptions {
         kotlinCompilerExtensionVersion compose_compiler_version
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
+
+    buildFeatures {
+        compose true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
     }
 }
 
