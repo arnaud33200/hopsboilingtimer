@@ -17,6 +17,7 @@ dependencies {
 
     implementation libs.coroutines.core
     implementation libs.javaxInject
+    implementation libs.kotlin.reflect // For using ".nestedClasses"
 
     testImplementation libs.bundles.test
 }

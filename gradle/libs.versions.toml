@@ -1,5 +1,8 @@
 [versions]
 
+# Kotlin
+kotlin = "1.7.10"
+
 # Android
 androidCoreVersion = "1.10.1"
 androidLifecycleVersion = "1.10.1"
@@ -35,6 +38,8 @@ coroutinesTestVersion = "1.6.4"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [libraries]
+
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 
 # Android
 android-core = { module = "androidx.core:core-ktx", version.ref = "androidCoreVersion" }
