@@ -2,10 +2,8 @@ package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.mapper.ScheduleStatusMapper
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
-import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEventHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.statemachine.toScheduleState
