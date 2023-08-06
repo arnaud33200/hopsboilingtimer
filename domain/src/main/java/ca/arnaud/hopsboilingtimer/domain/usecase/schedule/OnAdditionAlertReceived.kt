@@ -1,16 +1,29 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
+import ca.arnaud.hopsboilingtimer.domain.mapper.ScheduleStatusMapper
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
+import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEventHandler
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import javax.inject.Inject
 
 class OnAdditionAlertReceived @Inject constructor(
     jobExecutorProvider: JobExecutorProvider,
     private val scheduleRepository: ScheduleRepository,
-) : SuspendableUseCase<OnAdditionAlertReceived.Params, Unit>(jobExecutorProvider) {
+    scheduleStateRepository: ScheduleStateRepository,
+    stateMachine: AdditionScheduleStateMachine,
+    actionHandler: AdditionScheduleEventHandler,
+    statusMapper: ScheduleStatusMapper,
+) : ScheduleStateUseCase<OnAdditionAlertReceived.Params, Unit>(
+    jobExecutorProvider = jobExecutorProvider,
+    scheduleStateRepository = scheduleStateRepository,
+    stateMachine = stateMachine,
+    actionHandler = actionHandler,
+    statusMapper = statusMapper,
+) {
 
     data class Params(
         val alertId: String,
@@ -29,7 +42,7 @@ class OnAdditionAlertReceived @Inject constructor(
             }
 
             is AdditionAlert.End -> {
-                scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Stopped)
+                sendStateEvent(AdditionScheduleEvent.TimerEnd)
             }
 
             null -> {
@@ -41,7 +54,7 @@ class OnAdditionAlertReceived @Inject constructor(
     private suspend fun setNextAlert(nextAlert: AdditionAlert?) {
         when (nextAlert) {
             null -> {
-                scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Stopped)
+                sendStateEvent(AdditionScheduleEvent.TimerEnd)
             }
 
             is AdditionAlert.End,

@@ -1,7 +1,6 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -19,10 +18,12 @@ class AdditionScheduleEventHandler @Inject constructor(
         transition: Transition<AdditionScheduleState, AdditionScheduleEvent>
     ) {
         when (transition.toState) {
+            AdditionScheduleState.Iddle -> {} // No-op
             AdditionScheduleState.Going -> startSchedule(transition.event)
-            AdditionScheduleState.Iddle -> {} // TODO
-            AdditionScheduleState.Canceled -> {} // TODO
-            AdditionScheduleState.Stopped -> {} // TODO
+            AdditionScheduleState.Canceled,
+            AdditionScheduleState.Stopped -> {
+                stopSchedule()
+            }
         }
     }
 
@@ -41,15 +42,10 @@ class AdditionScheduleEventHandler @Inject constructor(
         val startTime = timeProvider.getNowLocalDateTime() - delay
 
         val schedule = additionScheduleFactory.create(additions, startTime)
-        scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Started(schedule))
+        scheduleRepository.setAdditionSchedule(schedule)
     }
-}
 
-fun ScheduleStatus.toScheduleState(): AdditionScheduleState {
-    return when (this) {
-        ScheduleStatus.Canceled -> AdditionScheduleState.Canceled
-        ScheduleStatus.Iddle -> AdditionScheduleState.Iddle
-        is ScheduleStatus.Started -> AdditionScheduleState.Going
-        ScheduleStatus.Stopped -> AdditionScheduleState.Stopped
+    private suspend fun stopSchedule() {
+        scheduleRepository.setAdditionSchedule(null)
     }
 }

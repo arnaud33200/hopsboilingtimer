@@ -1,17 +1,28 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
-import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
+import ca.arnaud.hopsboilingtimer.domain.mapper.ScheduleStatusMapper
+import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEventHandler
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.NoParamsSuspendableUseCase
 import javax.inject.Inject
 
 class StopAdditionSchedule @Inject constructor(
     jobExecutorProvider: JobExecutorProvider,
-    private val scheduleRepository: ScheduleRepository
-) : NoParamsSuspendableUseCase<Unit>(jobExecutorProvider) {
+    scheduleStateRepository: ScheduleStateRepository,
+    stateMachine: AdditionScheduleStateMachine,
+    actionHandler: AdditionScheduleEventHandler,
+    statusMapper: ScheduleStatusMapper,
+) : ScheduleStateUseCase<Unit, Unit>(
+    jobExecutorProvider = jobExecutorProvider,
+    scheduleStateRepository = scheduleStateRepository,
+    stateMachine = stateMachine,
+    actionHandler = actionHandler,
+    statusMapper = statusMapper,
+) {
 
-    override suspend fun buildRequest() {
-        scheduleRepository.setAdditionScheduleStatus(ScheduleStatus.Canceled)
+    override suspend fun buildRequest(params: Unit) {
+        sendStateEvent(AdditionScheduleEvent.Cancel)
     }
 }

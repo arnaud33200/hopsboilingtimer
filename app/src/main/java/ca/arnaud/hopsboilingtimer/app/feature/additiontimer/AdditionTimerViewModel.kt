@@ -185,7 +185,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
         // TODO - instead of calling onScheduleUpdated, better to have a "Stopping" state
         //  show a loader on the button and stop the timer
         onScheduleUpdated(ScheduleStatus.Canceled)
-        stopAdditionSchedule.execute()
+        stopAdditionSchedule.execute(Unit)
     }
 
     // endregion
