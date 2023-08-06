@@ -12,13 +12,12 @@ import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
 import ca.arnaud.hopsboilingtimer.data.repository.AdditionRepositoryImpl
 import ca.arnaud.hopsboilingtimer.data.repository.PreferencesRepositoryImpl
 import ca.arnaud.hopsboilingtimer.data.repository.ScheduleRepositoryImpl
+import ca.arnaud.hopsboilingtimer.data.repository.ScheduleStateRepositoryImpl
 import ca.arnaud.hopsboilingtimer.domain.repository.AdditionRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
+import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.preferences.PreferencesRepository
-import ca.arnaud.hopsboilingtimer.local.AdditionLocalDataSourceImpl
 import ca.arnaud.hopsboilingtimer.local.AppDatabase
-import ca.arnaud.hopsboilingtimer.local.PreferencesLocalDataSourceImpl
-import ca.arnaud.hopsboilingtimer.local.ScheduleLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -59,6 +58,10 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindScheduleRepository(impl: ScheduleRepositoryImpl): ScheduleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindScheduleStateRepository(impl: ScheduleStateRepositoryImpl): ScheduleStateRepository
 
     @Binds
     @Singleton
