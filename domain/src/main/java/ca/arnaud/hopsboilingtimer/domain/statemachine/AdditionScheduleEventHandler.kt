@@ -43,14 +43,14 @@ class AdditionScheduleEventHandler @Inject constructor(
         val startTime = timeProvider.getNowLocalDateTime() - delay
 
         val schedule = additionScheduleFactory.create(additions, startTime)
-        scheduleRepository.setAdditionSchedule(schedule)
+        scheduleRepository.setSchedule(schedule)
 
         val nextAlert = schedule.getNextAlert(startTime)
         scheduleRepository.setNextAlert(nextAlert)
     }
 
     private suspend fun stopSchedule() {
-        scheduleRepository.getAdditionSchedule()?.let { schedule ->
+        scheduleRepository.getSchedule()?.let { schedule ->
             scheduleRepository.deleteSchedule(schedule)
             scheduleRepository.setNextAlert(null)
         }

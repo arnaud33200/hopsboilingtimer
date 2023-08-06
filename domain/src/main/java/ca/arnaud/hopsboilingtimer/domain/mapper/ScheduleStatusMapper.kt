@@ -23,7 +23,7 @@ class ScheduleStatusMapper @Inject constructor(
             AdditionScheduleState.Stopped -> ScheduleStatus.Stopped
             AdditionScheduleState.Canceled -> ScheduleStatus.Canceled
             AdditionScheduleState.Going -> ScheduleStatus.Started(
-                schedule = scheduleRepository.getAdditionSchedule()
+                schedule = scheduleRepository.getSchedule()
                     ?: throw ScheduleStatusMapperError.MissingSchedule
             )
         }

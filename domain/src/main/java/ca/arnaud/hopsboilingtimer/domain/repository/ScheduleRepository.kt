@@ -7,8 +7,9 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
-    suspend fun getAdditionSchedule(): AdditionSchedule?
-    suspend fun setAdditionSchedule(schedule: AdditionSchedule)
+
+    suspend fun getSchedule(): AdditionSchedule?
+    suspend fun setSchedule(schedule: AdditionSchedule)
     suspend fun deleteSchedule(schedule: AdditionSchedule)
 
     suspend fun getNextAlertFLow(): Flow<AdditionAlert?>

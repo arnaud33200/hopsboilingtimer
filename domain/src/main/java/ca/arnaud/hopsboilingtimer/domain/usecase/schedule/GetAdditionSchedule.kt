@@ -12,7 +12,7 @@ class GetAdditionSchedule @Inject constructor(
 ) : NoParamsSuspendableUseCase<AdditionSchedule?>(jobExecutorProvider) {
 
     override suspend fun buildRequest(): AdditionSchedule? {
-        return scheduleRepository.getAdditionSchedule()
+        return scheduleRepository.getSchedule()
     }
 
 }

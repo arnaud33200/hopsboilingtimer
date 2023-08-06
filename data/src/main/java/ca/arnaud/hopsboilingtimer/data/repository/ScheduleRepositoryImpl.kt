@@ -30,13 +30,13 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAdditionSchedule(): AdditionSchedule? {
+    override suspend fun getSchedule(): AdditionSchedule? {
         return schedule ?: scheduleLocalDataSource.getSchedule().also {
             updateCachedSchedule(it)
         }
     }
 
-    override suspend fun setAdditionSchedule(schedule: AdditionSchedule) {
+    override suspend fun setSchedule(schedule: AdditionSchedule) {
         scheduleLocalDataSource.setSchedule(schedule)
         updateCachedSchedule(schedule)
     }

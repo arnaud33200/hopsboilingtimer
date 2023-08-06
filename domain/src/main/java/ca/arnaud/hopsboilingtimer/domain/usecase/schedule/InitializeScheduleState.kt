@@ -17,7 +17,7 @@ class InitializeScheduleState @Inject constructor(
 ) : SuspendableUseCase<Unit, Unit>(jobExecutorProvider) {
 
     override suspend fun buildRequest(params: Unit) {
-        val schedule = scheduleRepository.getAdditionSchedule()
+        val schedule = scheduleRepository.getSchedule()
         val nextAlert = schedule?.getNextAlert(timeProvider.getNowLocalDateTime())
 
         val initialState = when {

@@ -30,7 +30,7 @@ class OnAdditionAlertReceived @Inject constructor(
     )
 
     override suspend fun buildRequest(params: Params) {
-        val alerts = scheduleRepository.getAdditionSchedule()?.alerts ?: emptyList()
+        val alerts = scheduleRepository.getSchedule()?.alerts ?: emptyList()
         when (
             val receivedAlert = alerts.find { alert -> alert.id == params.alertId }
         ) {

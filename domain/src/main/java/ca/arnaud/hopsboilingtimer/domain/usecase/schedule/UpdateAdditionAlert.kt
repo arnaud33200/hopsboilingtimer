@@ -31,7 +31,7 @@ class UpdateAdditionAlert @Inject constructor(
     override suspend fun buildRequest(
         params: Params,
     ): Response<AdditionAlert, UpdateAdditionAlertException> {
-        val alert = scheduleRepository.getAdditionSchedule()?.alerts?.find {
+        val alert = scheduleRepository.getSchedule()?.alerts?.find {
             it.id == params.alertId
         } ?: return Response.ofFailure(UpdateAdditionAlertException.AdditionAlertNotFound())
 
