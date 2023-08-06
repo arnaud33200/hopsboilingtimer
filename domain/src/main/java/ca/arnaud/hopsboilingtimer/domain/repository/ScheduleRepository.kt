@@ -8,9 +8,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
     suspend fun getAdditionSchedule(): AdditionSchedule?
-    suspend fun setAdditionSchedule(schedule: AdditionSchedule?)
+    suspend fun setAdditionSchedule(schedule: AdditionSchedule)
+    suspend fun deleteSchedule(schedule: AdditionSchedule)
 
     suspend fun getNextAlertFLow(): Flow<AdditionAlert?>
-    suspend fun setNextAlert(nextAlert: AdditionAlert)
+    suspend fun setNextAlert(nextAlert: AdditionAlert?)
     suspend fun updateAdditionAlert(newAlert: AdditionAlert): Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException>
 }

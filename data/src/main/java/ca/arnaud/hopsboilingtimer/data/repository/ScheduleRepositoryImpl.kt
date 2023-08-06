@@ -5,7 +5,6 @@ import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.common.doOnSuccess
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +13,6 @@ import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
     private val scheduleLocalDataSource: ScheduleLocalDataSource,
-    private val timeProvider: TimeProvider,
 ) : ScheduleRepository {
 
     private var schedule: AdditionSchedule? = null
@@ -26,7 +24,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         return nextAdditionAlert
     }
 
-    override suspend fun setNextAlert(nextAlert: AdditionAlert) {
+    override suspend fun setNextAlert(nextAlert: AdditionAlert?) {
         if (nextAdditionAlert.value != nextAlert) {
             nextAdditionAlert.value = nextAlert
         }
@@ -38,19 +36,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun setAdditionSchedule(schedule: AdditionSchedule?) {
-        when (schedule) {
-            null -> deleteCurrentSchedule()
-            else -> scheduleLocalDataSource.setSchedule(schedule)
-        }
+    override suspend fun setAdditionSchedule(schedule: AdditionSchedule) {
+        scheduleLocalDataSource.setSchedule(schedule)
         updateCachedSchedule(schedule)
     }
 
-    private suspend fun deleteCurrentSchedule() {
-        schedule?.let {
-            scheduleLocalDataSource.deleteSchedule(it)
-            nextAdditionAlert.value = null
-        }
+    override suspend fun deleteSchedule(schedule: AdditionSchedule) {
+        scheduleLocalDataSource.deleteSchedule(schedule)
+        updateCachedSchedule(null)
     }
 
     override suspend fun updateAdditionAlert(

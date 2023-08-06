@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -43,9 +44,15 @@ class AdditionScheduleEventHandler @Inject constructor(
 
         val schedule = additionScheduleFactory.create(additions, startTime)
         scheduleRepository.setAdditionSchedule(schedule)
+
+        val nextAlert = schedule.getNextAlert(startTime)
+        scheduleRepository.setNextAlert(nextAlert)
     }
 
     private suspend fun stopSchedule() {
-        scheduleRepository.setAdditionSchedule(null)
+        scheduleRepository.getAdditionSchedule()?.let { schedule ->
+            scheduleRepository.deleteSchedule(schedule)
+            scheduleRepository.setNextAlert(null)
+        }
     }
 }
