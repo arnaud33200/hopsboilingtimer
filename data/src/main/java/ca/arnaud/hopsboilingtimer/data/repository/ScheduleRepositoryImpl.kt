@@ -5,7 +5,6 @@ import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.common.doOnSuccess
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
@@ -23,22 +22,11 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val nextAdditionAlert = MutableStateFlow<AdditionAlert?>(null)
 
     override suspend fun getNextAlertFLow(): Flow<AdditionAlert?> {
-        if (nextAdditionAlert.value == null) {
-            updateNextAddition()
-        }
+
         return nextAdditionAlert
     }
 
     override suspend fun setNextAlert(nextAlert: AdditionAlert) {
-        if (nextAdditionAlert.value != nextAlert) {
-            nextAdditionAlert.value = nextAlert
-        }
-    }
-
-    private fun updateNextAddition() {
-        val currentSchedule = schedule ?: return
-
-        val nextAlert = currentSchedule.getNextAlert(timeProvider.getNowLocalDateTime())
         if (nextAdditionAlert.value != nextAlert) {
             nextAdditionAlert.value = nextAlert
         }

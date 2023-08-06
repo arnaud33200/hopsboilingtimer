@@ -15,6 +15,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -42,10 +46,16 @@ abstract class AppModule {
 
         @Provides
         @Singleton
-        fun provideNotificationManager(context: Context) : NotificationManager {
+        fun provideNotificationManager(context: Context): NotificationManager {
             return ContextCompat.getSystemService(
                 context, NotificationManager::class.java
             ) as NotificationManager
+        }
+
+        @Provides
+        @Named("App")
+        fun provideApplicationScope(): CoroutineScope {
+            return CoroutineScope(Dispatchers.Default + SupervisorJob())
         }
     }
 
