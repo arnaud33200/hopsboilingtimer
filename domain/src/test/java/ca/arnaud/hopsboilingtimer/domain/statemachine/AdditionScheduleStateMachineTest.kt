@@ -29,25 +29,28 @@ class AdditionScheduleStateMachineTest {
             params = ScheduleOptions(delay = Duration.ofSeconds(10))
         )
         assertEquals(
-            AdditionScheduleState.Going,
-            subject.transition(AdditionScheduleState.Iddle, timerStart)!!.toState
+            AdditionScheduleState.Started,
+            subject.transition(AdditionScheduleState.Idle, timerStart)!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Going,
+            AdditionScheduleState.Started,
             subject.transition(AdditionScheduleState.Canceled, timerStartZeroDelay)!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Going,
+            AdditionScheduleState.Started,
             subject.transition(AdditionScheduleState.Stopped, timerStartSecondsDelay)!!.toState
         )
         assertEquals(
             AdditionScheduleState.Canceled,
-            subject.transition(AdditionScheduleState.Going, AdditionScheduleEvent.Cancel)!!.toState
+            subject.transition(
+                AdditionScheduleState.Started,
+                AdditionScheduleEvent.Cancel
+            )!!.toState
         )
         assertEquals(
             AdditionScheduleState.Stopped,
             subject.transition(
-                AdditionScheduleState.Going,
+                AdditionScheduleState.Started,
                 AdditionScheduleEvent.TimerEnd
             )!!.toState
         )

@@ -19,10 +19,10 @@ class ScheduleStatusMapper @Inject constructor(
     @Throws(ScheduleStatusMapperError::class)
     override suspend fun mapTo(input: AdditionScheduleState): ScheduleStatus {
         return when (input) {
-            AdditionScheduleState.Iddle -> ScheduleStatus.Iddle
+            AdditionScheduleState.Idle -> ScheduleStatus.Iddle
             AdditionScheduleState.Stopped -> ScheduleStatus.Stopped
             AdditionScheduleState.Canceled -> ScheduleStatus.Canceled
-            AdditionScheduleState.Going -> ScheduleStatus.Started(
+            AdditionScheduleState.Started -> ScheduleStatus.Started(
                 schedule = scheduleRepository.getSchedule()
                     ?: throw ScheduleStatusMapperError.MissingSchedule
             )

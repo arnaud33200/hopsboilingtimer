@@ -19,8 +19,8 @@ class AdditionScheduleEventHandler @Inject constructor(
         transition: Transition<AdditionScheduleState, AdditionScheduleEvent>
     ) {
         when (transition.toState) {
-            AdditionScheduleState.Iddle -> {} // No-op
-            AdditionScheduleState.Going -> startSchedule(transition.event)
+            AdditionScheduleState.Idle -> {} // No-op
+            AdditionScheduleState.Started -> startSchedule(transition.event)
             AdditionScheduleState.Canceled,
             AdditionScheduleState.Stopped -> {
                 stopSchedule()

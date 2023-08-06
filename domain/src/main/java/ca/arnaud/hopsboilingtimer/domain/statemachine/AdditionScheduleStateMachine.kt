@@ -6,15 +6,15 @@ import javax.inject.Inject
 // TODO - merge with ScheduleStatus?
 sealed interface AdditionScheduleState : MachineState {
 
-    object Iddle : AdditionScheduleState {
-        override val id = "Iddle"
+    object Idle : AdditionScheduleState {
+        override val id = "Idle"
     }
 
     object Stopped : AdditionScheduleState {
         override val id = "Stopped"
     }
 
-    object Going : AdditionScheduleState {
+    object Started : AdditionScheduleState {
         override val id = "Going"
     }
 
@@ -69,9 +69,9 @@ class AdditionScheduleStateMachine @Inject constructor() :
         event: AdditionScheduleEvent
     ): List<ConditionalTransition<AdditionScheduleState, AdditionScheduleEvent>>? {
         return when (fromState) {
-            AdditionScheduleState.Iddle -> when (event) {
+            AdditionScheduleState.Idle -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    AdditionScheduleState.Going.toConditionalTransition(event, fromState)
+                    AdditionScheduleState.Started.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // Forbidden
@@ -80,14 +80,14 @@ class AdditionScheduleStateMachine @Inject constructor() :
 
             AdditionScheduleState.Canceled -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    AdditionScheduleState.Going.toConditionalTransition(event, fromState)
+                    AdditionScheduleState.Started.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // No Action
                 AdditionScheduleEvent.TimerEnd -> null // Impossible
             }
 
-            AdditionScheduleState.Going -> when (event) {
+            AdditionScheduleState.Started -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> null // No Action
                 AdditionScheduleEvent.Cancel -> listOf(
                     AdditionScheduleState.Canceled.toConditionalTransition(event, fromState)
@@ -100,7 +100,7 @@ class AdditionScheduleStateMachine @Inject constructor() :
 
             AdditionScheduleState.Stopped -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    AdditionScheduleState.Going.toConditionalTransition(event, fromState)
+                    AdditionScheduleState.Started.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // Impossible

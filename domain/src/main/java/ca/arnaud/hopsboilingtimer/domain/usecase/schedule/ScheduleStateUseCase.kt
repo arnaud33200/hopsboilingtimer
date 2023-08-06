@@ -35,8 +35,8 @@ abstract class ScheduleStateUseCase<in T, out S> constructor(
     private fun ScheduleStatus.toScheduleState(): AdditionScheduleState {
         return when (this) {
             ScheduleStatus.Canceled -> AdditionScheduleState.Canceled
-            ScheduleStatus.Iddle -> AdditionScheduleState.Iddle
-            is ScheduleStatus.Started -> AdditionScheduleState.Going
+            ScheduleStatus.Iddle -> AdditionScheduleState.Idle
+            is ScheduleStatus.Started -> AdditionScheduleState.Started
             ScheduleStatus.Stopped -> AdditionScheduleState.Stopped
         }
     }
