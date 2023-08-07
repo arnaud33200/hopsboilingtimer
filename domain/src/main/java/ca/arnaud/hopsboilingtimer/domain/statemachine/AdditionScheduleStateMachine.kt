@@ -1,27 +1,8 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine
 
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import javax.inject.Inject
-
-// TODO - merge with ScheduleStatus?
-sealed interface AdditionScheduleState : MachineState {
-
-    object Idle : AdditionScheduleState {
-        override val id = "Idle"
-    }
-
-    object Stopped : AdditionScheduleState {
-        override val id = "Stopped"
-    }
-
-    object Started : AdditionScheduleState {
-        override val id = "Going"
-    }
-
-    object Canceled : AdditionScheduleState {
-        override val id = "Canceled"
-    }
-}
 
 sealed interface AdditionScheduleEvent : MachineEvent {
 
@@ -45,11 +26,11 @@ sealed interface AdditionScheduleParams : MachineParams {
 
 
 class AdditionScheduleStateMachine @Inject constructor() :
-    ConditionalStateMachine<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>() {
+    ConditionalStateMachine<ScheduleState, AdditionScheduleEvent, AdditionScheduleParams>() {
 
-    override fun getStates(): List<AdditionScheduleState> {
-        return AdditionScheduleState::class.nestedClasses.map { it.objectInstance }
-            .filterIsInstance<AdditionScheduleState>()
+    override fun getStates(): List<ScheduleState> {
+        return ScheduleState::class.nestedClasses.map { it.objectInstance }
+            .filterIsInstance<ScheduleState>()
     }
 
     override fun getEvents(): List<AdditionScheduleEvent> {
@@ -65,42 +46,42 @@ class AdditionScheduleStateMachine @Inject constructor() :
      * Going + TimerEnd --> Stopped
      */
     override fun getTransitions(
-        fromState: AdditionScheduleState,
+        fromState: ScheduleState,
         event: AdditionScheduleEvent
-    ): List<ConditionalTransition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>>? {
+    ): List<ConditionalTransition<ScheduleState, AdditionScheduleEvent, AdditionScheduleParams>>? {
         return when (fromState) {
-            AdditionScheduleState.Idle -> when (event) {
+            ScheduleState.Idle -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    AdditionScheduleState.Started.toConditionalTransition(event, fromState)
+                    ScheduleState.Started.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // Forbidden
                 AdditionScheduleEvent.TimerEnd -> null // Forbidden
             }
 
-            AdditionScheduleState.Canceled -> when (event) {
+            ScheduleState.Canceled -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    AdditionScheduleState.Started.toConditionalTransition(event, fromState)
+                    ScheduleState.Started.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // No Action
                 AdditionScheduleEvent.TimerEnd -> null // Impossible
             }
 
-            AdditionScheduleState.Started -> when (event) {
+            ScheduleState.Started -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> null // No Action
                 AdditionScheduleEvent.Cancel -> listOf(
-                    AdditionScheduleState.Canceled.toConditionalTransition(event, fromState)
+                    ScheduleState.Canceled.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.TimerEnd -> listOf(
-                    AdditionScheduleState.Stopped.toConditionalTransition(event, fromState)
+                    ScheduleState.Stopped.toConditionalTransition(event, fromState)
                 )
             }
 
-            AdditionScheduleState.Stopped -> when (event) {
+            ScheduleState.Stopped -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    AdditionScheduleState.Started.toConditionalTransition(event, fromState)
+                    ScheduleState.Started.toConditionalTransition(event, fromState)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // Impossible

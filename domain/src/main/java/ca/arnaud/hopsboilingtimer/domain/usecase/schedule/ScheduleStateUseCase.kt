@@ -1,12 +1,9 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
-import ca.arnaud.hopsboilingtimer.domain.mapper.ScheduleStatusMapper
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEventHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleParams
-import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
@@ -17,31 +14,16 @@ abstract class ScheduleStateUseCase<in T, out S> constructor(
     private val scheduleStateRepository: ScheduleStateRepository,
     private val stateMachine: AdditionScheduleStateMachine,
     private val actionHandler: AdditionScheduleEventHandler,
-    private val statusMapper: ScheduleStatusMapper,
 ) : SuspendableUseCase<T, S>(jobExecutorProvider) {
 
     suspend fun sendStateEvent(
         event: AdditionScheduleEvent,
         params: AdditionScheduleParams? = null,
     ) {
-        val state = scheduleStateRepository.getScheduleStatusFlow().first().toScheduleState()
+        val state = scheduleStateRepository.getScheduleStatusFlow().first()
         stateMachine.transition(state, event, params)?.let { transition ->
             actionHandler.handle(transition)
-            try {
-                val status = statusMapper.mapTo(transition.toState)
-                scheduleStateRepository.setScheduleStatus(status)
-            } catch (exception: ScheduleStatusMapper.ScheduleStatusMapperError) {
-                // No-op
-            }
-        }
-    }
-
-    private fun ScheduleStatus.toScheduleState(): AdditionScheduleState {
-        return when (this) {
-            ScheduleStatus.Canceled -> AdditionScheduleState.Canceled
-            ScheduleStatus.Iddle -> AdditionScheduleState.Idle
-            is ScheduleStatus.Started -> AdditionScheduleState.Started
-            ScheduleStatus.Stopped -> AdditionScheduleState.Stopped
+            scheduleStateRepository.setScheduleStatus(state)
         }
     }
 }

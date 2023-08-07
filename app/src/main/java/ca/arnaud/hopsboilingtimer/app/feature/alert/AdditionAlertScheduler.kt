@@ -8,7 +8,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDa
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.worker.AdditionNotificationWorker
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeScheduleState
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ class AdditionAlertScheduler @Inject constructor(
     private val additionAlertWorkerDataMapper: AdditionAlertWorkerDataMapper,
     private val additionAlertDataFactory: AdditionAlertDataFactory,
 ) {
-    private var currentSchedule: ScheduleStatus? = null
+    private var currentSchedule: ScheduleState? = null
 
     init {
         coroutineScopeProvider.scope.launch {
@@ -41,19 +41,19 @@ class AdditionAlertScheduler @Inject constructor(
         }
     }
 
-    private fun onScheduleStatusUpdate(status: ScheduleStatus) {
+    private fun onScheduleStatusUpdate(status: ScheduleState) {
         when (status) {
-            is ScheduleStatus.Started -> {} // No-op
-            ScheduleStatus.Stopped -> {
-                if (currentSchedule is ScheduleStatus.Started) {
+            is ScheduleState.Started -> {} // No-op
+            ScheduleState.Stopped -> {
+                if (currentSchedule is ScheduleState.Started) {
                     additionAlertNotificationPresenter.showEnd()
                 } else {
                     cancelAlarm()
                 }
             }
 
-            ScheduleStatus.Iddle,
-            ScheduleStatus.Canceled -> cancelAlarm()
+            ScheduleState.Idle,
+            ScheduleState.Canceled -> cancelAlarm()
         }
         currentSchedule = status
     }

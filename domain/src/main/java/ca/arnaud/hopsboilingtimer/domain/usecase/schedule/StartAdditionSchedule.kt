@@ -1,6 +1,5 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
-import ca.arnaud.hopsboilingtimer.domain.mapper.ScheduleStatusMapper
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
@@ -15,13 +14,11 @@ class StartAdditionSchedule @Inject constructor(
     scheduleStateRepository: ScheduleStateRepository,
     stateMachine: AdditionScheduleStateMachine,
     actionHandler: AdditionScheduleEventHandler,
-    statusMapper: ScheduleStatusMapper,
 ) : ScheduleStateUseCase<ScheduleOptions, Unit>(
     jobExecutorProvider = jobExecutorProvider,
     scheduleStateRepository = scheduleStateRepository,
     stateMachine = stateMachine,
     actionHandler = actionHandler,
-    statusMapper = statusMapper,
 ) {
 
     override suspend fun buildRequest(params: ScheduleOptions) {

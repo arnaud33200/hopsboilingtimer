@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
@@ -16,20 +17,20 @@ class AdditionScheduleEventHandler @Inject constructor(
 ) {
 
     suspend fun handle(
-        transition: Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
+        transition: Transition<ScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
     ) {
         when (transition.toState) {
-            AdditionScheduleState.Idle -> {} // No-op
-            AdditionScheduleState.Started -> startSchedule(transition)
-            AdditionScheduleState.Canceled,
-            AdditionScheduleState.Stopped -> {
+            ScheduleState.Idle -> {} // No-op
+            ScheduleState.Started -> startSchedule(transition)
+            ScheduleState.Canceled,
+            ScheduleState.Stopped -> {
                 stopSchedule()
             }
         }
     }
 
     private suspend fun startSchedule(
-        transition: Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
+        transition: Transition<ScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
     ) {
         // TODO throw an error
         val params = (transition.params as? AdditionScheduleParams.Start)?.scheduleOptions ?: return

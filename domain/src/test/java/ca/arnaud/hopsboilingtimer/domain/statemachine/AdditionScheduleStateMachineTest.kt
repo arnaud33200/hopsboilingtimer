@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine
 
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -18,37 +19,37 @@ class AdditionScheduleStateMachineTest {
     @Test
     fun `GIVEN different possible state & event combination WHEN doing all transition VERIFY correct states`() {
         assertEquals(
-            AdditionScheduleState.Started,
+            ScheduleState.Started,
             subject.transition(
-                AdditionScheduleState.Idle,
+                ScheduleState.Idle,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Started,
+            ScheduleState.Started,
             subject.transition(
-                AdditionScheduleState.Canceled,
+                ScheduleState.Canceled,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Started,
+            ScheduleState.Started,
             subject.transition(
-                AdditionScheduleState.Stopped,
+                ScheduleState.Stopped,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Canceled,
+            ScheduleState.Canceled,
             subject.transition(
-                AdditionScheduleState.Started,
+                ScheduleState.Started,
                 AdditionScheduleEvent.Cancel
             )!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Stopped,
+            ScheduleState.Stopped,
             subject.transition(
-                AdditionScheduleState.Started,
+                ScheduleState.Started,
                 AdditionScheduleEvent.TimerEnd
             )!!.toState
         )

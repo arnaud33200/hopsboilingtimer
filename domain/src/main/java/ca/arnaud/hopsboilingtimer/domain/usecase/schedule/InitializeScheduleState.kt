@@ -1,6 +1,6 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
@@ -21,9 +21,9 @@ class InitializeScheduleState @Inject constructor(
         val nextAlert = schedule?.getNextAlert(timeProvider.getNowLocalDateTime())
 
         val initialState = when {
-            schedule == null -> ScheduleStatus.Iddle
-            nextAlert == null -> ScheduleStatus.Iddle
-            else -> ScheduleStatus.Started
+            schedule == null -> ScheduleState.Idle
+            nextAlert == null -> ScheduleState.Idle
+            else -> ScheduleState.Started
         }
 
         if (nextAlert != null) {

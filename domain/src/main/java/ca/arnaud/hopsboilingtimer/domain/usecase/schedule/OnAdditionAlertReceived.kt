@@ -1,6 +1,5 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
-import ca.arnaud.hopsboilingtimer.domain.mapper.ScheduleStatusMapper
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
@@ -16,13 +15,11 @@ class OnAdditionAlertReceived @Inject constructor(
     scheduleStateRepository: ScheduleStateRepository,
     stateMachine: AdditionScheduleStateMachine,
     actionHandler: AdditionScheduleEventHandler,
-    statusMapper: ScheduleStatusMapper,
 ) : ScheduleStateUseCase<OnAdditionAlertReceived.Params, Unit>(
     jobExecutorProvider = jobExecutorProvider,
     scheduleStateRepository = scheduleStateRepository,
     stateMachine = stateMachine,
     actionHandler = actionHandler,
-    statusMapper = statusMapper,
 ) {
 
     data class Params(

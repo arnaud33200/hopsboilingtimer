@@ -18,7 +18,7 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -164,16 +164,16 @@ class AdditionTimerViewModel @AssistedInject constructor(
         updateScreenModel()
     }
 
-    private fun onScheduleStateUpdate(status: ScheduleStatus) {
+    private fun onScheduleStateUpdate(status: ScheduleState) {
         if (screenModel.value !is AdditionTimerScreenModel.Loading) {
             return
         }
 
         when (status) {
-            is ScheduleStatus.Started -> clockService.start()
-            ScheduleStatus.Iddle,
-            ScheduleStatus.Canceled,
-            ScheduleStatus.Stopped -> {
+            is ScheduleState.Started -> clockService.start()
+            ScheduleState.Idle,
+            ScheduleState.Canceled,
+            ScheduleState.Stopped -> {
                 clockService.reset()
                 _timerTextUpdate.value = TimerTextUpdateModel()
             }
@@ -196,7 +196,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private suspend fun stopSchedule() {
         // TODO - instead of calling onScheduleUpdated, better to have a "Stopping" state
         //  show a loader on the button and stop the timer
-        onScheduleStateUpdate(ScheduleStatus.Canceled)
+        onScheduleStateUpdate(ScheduleState.Canceled)
         stopAdditionSchedule.execute(Unit)
     }
 
@@ -284,10 +284,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
     override fun startTimerButtonClick() {
         viewModelScope.launch {
             when (subscribeScheduleState.execute().first()) {
-                is ScheduleStatus.Started -> stopSchedule()
-                ScheduleStatus.Iddle,
-                ScheduleStatus.Canceled,
-                ScheduleStatus.Stopped -> startSchedule()
+                is ScheduleState.Started -> stopSchedule()
+                ScheduleState.Idle,
+                ScheduleState.Canceled,
+                ScheduleState.Stopped -> startSchedule()
             }
         }
     }
