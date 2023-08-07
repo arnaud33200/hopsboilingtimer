@@ -8,8 +8,8 @@ import ca.arnaud.hopsboilingtimer.app.executor.CoroutineScopeProvider
 import ca.arnaud.hopsboilingtimer.app.feature.alert.AdditionAlertNotificationPresenter
 import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDataMapper
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
+import ca.arnaud.hopsboilingtimer.domain.usecase.alert.OnAdditionAlertReceived
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.GetAdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.OnAdditionAlertReceived
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch

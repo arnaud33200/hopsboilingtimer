@@ -18,18 +18,18 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
+import ca.arnaud.hopsboilingtimer.domain.usecase.alert.SubscribeNextAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.alert.UpdateAdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.PatchPreferences
 import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.SubscribePreferences
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeScheduleState
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedulestate.SubscribeScheduleState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
@@ -164,12 +164,12 @@ class AdditionTimerViewModel @AssistedInject constructor(
         updateScreenModel()
     }
 
-    private fun onScheduleStateUpdate(status: ScheduleState) {
+    private fun onScheduleStateUpdate(status: AdditionScheduleState) {
         when (status) {
-            is ScheduleState.Started -> clockService.start()
-            ScheduleState.Idle,
-            ScheduleState.Canceled,
-            ScheduleState.Stopped -> {
+            is AdditionScheduleState.Started -> clockService.start()
+            AdditionScheduleState.Idle,
+            AdditionScheduleState.Canceled,
+            AdditionScheduleState.Stopped -> {
                 clockService.reset()
                 _timerTextUpdate.value = TimerTextUpdateModel()
             }
@@ -192,7 +192,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private suspend fun stopSchedule() {
         // TODO - instead of calling onScheduleUpdated, better to have a "Stopping" state
         //  show a loader on the button and stop the timer
-        onScheduleStateUpdate(ScheduleState.Canceled)
+        onScheduleStateUpdate(AdditionScheduleState.Canceled)
         stopAdditionSchedule.execute(Unit)
     }
 
@@ -280,10 +280,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
     override fun startTimerButtonClick() {
         viewModelScope.launch {
             when (subscribeScheduleState.execute().first()) {
-                is ScheduleState.Started -> stopSchedule()
-                ScheduleState.Idle,
-                ScheduleState.Canceled,
-                ScheduleState.Stopped -> startSchedule()
+                is AdditionScheduleState.Started -> stopSchedule()
+                AdditionScheduleState.Idle,
+                AdditionScheduleState.Canceled,
+                AdditionScheduleState.Stopped -> startSchedule()
             }
         }
     }

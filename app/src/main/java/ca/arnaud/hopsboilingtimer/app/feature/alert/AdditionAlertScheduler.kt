@@ -8,9 +8,9 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.mapper.AdditionAlertWorkerDa
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.worker.AdditionNotificationWorker
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeScheduleState
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
+import ca.arnaud.hopsboilingtimer.domain.usecase.alert.SubscribeNextAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedulestate.SubscribeScheduleState
 import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
@@ -26,7 +26,7 @@ class AdditionAlertScheduler @Inject constructor(
     private val additionAlertWorkerDataMapper: AdditionAlertWorkerDataMapper,
     private val additionAlertDataFactory: AdditionAlertDataFactory,
 ) {
-    private var currentSchedule: ScheduleState? = null
+    private var currentSchedule: AdditionScheduleState? = null
 
     init {
         coroutineScopeProvider.scope.launch {
@@ -41,19 +41,19 @@ class AdditionAlertScheduler @Inject constructor(
         }
     }
 
-    private fun onScheduleStatusUpdate(status: ScheduleState) {
+    private fun onScheduleStatusUpdate(status: AdditionScheduleState) {
         when (status) {
-            is ScheduleState.Started -> {} // No-op
-            ScheduleState.Stopped -> {
-                if (currentSchedule is ScheduleState.Started) {
+            is AdditionScheduleState.Started -> {} // No-op
+            AdditionScheduleState.Stopped -> {
+                if (currentSchedule is AdditionScheduleState.Started) {
                     additionAlertNotificationPresenter.showEnd()
                 } else {
                     cancelAlarm()
                 }
             }
 
-            ScheduleState.Idle,
-            ScheduleState.Canceled -> cancelAlarm()
+            AdditionScheduleState.Idle,
+            AdditionScheduleState.Canceled -> cancelAlarm()
         }
         currentSchedule = status
     }

@@ -1,10 +1,10 @@
-package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
+package ca.arnaud.hopsboilingtimer.domain.usecase.schedulestate
 
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import kotlinx.coroutines.CompletableDeferred
@@ -25,9 +25,9 @@ class InitializeScheduleState @Inject constructor(
         val nextAlert = schedule?.getNextAlert(timeProvider.getNowLocalDateTime())
 
         val initialState = when {
-            schedule == null -> ScheduleState.Idle
-            nextAlert == null -> ScheduleState.Idle
-            else -> ScheduleState.Started
+            schedule == null -> AdditionScheduleState.Idle
+            nextAlert == null -> AdditionScheduleState.Idle
+            else -> AdditionScheduleState.Started
         }
 
         if (nextAlert != null) {

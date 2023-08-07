@@ -5,7 +5,7 @@ import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
 import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.alert.UpdateAdditionAlert
 import ca.arnaud.hopsboilingtimer.local.factory.AdditionAlertFactory
 import ca.arnaud.hopsboilingtimer.local.factory.AdditionScheduleFactory
 import ca.arnaud.hopsboilingtimer.local.mapper.AlertEntityMapper

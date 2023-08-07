@@ -1,9 +1,9 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
-import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
-import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEventHandler
-import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleStateMachine
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEventHandler
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import javax.inject.Inject
 

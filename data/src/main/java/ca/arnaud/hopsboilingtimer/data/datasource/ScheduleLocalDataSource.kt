@@ -3,7 +3,7 @@ package ca.arnaud.hopsboilingtimer.data.datasource
 import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.alert.UpdateAdditionAlert
 
 interface ScheduleLocalDataSource {
 

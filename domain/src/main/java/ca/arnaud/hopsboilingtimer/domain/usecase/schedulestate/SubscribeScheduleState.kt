@@ -1,7 +1,7 @@
-package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
+package ca.arnaud.hopsboilingtimer.domain.usecase.schedulestate
 
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.NoParamsSuspendableUseCase
 import kotlinx.coroutines.CompletableDeferred
@@ -14,9 +14,9 @@ class SubscribeScheduleState @Inject constructor(
     @Named("InitScheduleState")
     private val initCompletion: CompletableDeferred<Unit>,
     private val scheduleStateRepository: ScheduleStateRepository,
-) : NoParamsSuspendableUseCase<Flow<ScheduleState>>(jobExecutorProvider) {
+) : NoParamsSuspendableUseCase<Flow<AdditionScheduleState>>(jobExecutorProvider) {
 
-    override suspend fun buildRequest(): Flow<ScheduleState> {
+    override suspend fun buildRequest(): Flow<AdditionScheduleState> {
         initCompletion.await()
         return scheduleStateRepository.getScheduleStatusFlow()
     }

@@ -1,6 +1,8 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine
 
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -19,37 +21,37 @@ class AdditionScheduleStateMachineTest {
     @Test
     fun `GIVEN different possible state & event combination WHEN doing all transition VERIFY correct states`() {
         assertEquals(
-            ScheduleState.Started,
+            AdditionScheduleState.Started,
             subject.transition(
-                ScheduleState.Idle,
+                AdditionScheduleState.Idle,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
         assertEquals(
-            ScheduleState.Started,
+            AdditionScheduleState.Started,
             subject.transition(
-                ScheduleState.Canceled,
+                AdditionScheduleState.Canceled,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
         assertEquals(
-            ScheduleState.Started,
+            AdditionScheduleState.Started,
             subject.transition(
-                ScheduleState.Stopped,
+                AdditionScheduleState.Stopped,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
         assertEquals(
-            ScheduleState.Canceled,
+            AdditionScheduleState.Canceled,
             subject.transition(
-                ScheduleState.Started,
+                AdditionScheduleState.Started,
                 AdditionScheduleEvent.Cancel
             )!!.toState
         )
         assertEquals(
-            ScheduleState.Stopped,
+            AdditionScheduleState.Stopped,
             subject.transition(
-                ScheduleState.Started,
+                AdditionScheduleState.Started,
                 AdditionScheduleEvent.TimerEnd
             )!!.toState
         )

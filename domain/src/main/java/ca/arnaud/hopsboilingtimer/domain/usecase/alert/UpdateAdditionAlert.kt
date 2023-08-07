@@ -1,4 +1,4 @@
-package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
+package ca.arnaud.hopsboilingtimer.domain.usecase.alert
 
 import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert

@@ -1,20 +1,21 @@
 package ca.arnaud.hopsboilingtimer.data.repository
 
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleState
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 class ScheduleStateRepositoryImpl @Inject constructor() : ScheduleStateRepository {
 
-    private val scheduleStateFlow = MutableStateFlow<ScheduleState>(ScheduleState.Idle)
+    private val scheduleStateFlow =
+        MutableStateFlow<AdditionScheduleState>(AdditionScheduleState.Idle)
 
-    override suspend fun getScheduleStatusFlow(): Flow<ScheduleState> {
+    override suspend fun getScheduleStatusFlow(): Flow<AdditionScheduleState> {
         return scheduleStateFlow
     }
 
-    override suspend fun setScheduleStatus(status: ScheduleState) {
+    override suspend fun setScheduleStatus(status: AdditionScheduleState) {
         scheduleStateFlow.value = status
     }
 }
