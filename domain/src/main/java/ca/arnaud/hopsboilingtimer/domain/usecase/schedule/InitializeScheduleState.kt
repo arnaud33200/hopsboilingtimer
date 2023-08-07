@@ -23,7 +23,7 @@ class InitializeScheduleState @Inject constructor(
         val initialState = when {
             schedule == null -> ScheduleStatus.Iddle
             nextAlert == null -> ScheduleStatus.Iddle
-            else -> ScheduleStatus.Started(schedule)
+            else -> ScheduleStatus.Started
         }
 
         if (nextAlert != null) {

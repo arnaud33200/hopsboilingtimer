@@ -16,6 +16,7 @@ import ca.arnaud.hopsboilingtimer.app.service.ClockService
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
@@ -26,6 +27,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.SubscribePreference
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import dagger.assisted.Assisted
@@ -47,6 +49,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
     private val subscribeScheduleState: SubscribeScheduleState,
+    private val subscribeSchedule: SubscribeSchedule,
     private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
     private val updateAdditionAlert: UpdateAdditionAlert,
     private val patchPreferences: PatchPreferences,
@@ -71,28 +74,27 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val _showRequestPermissionDialog = MutableStateFlow(false)
     val showRequestPermissionDialog: StateFlow<Boolean> = _showRequestPermissionDialog
 
-
-    private var scheduleStatus: ScheduleStatus? = null
-    private val currentSchedule get() = scheduleStatus?.getSchedule()
+    private var currentSchedule: AdditionSchedule? = null
 
     data class AdditionClockEvent(
-        val scheduleStatus: ScheduleStatus,
+        val schedule: AdditionSchedule?,
         val nextAlert: AdditionAlert?,
     )
 
     init {
         viewModelScope.launch {
-            val scheduleFlow = subscribeScheduleState.execute()
+            val scheduleFlow = subscribeSchedule.execute()
             val nextAlertFlow = subscribeNextAdditionAlert.execute()
 
             subscribeSchedule(scheduleFlow)
+            subscribeScheduleState()
             subscribeNextAlert(nextAlertFlow)
             subscribeClockService(scheduleFlow, nextAlertFlow)
         }
     }
 
     private fun onClockTick(event: AdditionClockEvent) {
-        val schedule = event.scheduleStatus.getSchedule() ?: return
+        val schedule = event.schedule ?: return
         val nextAlert = event.nextAlert ?: return
         _timerTextUpdate.value = TimerTextUpdateModel(
             buttonTimer = additionTimerScreenModelFactory.getButtonTime(schedule),
@@ -110,10 +112,18 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     // region Subscription
 
-    private fun subscribeSchedule(scheduleFlow: Flow<ScheduleStatus>) {
+    private fun subscribeSchedule(scheduleFlow: Flow<AdditionSchedule?>) {
         viewModelScope.launch {
-            scheduleFlow.collect { status ->
-                onScheduleUpdated(status)
+            scheduleFlow.collect { schedule ->
+                onScheduleUpdate(schedule)
+            }
+        }
+    }
+
+    private fun subscribeScheduleState() {
+        viewModelScope.launch {
+            subscribeScheduleState.execute().collect { status ->
+                onScheduleStateUpdate(status)
             }
         }
     }
@@ -129,7 +139,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     }
 
     private fun subscribeClockService(
-        scheduleFlow: Flow<ScheduleStatus>,
+        scheduleFlow: Flow<AdditionSchedule?>,
         nextAlertFlow: Flow<AdditionAlert?>,
     ) {
         viewModelScope.launch {
@@ -149,12 +159,16 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     // region Schedule
 
-    private suspend fun onScheduleUpdated(status: ScheduleStatus) {
-        if (status == scheduleStatus && screenModel.value !is AdditionTimerScreenModel.Loading) {
+    private suspend fun onScheduleUpdate(schedule: AdditionSchedule?) {
+        currentSchedule = schedule
+        updateScreenModel()
+    }
+
+    private fun onScheduleStateUpdate(status: ScheduleStatus) {
+        if (screenModel.value !is AdditionTimerScreenModel.Loading) {
             return
         }
 
-        scheduleStatus = status
         when (status) {
             is ScheduleStatus.Started -> clockService.start()
             ScheduleStatus.Iddle,
@@ -164,7 +178,6 @@ class AdditionTimerViewModel @AssistedInject constructor(
                 _timerTextUpdate.value = TimerTextUpdateModel()
             }
         }
-        updateScreenModel()
     }
 
     private suspend fun startSchedule() {
@@ -183,7 +196,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private suspend fun stopSchedule() {
         // TODO - instead of calling onScheduleUpdated, better to have a "Stopping" state
         //  show a loader on the button and stop the timer
-        onScheduleUpdated(ScheduleStatus.Canceled)
+        onScheduleStateUpdate(ScheduleStatus.Canceled)
         stopAdditionSchedule.execute(Unit)
     }
 
