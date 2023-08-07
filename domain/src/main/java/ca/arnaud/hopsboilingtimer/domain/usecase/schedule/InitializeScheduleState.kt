@@ -13,7 +13,6 @@ import javax.inject.Named
 
 class InitializeScheduleState @Inject constructor(
     jobExecutorProvider: JobExecutorProvider,
-    @Inject
     @Named("InitScheduleState")
     private val initCompletion: CompletableDeferred<Unit>,
     private val scheduleRepository: ScheduleRepository,
