@@ -2,7 +2,6 @@ package ca.arnaud.hopsboilingtimer.data.repository
 
 import ca.arnaud.hopsboilingtimer.data.datasource.ScheduleLocalDataSource
 import ca.arnaud.hopsboilingtimer.domain.common.Response
-import ca.arnaud.hopsboilingtimer.domain.common.doOnSuccess
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
@@ -15,9 +14,14 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val scheduleLocalDataSource: ScheduleLocalDataSource,
 ) : ScheduleRepository {
 
-    private var schedule: AdditionSchedule? = null
-
+    private var scheduleFlow: MutableStateFlow<AdditionSchedule?>? = null
     private val nextAdditionAlert = MutableStateFlow<AdditionAlert?>(null)
+
+    override suspend fun getScheduleFLow(): Flow<AdditionSchedule?> {
+        return scheduleFlow ?: MutableStateFlow(scheduleLocalDataSource.getSchedule()).also {
+            scheduleFlow = it
+        }
+    }
 
     override suspend fun getNextAlertFLow(): Flow<AdditionAlert?> {
 
@@ -31,9 +35,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSchedule(): AdditionSchedule? {
-        return schedule ?: scheduleLocalDataSource.getSchedule().also {
-            updateCachedSchedule(it)
-        }
+        return scheduleFlow?.value
     }
 
     override suspend fun setSchedule(schedule: AdditionSchedule) {
@@ -50,12 +52,15 @@ class ScheduleRepositoryImpl @Inject constructor(
         newAlert: AdditionAlert
     ): Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException> {
         return scheduleLocalDataSource.updateAdditionAlert(newAlert).also { response ->
-            response.doOnSuccess { updateCachedSchedule(it) }
+            when (response) {
+                is Response.Success -> updateCachedSchedule(response.data)
+                is Response.Failure -> {} // No-op
+            }
         }
     }
 
-    private fun updateCachedSchedule(updatedAlert: AdditionAlert) {
-        val currentSchedule = schedule ?: return
+    private suspend fun updateCachedSchedule(updatedAlert: AdditionAlert) {
+        val currentSchedule = getSchedule() ?: return
         val newAlerts = currentSchedule.alerts.toMutableList().apply {
             replaceAll { alert ->
                 when (alert.id) {
@@ -68,6 +73,6 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     private fun updateCachedSchedule(schedule: AdditionSchedule?) {
-        this.schedule = schedule
+        this.scheduleFlow?.value = schedule
     }
 }

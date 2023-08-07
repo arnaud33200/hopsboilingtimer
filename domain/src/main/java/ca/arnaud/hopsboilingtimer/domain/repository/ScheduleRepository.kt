@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
 
+    suspend fun getScheduleFLow(): Flow<AdditionSchedule?>
     suspend fun getSchedule(): AdditionSchedule?
     suspend fun setSchedule(schedule: AdditionSchedule)
     suspend fun deleteSchedule(schedule: AdditionSchedule)
