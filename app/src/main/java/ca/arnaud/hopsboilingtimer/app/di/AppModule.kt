@@ -15,6 +15,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -56,6 +57,13 @@ abstract class AppModule {
         @Named("App")
         fun provideApplicationScope(): CoroutineScope {
             return CoroutineScope(Dispatchers.Default + SupervisorJob())
+        }
+
+        @Provides
+        @Named("InitScheduleState") // TODO - Maybe better to not use names? or at least have the name on a const val
+        @Singleton
+        fun provideCompletableDeferred(): CompletableDeferred<Unit> {
+            return CompletableDeferred<Unit>()
         }
     }
 

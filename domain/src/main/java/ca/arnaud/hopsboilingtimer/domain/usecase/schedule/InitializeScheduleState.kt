@@ -7,10 +7,15 @@ import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
+import kotlinx.coroutines.CompletableDeferred
 import javax.inject.Inject
+import javax.inject.Named
 
 class InitializeScheduleState @Inject constructor(
     jobExecutorProvider: JobExecutorProvider,
+    @Inject
+    @Named("InitScheduleState")
+    private val initCompletion: CompletableDeferred<Unit>,
     private val scheduleRepository: ScheduleRepository,
     private val scheduleStateRepository: ScheduleStateRepository,
     private val timeProvider: TimeProvider,
@@ -31,5 +36,6 @@ class InitializeScheduleState @Inject constructor(
         }
 
         scheduleStateRepository.setScheduleStatus(initialState)
+        initCompletion.complete(Unit)
     }
 }
