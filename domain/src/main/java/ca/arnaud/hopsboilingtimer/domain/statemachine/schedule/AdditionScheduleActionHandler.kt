@@ -4,21 +4,24 @@ import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
-import ca.arnaud.hopsboilingtimer.domain.statemachine.Transition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import java.time.Duration
 import javax.inject.Inject
 
-class AdditionScheduleEventHandler @Inject constructor(
+class AdditionScheduleActionHandler @Inject constructor(
     private val timeProvider: TimeProvider,
     private val getAdditions: GetAdditions,
     private val additionScheduleFactory: AdditionScheduleFactory,
     private val scheduleRepository: ScheduleRepository,
 ) {
 
-    suspend fun handle(
-        transition: Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
-    ) {
+    sealed class AdditionScheduleActionError : Throwable() {
+
+        object StartScheduleMissingParams : AdditionScheduleActionError()
+    }
+
+    @Throws(AdditionScheduleActionError::class)
+    suspend fun handle(transition: AdditionScheduleTransition) {
         when (transition.toState) {
             AdditionScheduleState.Idle -> {} // No-op
             AdditionScheduleState.Started -> startSchedule(transition)
@@ -29,11 +32,10 @@ class AdditionScheduleEventHandler @Inject constructor(
         }
     }
 
-    private suspend fun startSchedule(
-        transition: Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
-    ) {
-        // TODO throw an error
-        val params = (transition.params as? AdditionScheduleParams.Start)?.scheduleOptions ?: return
+    @Throws(AdditionScheduleActionError::class)
+    private suspend fun startSchedule(transition: AdditionScheduleTransition) {
+        val params = (transition.params as? AdditionScheduleParams.Start)?.scheduleOptions
+            ?: throw AdditionScheduleActionError.StartScheduleMissingParams
 
         val additions = getAdditions.execute(Unit).getOrDefault(emptyList())
 

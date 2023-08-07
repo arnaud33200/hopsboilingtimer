@@ -3,8 +3,8 @@ package ca.arnaud.hopsboilingtimer.domain.usecase.alert
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleActionHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
-import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEventHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.ScheduleStateUseCase
@@ -15,7 +15,7 @@ class OnAdditionAlertReceived @Inject constructor(
     private val scheduleRepository: ScheduleRepository,
     scheduleStateRepository: ScheduleStateRepository,
     stateMachine: AdditionScheduleStateMachine,
-    actionHandler: AdditionScheduleEventHandler,
+    actionHandler: AdditionScheduleActionHandler,
 ) : ScheduleStateUseCase<OnAdditionAlertReceived.Params, Unit>(
     jobExecutorProvider = jobExecutorProvider,
     scheduleStateRepository = scheduleStateRepository,

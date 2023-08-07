@@ -2,8 +2,10 @@ package ca.arnaud.hopsboilingtimer.domain.statemachine.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.statemachine.ConditionalStateMachine
 import ca.arnaud.hopsboilingtimer.domain.statemachine.ConditionalTransition
+import ca.arnaud.hopsboilingtimer.domain.statemachine.Transition
 import javax.inject.Inject
 
+typealias AdditionScheduleTransition = Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
 
 class AdditionScheduleStateMachine @Inject constructor() :
     ConditionalStateMachine<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>() {

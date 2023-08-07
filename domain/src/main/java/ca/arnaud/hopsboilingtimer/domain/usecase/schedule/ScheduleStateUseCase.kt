@@ -1,8 +1,8 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleActionHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
-import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEventHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleParams
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
@@ -13,7 +13,7 @@ abstract class ScheduleStateUseCase<in T, out S> constructor(
     jobExecutorProvider: JobExecutorProvider,
     private val scheduleStateRepository: ScheduleStateRepository,
     private val stateMachine: AdditionScheduleStateMachine,
-    private val actionHandler: AdditionScheduleEventHandler,
+    private val actionHandler: AdditionScheduleActionHandler,
 ) : SuspendableUseCase<T, S>(jobExecutorProvider) {
 
     suspend fun sendStateEvent(
