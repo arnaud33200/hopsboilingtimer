@@ -23,7 +23,7 @@ abstract class ScheduleStateUseCase<in T, out S> constructor(
         val state = scheduleStateRepository.getScheduleStatusFlow().first()
         stateMachine.transition(state, event, params)?.let { transition ->
             actionHandler.handle(transition)
-            scheduleStateRepository.setScheduleStatus(state)
+            scheduleStateRepository.setScheduleStatus(transition.toState)
         }
     }
 }

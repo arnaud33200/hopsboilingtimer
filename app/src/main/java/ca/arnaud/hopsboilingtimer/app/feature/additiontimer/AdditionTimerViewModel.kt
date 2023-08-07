@@ -165,10 +165,6 @@ class AdditionTimerViewModel @AssistedInject constructor(
     }
 
     private fun onScheduleStateUpdate(status: ScheduleState) {
-        if (screenModel.value !is AdditionTimerScreenModel.Loading) {
-            return
-        }
-
         when (status) {
             is ScheduleState.Started -> clockService.start()
             ScheduleState.Idle,
