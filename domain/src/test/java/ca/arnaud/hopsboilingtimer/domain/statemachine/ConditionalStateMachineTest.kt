@@ -44,7 +44,10 @@ class ConditionalStateMachineTest {
         }
     }
 
-    object TestParams : MachineParams
+    sealed interface TestParams : MachineParams {
+
+        object Params1 : TestParams
+    }
 
     private lateinit var subject: ConditionalStateMachine<TestState, TestEvent, MachineParams>
 
@@ -74,24 +77,24 @@ class ConditionalStateMachineTest {
             override fun getTransitions(
                 fromState: TestState,
                 event: TestEvent
-            ): List<ConditionalTransition<TestState, TestEvent, MachineParams>>? {
+            ): List<ConditionalTransition<TestState>>? {
                 return when (fromState) {
                     TestState.A -> when (event) {
                         TestEvent.Event1 -> listOf(
-                            TestState.B.toConditionalTransition(event, fromState)
+                            ConditionalTransition(TestState.B)
                         )
 
                         TestEvent.Event2 -> null
                         TestEvent.Event3 -> null
                         TestEvent.Event4 -> listOf(
-                            TestState.C.toConditionalTransition(event, fromState)
+                            ConditionalTransition(TestState.C)
                         )
                     }
 
                     TestState.B -> when (event) {
                         TestEvent.Event1 -> null
                         TestEvent.Event2 -> listOf(
-                            TestState.A.toConditionalTransition(event, fromState)
+                            ConditionalTransition(TestState.A)
                         )
 
                         TestEvent.Event3 -> null
@@ -102,7 +105,7 @@ class ConditionalStateMachineTest {
                         TestEvent.Event1 -> null
                         TestEvent.Event2 -> null
                         TestEvent.Event3 -> listOf(
-                            TestState.D.toConditionalTransition(event, fromState)
+                            ConditionalTransition(TestState.D)
                         )
 
                         TestEvent.Event4 -> null
@@ -126,5 +129,11 @@ class ConditionalStateMachineTest {
         assertEquals(TestState.A, subject.transition(TestState.B, TestEvent.Event2)!!.toState)
         assertEquals(TestState.D, subject.transition(TestState.C, TestEvent.Event3)!!.toState)
         assertEquals(TestState.B, subject.transition(TestState.A, TestEvent.Event1)!!.toState)
+    }
+
+    @Test
+    fun `GIVEN params WHEN transitioning VERIFY params in transition`() {
+        val params = TestParams.Params1
+        assertEquals(params, subject.transition(TestState.A, TestEvent.Event1, params)!!.params)
     }
 }

@@ -48,11 +48,11 @@ class AdditionScheduleStateMachine @Inject constructor() :
     override fun getTransitions(
         fromState: ScheduleState,
         event: AdditionScheduleEvent
-    ): List<ConditionalTransition<ScheduleState, AdditionScheduleEvent, AdditionScheduleParams>>? {
+    ): List<ConditionalTransition<ScheduleState>>? {
         return when (fromState) {
             ScheduleState.Idle -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    ScheduleState.Started.toConditionalTransition(event, fromState)
+                    ConditionalTransition(ScheduleState.Started)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // Forbidden
@@ -61,7 +61,7 @@ class AdditionScheduleStateMachine @Inject constructor() :
 
             ScheduleState.Canceled -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    ScheduleState.Started.toConditionalTransition(event, fromState)
+                    ConditionalTransition(ScheduleState.Started)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // No Action
@@ -71,17 +71,17 @@ class AdditionScheduleStateMachine @Inject constructor() :
             ScheduleState.Started -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> null // No Action
                 AdditionScheduleEvent.Cancel -> listOf(
-                    ScheduleState.Canceled.toConditionalTransition(event, fromState)
+                    ConditionalTransition(ScheduleState.Canceled)
                 )
 
                 AdditionScheduleEvent.TimerEnd -> listOf(
-                    ScheduleState.Stopped.toConditionalTransition(event, fromState)
+                    ConditionalTransition(ScheduleState.Stopped)
                 )
             }
 
             ScheduleState.Stopped -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
-                    ScheduleState.Started.toConditionalTransition(event, fromState)
+                    ConditionalTransition(ScheduleState.Started)
                 )
 
                 AdditionScheduleEvent.Cancel -> null // Impossible

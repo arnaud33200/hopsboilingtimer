@@ -2,32 +2,15 @@ package ca.arnaud.hopsboilingtimer.domain.statemachine
 
 import ca.arnaud.hopsboilingtimer.domain.extension.associateByNotNull
 
-data class ConditionalTransition<State : MachineState, Event : MachineEvent, Params : MachineParams>(
-    val transition: Transition<State, Event, Params>,
-    val condition: (() -> Boolean)?,
+data class ConditionalTransition<State : MachineState>(
+    val toState: State,
+    val condition: (() -> Boolean)? = null,
 )
-
-fun <State : MachineState, Event : MachineEvent, Params : MachineParams> State.toConditionalTransition(
-    event: Event,
-    fromState: State,
-    params: Params? = null,
-    condition: (() -> Boolean)? = null,
-): ConditionalTransition<State, Event, Params> {
-    return ConditionalTransition(
-        transition = object : Transition<State, Event, Params> {
-            override val fromState: State = fromState
-            override val toState: State = this@toConditionalTransition
-            override val event: Event = event
-            override val params: Params? = params
-        },
-        condition = condition,
-    )
-}
 
 abstract class ConditionalStateMachine<State : MachineState, Event : MachineEvent, Params : MachineParams> :
     StateMachine<State, Event, Params> {
 
-    private val _transitions: Map<StateId, Map<EventId, List<ConditionalTransition<State, Event, Params>>>> =
+    private val _transitions: Map<StateId, Map<EventId, List<ConditionalTransition<State>>>> =
         getStates().associateByNotNull(keyTransform = { it.id }) { stateKey, state ->
             getEvents().associateByNotNull(keyTransform = { it.id }) { eventKey, event ->
                 getTransitions(state, event)
@@ -41,7 +24,7 @@ abstract class ConditionalStateMachine<State : MachineState, Event : MachineEven
     protected abstract fun getTransitions(
         fromState: State,
         event: Event
-    ): List<ConditionalTransition<State, Event, Params>>?
+    ): List<ConditionalTransition<State>>?
 
     override fun transition(
         fromState: State,
@@ -52,7 +35,24 @@ abstract class ConditionalStateMachine<State : MachineState, Event : MachineEven
         val transitions = events[event.id] ?: emptyList()
         return transitions.firstOrNull { transition ->
             transition.condition?.invoke() ?: true
-        }?.transition
+        }?.toTransition(
+            event = event,
+            fromState = fromState,
+            params = params,
+        )
+    }
+
+    private fun <State : MachineState, Event : MachineEvent, Params : MachineParams> ConditionalTransition<State>.toTransition(
+        event: Event,
+        fromState: State,
+        params: Params? = null,
+    ): Transition<State, Event, Params> {
+        return object : Transition<State, Event, Params> {
+            override val fromState: State = fromState
+            override val toState: State = this@toTransition.toState
+            override val event: Event = event
+            override val params: Params? = params
+        }
     }
 
     override fun toString(): String {
