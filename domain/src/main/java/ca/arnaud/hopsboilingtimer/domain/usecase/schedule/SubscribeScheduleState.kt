@@ -7,7 +7,7 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.common.NoParamsSuspendableUseCa
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class SubscribeAdditionSchedule @Inject constructor(
+class SubscribeScheduleState @Inject constructor(
     jobExecutorProvider: JobExecutorProvider,
     private val scheduleStateRepository: ScheduleStateRepository,
 ) : NoParamsSuspendableUseCase<Flow<ScheduleStatus>>(jobExecutorProvider) {

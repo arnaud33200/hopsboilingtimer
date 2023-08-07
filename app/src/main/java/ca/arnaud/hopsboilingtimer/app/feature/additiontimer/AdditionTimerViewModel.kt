@@ -18,7 +18,6 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.preferences.PatchPreferencesParams
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleOptions
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
-import ca.arnaud.hopsboilingtimer.domain.model.schedule.getSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.AddNewAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.DeleteAddition
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
@@ -26,8 +25,8 @@ import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.PatchPreferences
 import ca.arnaud.hopsboilingtimer.domain.usecase.preferences.SubscribePreferences
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StartAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.StopAdditionSchedule
-import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeAdditionSchedule
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeNextAdditionAlert
+import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.SubscribeScheduleState
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.UpdateAdditionAlert
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -47,7 +46,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
     private val deleteAddition: DeleteAddition,
     private val startAdditionSchedule: StartAdditionSchedule,
     private val stopAdditionSchedule: StopAdditionSchedule,
-    private val subscribeAdditionSchedule: SubscribeAdditionSchedule,
+    private val subscribeScheduleState: SubscribeScheduleState,
     private val subscribeNextAdditionAlert: SubscribeNextAdditionAlert,
     private val updateAdditionAlert: UpdateAdditionAlert,
     private val patchPreferences: PatchPreferences,
@@ -83,7 +82,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            val scheduleFlow = subscribeAdditionSchedule.execute()
+            val scheduleFlow = subscribeScheduleState.execute()
             val nextAlertFlow = subscribeNextAdditionAlert.execute()
 
             subscribeSchedule(scheduleFlow)
@@ -271,7 +270,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     override fun startTimerButtonClick() {
         viewModelScope.launch {
-            when (subscribeAdditionSchedule.execute().first()) {
+            when (subscribeScheduleState.execute().first()) {
                 is ScheduleStatus.Started -> stopSchedule()
                 ScheduleStatus.Iddle,
                 ScheduleStatus.Canceled,
