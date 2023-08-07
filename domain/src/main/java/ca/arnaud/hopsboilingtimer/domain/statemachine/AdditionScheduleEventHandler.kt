@@ -16,11 +16,11 @@ class AdditionScheduleEventHandler @Inject constructor(
 ) {
 
     suspend fun handle(
-        transition: Transition<AdditionScheduleState, AdditionScheduleEvent>
+        transition: Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
     ) {
         when (transition.toState) {
             AdditionScheduleState.Idle -> {} // No-op
-            AdditionScheduleState.Started -> startSchedule(transition.event)
+            AdditionScheduleState.Started -> startSchedule(transition)
             AdditionScheduleState.Canceled,
             AdditionScheduleState.Stopped -> {
                 stopSchedule()
@@ -28,8 +28,11 @@ class AdditionScheduleEventHandler @Inject constructor(
         }
     }
 
-    private suspend fun startSchedule(event: AdditionScheduleEvent) {
-        val params = (event as? AdditionScheduleEvent.TimerStart)?.params ?: return
+    private suspend fun startSchedule(
+        transition: Transition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>
+    ) {
+        // TODO throw an error
+        val params = (transition.params as? AdditionScheduleParams.Start)?.scheduleOptions ?: return
 
         val additions = getAdditions.execute(Unit).getOrDefault(emptyList())
 

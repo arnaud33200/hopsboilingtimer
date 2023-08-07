@@ -5,6 +5,7 @@ import ca.arnaud.hopsboilingtimer.domain.model.schedule.ScheduleStatus
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleEventHandler
+import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleParams
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.statemachine.AdditionScheduleStateMachine
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
@@ -19,9 +20,12 @@ abstract class ScheduleStateUseCase<in T, out S> constructor(
     private val statusMapper: ScheduleStatusMapper,
 ) : SuspendableUseCase<T, S>(jobExecutorProvider) {
 
-    suspend fun sendStateEvent(event: AdditionScheduleEvent) {
+    suspend fun sendStateEvent(
+        event: AdditionScheduleEvent,
+        params: AdditionScheduleParams? = null,
+    ) {
         val state = scheduleStateRepository.getScheduleStatusFlow().first().toScheduleState()
-        stateMachine.transition(state, event)?.let { transition ->
+        stateMachine.transition(state, event, params)?.let { transition ->
             actionHandler.handle(transition)
             try {
                 val status = statusMapper.mapTo(transition.toState)

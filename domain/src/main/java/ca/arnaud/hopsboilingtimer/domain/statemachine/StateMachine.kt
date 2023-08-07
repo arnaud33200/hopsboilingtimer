@@ -12,13 +12,20 @@ interface MachineEvent {
     val id: EventId
 }
 
-interface Transition<State : MachineState, Event : MachineEvent> {
+interface MachineParams
+
+interface Transition<State : MachineState, Event : MachineEvent, Params : MachineParams> {
     val fromState: State
     val toState: State
     val event: Event
+    val params: Params?
 }
 
-interface StateMachine<State : MachineState, Event : MachineEvent> {
+interface StateMachine<State : MachineState, Event : MachineEvent, Params : MachineParams> {
 
-    fun transition(fromState: State, event: Event): Transition<State, Event>?
+    fun transition(
+        fromState: State,
+        event: Event,
+        params: Params? = null,
+    ): Transition<State, Event, Params>?
 }

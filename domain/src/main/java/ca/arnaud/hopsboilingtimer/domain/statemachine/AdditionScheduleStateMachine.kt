@@ -25,9 +25,7 @@ sealed interface AdditionScheduleState : MachineState {
 
 sealed interface AdditionScheduleEvent : MachineEvent {
 
-    data class TimerStart(
-        val params: ScheduleOptions,
-    ) : AdditionScheduleEvent {
+    object TimerStart : AdditionScheduleEvent {
         override val id = "TimerStart"
     }
 
@@ -40,9 +38,14 @@ sealed interface AdditionScheduleEvent : MachineEvent {
     }
 }
 
+sealed interface AdditionScheduleParams : MachineParams {
+
+    data class Start(val scheduleOptions: ScheduleOptions) : AdditionScheduleParams
+}
+
 
 class AdditionScheduleStateMachine @Inject constructor() :
-    ConditionalStateMachine<AdditionScheduleState, AdditionScheduleEvent>() {
+    ConditionalStateMachine<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>() {
 
     override fun getStates(): List<AdditionScheduleState> {
         return AdditionScheduleState::class.nestedClasses.map { it.objectInstance }
@@ -50,11 +53,8 @@ class AdditionScheduleStateMachine @Inject constructor() :
     }
 
     override fun getEvents(): List<AdditionScheduleEvent> {
-        return listOf(
-            AdditionScheduleEvent.TimerStart(params = ScheduleOptions()), // TODO - better to have the params in separate class?
-            AdditionScheduleEvent.Cancel,
-            AdditionScheduleEvent.TimerEnd,
-        )
+        return AdditionScheduleEvent::class.nestedClasses.map { it.objectInstance }
+            .filterIsInstance<AdditionScheduleEvent>()
     }
 
     /**
@@ -67,7 +67,7 @@ class AdditionScheduleStateMachine @Inject constructor() :
     override fun getTransitions(
         fromState: AdditionScheduleState,
         event: AdditionScheduleEvent
-    ): List<ConditionalTransition<AdditionScheduleState, AdditionScheduleEvent>>? {
+    ): List<ConditionalTransition<AdditionScheduleState, AdditionScheduleEvent, AdditionScheduleParams>>? {
         return when (fromState) {
             AdditionScheduleState.Idle -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
