@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app.provider
 
 import android.content.Context
+import android.text.TextUtils
 import androidx.annotation.StringRes
 import javax.inject.Inject
 
@@ -13,6 +14,6 @@ class StringProvider @Inject constructor(
     }
 
     fun get(@StringRes id: Int, vararg arguments: String): String {
-        return context.getString(id, arguments)
+        return TextUtils.expandTemplate(get(id), *arguments).toString()
     }
 }

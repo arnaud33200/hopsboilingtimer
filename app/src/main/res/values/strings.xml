@@ -1,9 +1,19 @@
 <resources>
     <string name="app_name">Hops Boiling Timer</string>
 
+    <!-- Time -->
+    <string name="time_at_time">at ^1</string> <!-- ^1 = time hour (2:30 PM) -->
+    <string name="time_hours_minute_format_pattern">hh:mm a</string>
+
     <!-- Notification -->
     <string name="notification_channel_name">Hops Additions</string>
     <string name="notification_channel_description">Add the next additions\n</string>
     <string name="notification_title">Hops Boiling Timer</string>
+    <string name="notification_addition_alert_message">add ^1 (^2)</string> <!-- ^1 = hops, ^2 = duration -->
+    <string name="notification_stop_boiling">Stop boiling!</string>
+    <string name="notification_row_type_next">Next</string>
+    <string name="notification_row_type_after">After</string>
+    <string name="notification_row_type_now">Now</string>
+    <string name="notification_end_schedule">stop boiling!</string>
 
 </resources>

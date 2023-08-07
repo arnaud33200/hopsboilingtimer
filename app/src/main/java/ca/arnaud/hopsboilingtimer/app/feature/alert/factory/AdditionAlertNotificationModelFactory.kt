@@ -1,10 +1,12 @@
 package ca.arnaud.hopsboilingtimer.app.feature.alert.factory
 
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AlertNotificationRowModel
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
+import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import ca.arnaud.hopsboilingtimer.domain.extension.getNextAlerts
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
@@ -16,6 +18,7 @@ import javax.inject.Inject
 class AdditionAlertNotificationModelFactory @Inject constructor(
     private val durationTextFormatter: DurationTextFormatter,
     private val timeHoursTextFormatter: TimeHoursTextFormatter,
+    private val stringProvider: StringProvider,
 ) {
 
     fun create(
@@ -42,7 +45,7 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
             rows = listOf(
                 AlertNotificationRowModel(
                     type = RowType.Now.toTypeText(),
-                    title = "Stop boiling!"
+                    title = stringProvider.get(R.string.notification_stop_boiling)
                 )
             ),
             dismissible = true,
@@ -66,12 +69,13 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
     }
 
     private fun RowType.toTypeText(): String {
-        return when (this) {
-            // TODO - hardcoded string
-            RowType.Next -> "Next"
-            RowType.After -> "After"
-            RowType.Now -> "Now"
-        }
+        return stringProvider.get(
+            when (this) {
+                RowType.Next -> R.string.notification_row_type_next
+                RowType.After -> R.string.notification_row_type_after
+                RowType.Now -> R.string.notification_row_type_now
+            }
+        )
     }
 
     private fun createRow(alert: AdditionAlert, type: RowType): AlertNotificationRowModel {
@@ -79,15 +83,17 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
             id = alert.id,
             type = type.toTypeText(),
             title = when (alert) {
-                is AdditionAlert.Start -> createStartMessage(alert)
+                is AdditionAlert.Start -> "" // won't be shown
                 is AdditionAlert.Next -> createNextMessage(alert)
                 is AdditionAlert.End -> createEndMessage(alert)
             },
             time = when (type) {
                 RowType.Next,
                 RowType.After -> {
-                    // TODO - show a countdown when 5 min left
-                    "at ${timeHoursTextFormatter.format(alert.triggerAtTime)}"
+                    stringProvider.get(
+                        R.string.time_at_time,
+                        timeHoursTextFormatter.format(alert.triggerAtTime)
+                    )
                 }
 
                 RowType.Now -> ""
@@ -95,20 +101,18 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         )
     }
 
-    private fun createStartMessage(input: AdditionAlert): String {
-        val additions = input.additionsOrEmpty()
-        val hops = additions.joinToString(separator = ", ", prefix = ": ") { it.name }
-        return "Start$hops"
-    }
-
     private fun createNextMessage(input: AdditionAlert): String {
         val additions = input.additionsOrEmpty()
         val duration = input.getDuration() ?: Duration.ZERO
         val hops = additions.joinToString(separator = ", ", prefix = "") { it.name }
-        return "add $hops (${durationTextFormatter.format(duration)})"
+        return stringProvider.get(
+            R.string.notification_addition_alert_message,
+            hops,
+            durationTextFormatter.format(duration),
+        )
     }
 
     private fun createEndMessage(input: AdditionAlert): String {
-        return "stop boiling!"
+        return stringProvider.get(R.string.notification_end_schedule)
     }
 }
