@@ -1,5 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app
 
+import ca.arnaud.hopsboilingtimer.R
+import ca.arnaud.hopsboilingtimer.app.fake.FakeStringProvider
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -10,9 +12,18 @@ class DurationTextFormatterTest {
 
     private lateinit var subject: DurationTextFormatter
 
+    private val stringProvider = FakeStringProvider(
+        mapOf(
+            R.string.time_duration_seconds_pattern to "^1 sec",
+            R.string.time_duration_minutes_pattern to "^1 min",
+        )
+    )
+
     @Before
     fun setup() {
-        subject = DurationTextFormatter()
+        subject = DurationTextFormatter(
+            stringProvider = stringProvider,
+        )
     }
 
     @Test

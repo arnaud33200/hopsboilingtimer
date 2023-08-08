@@ -5,8 +5,8 @@ import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
+import ca.arnaud.hopsboilingtimer.app.formatter.time.CountdownTimerTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
-import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
@@ -20,7 +20,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
     private val alertRowModelFactory: AlertRowModelFactory,
     private val timeProvider: TimeProvider,
     private val durationTextFormatter: DurationTextFormatter,
-    private val remainingTimeTextFormatter: RemainingTimeTextFormatter,
+    private val countdownTimerTextFormatter: CountdownTimerTextFormatter,
 ) {
 
     fun create(
@@ -57,7 +57,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         }
 
         return remainingDuration?.let { duration ->
-            remainingTimeTextFormatter.format(duration)
+            countdownTimerTextFormatter.format(duration)
         } ?: ""
     }
 

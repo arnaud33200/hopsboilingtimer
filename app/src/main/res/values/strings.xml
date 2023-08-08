@@ -2,8 +2,12 @@
     <string name="app_name">Hops Boiling Timer</string>
 
     <!-- Time -->
-    <string name="time_at_time">at ^1</string> <!-- ^1 = time hour (2:30 PM) -->
+    <string name="time_at_time">At ^1</string> <!-- ^1 = time hour (2:30 PM) -->
+    <string name="time_in_countdown">In ^1</string> <!-- ^1 = countdown (01:20) -->
     <string name="time_hours_minute_format_pattern">hh:mm a</string>
+    <string name="time_duration_seconds_pattern">^1 sec</string>
+    <string name="time_duration_minutes_pattern">^1 min</string>
+    <string name="time_countdown_minutes_seconds_pattern">^1:^2</string> <!-- ^1 = minutes, ^2 = seconds -->
 
     <!-- Notification -->
     <string name="notification_channel_name">Hops Additions</string>
@@ -15,5 +19,7 @@
     <string name="notification_row_type_after">After</string>
     <string name="notification_row_type_now">Now</string>
     <string name="notification_end_schedule">stop boiling!</string>
+
+    <string name="alert_row_end_boiling">End boiling</string>
 
 </resources>

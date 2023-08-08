@@ -1,8 +1,10 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
-import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
+import ca.arnaud.hopsboilingtimer.app.formatter.time.CountdownTimerTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
+import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.model.isChecked
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 class AlertRowModelFactory @Inject constructor(
     private val timeProvider: TimeProvider,
-    private val remainingTimeTextFormatter: RemainingTimeTextFormatter,
+    private val stringProvider: StringProvider,
+    private val countdownTimerTextFormatter: CountdownTimerTextFormatter,
     private val timeHoursTextFormatter: TimeHoursTextFormatter,
 ) {
     fun create(
@@ -38,7 +41,10 @@ class AlertRowModelFactory @Inject constructor(
             title = getTitle(alert),
             time = when {
                 highlighted -> getHighlightedTimeText(remainingDuration)
-                else -> "At ${timeHoursTextFormatter.format(alert.triggerAtTime)}"
+                else -> stringProvider.get(
+                    R.string.time_at_time,
+                    timeHoursTextFormatter.format(alert.triggerAtTime)
+                )
             },
             highlighted = highlighted,
         )
@@ -55,7 +61,10 @@ class AlertRowModelFactory @Inject constructor(
     }
 
     private fun getHighlightedTimeText(remainingDuration: Duration): String {
-        return "In ${remainingTimeTextFormatter.format(remainingDuration)}"
+        return stringProvider.get(
+            R.string.time_in_countdown,
+            countdownTimerTextFormatter.format(remainingDuration),
+        )
     }
 
     private fun createAdded(alert: AdditionAlert): AlertRowModel.Added {
@@ -69,7 +78,7 @@ class AlertRowModelFactory @Inject constructor(
 
     private fun getTitle(alert: AdditionAlert): String {
         return when (alert) {
-            is AdditionAlert.End -> "End boiling" // TODO - hardcoded string
+            is AdditionAlert.End -> stringProvider.get(R.string.alert_row_end_boiling)
             is AdditionAlert.Next,
             is AdditionAlert.Start -> {
                 alert.additionsOrEmpty().joinToString(separator = ", ") { it.name }

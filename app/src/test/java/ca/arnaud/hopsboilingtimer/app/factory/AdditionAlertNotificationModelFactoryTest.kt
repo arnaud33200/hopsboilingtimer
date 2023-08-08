@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.factory
 
+import ca.arnaud.hopsboilingtimer.app.fake.FakeStringProvider
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
@@ -21,6 +22,8 @@ class AdditionAlertNotificationModelFactoryTest {
     private val durationTextFormatter: DurationTextFormatter = mockk()
     private val timeHoursTextFormatter: TimeHoursTextFormatter = mockk()
 
+    private val stringProvider = FakeStringProvider(emptyMap())
+
     @Before
     fun setup() {
         every { durationTextFormatter.format(any()) } returns ""
@@ -29,6 +32,7 @@ class AdditionAlertNotificationModelFactoryTest {
         subject = AdditionAlertNotificationModelFactory(
             durationTextFormatter = durationTextFormatter,
             timeHoursTextFormatter = timeHoursTextFormatter,
+            stringProvider = stringProvider,
         )
     }
 

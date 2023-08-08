@@ -1,13 +1,15 @@
 package ca.arnaud.hopsboilingtimer.app.formatter.time
 
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.extension.toPositiveDuration
 import ca.arnaud.hopsboilingtimer.app.formatter.Formatter
+import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import java.time.Duration
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
-class RemainingTimeTextFormatter @Inject constructor() : Formatter<Duration, String> {
+class CountdownTimerTextFormatter @Inject constructor(
+    private val stringProvider: StringProvider,
+) : Formatter<Duration, String> {
 
     override fun format(input: Duration): String {
         val positiveDuration = input.toPositiveDuration()
@@ -16,7 +18,11 @@ class RemainingTimeTextFormatter @Inject constructor() : Formatter<Duration, Str
         val minutesText = addZeroIfNeeded("$minutes")
         val secondsText = addZeroIfNeeded("$seconds")
         val negativeSign = if (input.isNegative) "-" else ""
-        return "$negativeSign$minutesText:$secondsText"
+        return negativeSign + stringProvider.get(
+            R.string.time_countdown_minutes_seconds_pattern,
+            minutesText,
+            secondsText,
+        )
     }
 
     private fun addZeroIfNeeded(text: String): String {

@@ -1,18 +1,28 @@
 package ca.arnaud.hopsboilingtimer.app
 
-import ca.arnaud.hopsboilingtimer.app.formatter.time.RemainingTimeTextFormatter
+import ca.arnaud.hopsboilingtimer.R
+import ca.arnaud.hopsboilingtimer.app.fake.FakeStringProvider
+import ca.arnaud.hopsboilingtimer.app.formatter.time.CountdownTimerTextFormatter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.Duration
 
-class RemainingTimeTextFormatterTest {
+class CountdownTimerTextFormatterTest {
 
-    private lateinit var subject: RemainingTimeTextFormatter
+    private lateinit var subject: CountdownTimerTextFormatter
+
+    private val stringProvider = FakeStringProvider(
+        mapOf(
+            R.string.time_countdown_minutes_seconds_pattern to "^1:^2"
+        )
+    )
 
     @Before
     fun setup() {
-        subject = RemainingTimeTextFormatter()
+        subject = CountdownTimerTextFormatter(
+            stringProvider = stringProvider,
+        )
     }
 
     @Test
