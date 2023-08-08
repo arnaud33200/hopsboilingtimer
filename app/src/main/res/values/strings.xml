@@ -20,6 +20,15 @@
     <string name="notification_row_type_now">Now</string>
     <string name="notification_end_schedule">stop boiling!</string>
 
+    <!-- Addition Timer -->
+    <string name="addition_timer_screen_title">Hops Boiling Timer</string>
     <string name="alert_row_end_boiling">End boiling</string>
+    <string name="addition_timer_add_title">New Addition</string>
+    <string name="addition_timer_add_field_hops">Hops</string>
+    <string name="addition_timer_add_field_minutes">Min</string>
+    <string name="addition_timer_start_button">Start timer</string>
+    <string name="addition_timer_stop_button">Stop timer</string>
+    <string name="addition_timer_alert_added_title">Added</string>
+
 
 </resources>

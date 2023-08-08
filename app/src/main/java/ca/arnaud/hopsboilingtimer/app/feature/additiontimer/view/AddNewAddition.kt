@@ -20,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen.AdditionTimerScreenConfig
 import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 
@@ -95,7 +97,7 @@ private fun TitleTextField(
     TransparentTextField(
         modifier = modifier,
         value = title,
-        label = { Text("Hops") },
+        label = { Text(stringResource(id = R.string.addition_timer_add_field_hops)) },
         singleLine = true,
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(
@@ -114,7 +116,7 @@ private fun DurationTextField(
     TransparentTextField(
         modifier = modifier,
         value = duration,
-        label = { Text("Min") },
+        label = { Text(stringResource(id = R.string.addition_timer_add_field_minutes)) },
         singleLine = true,
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(

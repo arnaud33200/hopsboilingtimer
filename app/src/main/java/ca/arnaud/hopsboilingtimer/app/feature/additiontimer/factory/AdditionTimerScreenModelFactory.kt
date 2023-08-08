@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.factory
 
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AlertRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.BottomBarModel
@@ -7,6 +8,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonModel
 import ca.arnaud.hopsboilingtimer.app.feature.common.model.TimeButtonStyle
 import ca.arnaud.hopsboilingtimer.app.formatter.time.CountdownTimerTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
+import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
@@ -16,9 +18,10 @@ import java.time.Duration
 import javax.inject.Inject
 
 class AdditionTimerScreenModelFactory @Inject constructor(
+    private val timeProvider: TimeProvider,
+    private val stringProvider: StringProvider,
     private val additionRowModelFactory: AdditionRowModelFactory,
     private val alertRowModelFactory: AlertRowModelFactory,
-    private val timeProvider: TimeProvider,
     private val durationTextFormatter: DurationTextFormatter,
     private val countdownTimerTextFormatter: CountdownTimerTextFormatter,
 ) {
@@ -73,7 +76,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
         return when (schedule) {
             null -> BottomBarModel(
                 timeButton = TimeButtonModel(
-                    title = "Start Timer", // TODO - hardcoded string
+                    title = stringProvider.get(R.string.addition_timer_start_button),
                     time = maxDuration?.let { duration ->
                         durationTextFormatter.format(duration)
                     } ?: "",
@@ -85,7 +88,7 @@ class AdditionTimerScreenModelFactory @Inject constructor(
             else -> {
                 BottomBarModel(
                     timeButton = TimeButtonModel(
-                        title = "Stop Timer", // TODO - hardcoded string
+                        title = stringProvider.get(R.string.addition_timer_stop_button),
                         time = getButtonTime(schedule),
                         style = TimeButtonStyle.Stop,
                         enabled = true,

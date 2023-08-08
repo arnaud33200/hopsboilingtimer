@@ -2,7 +2,6 @@ package ca.arnaud.hopsboilingtimer.app.feature.additiontimer.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,14 +12,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.InvertColors
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -29,18 +24,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionOptionType
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.additiontimer.model.AdditionTimerScreenModel
@@ -55,7 +47,6 @@ import ca.arnaud.hopsboilingtimer.app.feature.common.view.TimeButton
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTheme
 import ca.arnaud.hopsboilingtimer.app.theme.HopsAppTypography
 import ca.arnaud.hopsboilingtimer.app.theme.LocalAppTypography
-import ca.arnaud.hopsboilingtimer.app.view.TransparentTextField
 
 interface AdditionTimerScreenActionListener {
 
@@ -141,7 +132,7 @@ private fun TopBar(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Hops Boiling Timer", // TODO - put in strings.xml
+                text = stringResource(id = R.string.addition_timer_screen_title),
                 style = HopsAppTypography.h1,
             )
 
@@ -177,7 +168,7 @@ private fun EditContent(
             }
 
             if (model.additionRows.isNotEmpty()) {
-                TitleRow(text = "New Addition")
+                TitleRow(text = stringResource(id = R.string.addition_timer_add_title))
             }
             AddNewAddition(
                 newAdditionHopsTextChanged = actionListener::newAdditionHopsTextChanged,
@@ -215,7 +206,7 @@ private fun ScheduleContent(
             }
 
             item(key = "added") {
-                TitleRow(text = "Added")
+                TitleRow(text = stringResource(id = R.string.addition_timer_alert_added_title))
             }
 
             items(
