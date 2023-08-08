@@ -30,7 +30,7 @@ class AdditionScheduleStateMachine @Inject constructor() :
     override fun getTransitions(
         fromState: AdditionScheduleState,
         event: AdditionScheduleEvent
-    ): List<ConditionalTransition<AdditionScheduleState>>? {
+    ): List<ConditionalTransition<AdditionScheduleState, AdditionScheduleParams>>? {
         return when (fromState) {
             AdditionScheduleState.Idle -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(

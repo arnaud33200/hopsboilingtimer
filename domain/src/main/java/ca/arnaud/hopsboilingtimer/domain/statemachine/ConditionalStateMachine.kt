@@ -2,15 +2,15 @@ package ca.arnaud.hopsboilingtimer.domain.statemachine
 
 import ca.arnaud.hopsboilingtimer.domain.extension.associateByNotNull
 
-data class ConditionalTransition<State : MachineState>(
+data class ConditionalTransition<State : MachineState, Params : MachineParams>(
     val toState: State,
-    val condition: (() -> Boolean)? = null,
+    val condition: ((Params?) -> Boolean)? = null,
 )
 
 abstract class ConditionalStateMachine<State : MachineState, Event : MachineEvent, Params : MachineParams> :
     StateMachine<State, Event, Params> {
 
-    private val _transitions: Map<StateId, Map<EventId, List<ConditionalTransition<State>>>> =
+    private val _transitions: Map<StateId, Map<EventId, List<ConditionalTransition<State, Params>>>> =
         getStates().associateByNotNull(keyTransform = { it.id }) { stateKey, state ->
             getEvents().associateByNotNull(keyTransform = { it.id }) { eventKey, event ->
                 getTransitions(state, event)
@@ -24,7 +24,7 @@ abstract class ConditionalStateMachine<State : MachineState, Event : MachineEven
     protected abstract fun getTransitions(
         fromState: State,
         event: Event
-    ): List<ConditionalTransition<State>>?
+    ): List<ConditionalTransition<State, Params>>?
 
     override fun transition(
         fromState: State,
@@ -34,7 +34,7 @@ abstract class ConditionalStateMachine<State : MachineState, Event : MachineEven
         val events = _transitions[fromState.id] ?: emptyMap()
         val transitions = events[event.id] ?: emptyList()
         return transitions.firstOrNull { transition ->
-            transition.condition?.invoke() ?: true
+            transition.condition?.invoke(params) ?: true
         }?.toTransition(
             event = event,
             fromState = fromState,
@@ -42,7 +42,7 @@ abstract class ConditionalStateMachine<State : MachineState, Event : MachineEven
         )
     }
 
-    private fun <State : MachineState, Event : MachineEvent, Params : MachineParams> ConditionalTransition<State>.toTransition(
+    private fun <State : MachineState, Event : MachineEvent, Params : MachineParams> ConditionalTransition<State, Params>.toTransition(
         event: Event,
         fromState: State,
         params: Params? = null,

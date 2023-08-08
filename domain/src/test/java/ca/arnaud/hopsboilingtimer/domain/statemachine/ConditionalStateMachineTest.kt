@@ -49,11 +49,11 @@ class ConditionalStateMachineTest {
         object Params1 : TestParams
     }
 
-    private lateinit var subject: ConditionalStateMachine<TestState, TestEvent, MachineParams>
+    private lateinit var subject: ConditionalStateMachine<TestState, TestEvent, TestParams>
 
     @Before
     fun setup() {
-        subject = object : ConditionalStateMachine<TestState, TestEvent, MachineParams>() {
+        subject = object : ConditionalStateMachine<TestState, TestEvent, TestParams>() {
 
             override fun getStates(): List<TestState> {
                 return listOf(TestState.A, TestState.B, TestState.C, TestState.D)
@@ -77,7 +77,7 @@ class ConditionalStateMachineTest {
             override fun getTransitions(
                 fromState: TestState,
                 event: TestEvent
-            ): List<ConditionalTransition<TestState>>? {
+            ): List<ConditionalTransition<TestState, TestParams>>? {
                 return when (fromState) {
                     TestState.A -> when (event) {
                         TestEvent.Event1 -> listOf(
