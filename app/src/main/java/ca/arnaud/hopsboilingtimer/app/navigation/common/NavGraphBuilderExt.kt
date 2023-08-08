@@ -20,7 +20,7 @@ inline fun <reified VM : ViewModel> NavGraphBuilder.navigationComposable(
     animatedTransitions: AnimatedTransitions = DefaultAnimatedTransitions,
     crossinline content: @Composable AnimatedVisibilityScope.(NavBackStackEntry, VM) -> Unit
 ) {
-    // TODO - setup deeplinks and arguments here if needed
+    // Setup deeplinks and arguments here if needed
     composable(
         route = screenNavigation.route,
         enterTransition = animatedTransitions.enterTransition,
