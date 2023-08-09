@@ -6,12 +6,12 @@ import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
-import ca.arnaud.hopsboilingtimer.app.executor.JobExecutorProviderImpl
+import ca.arnaud.hopsboilingtimer.app.executor.CoroutineContextProviderImpl
 import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import ca.arnaud.hopsboilingtimer.app.provider.StringProviderImpl
 import ca.arnaud.hopsboilingtimer.app.provider.TimeProviderImpl
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -70,7 +70,7 @@ abstract class AppModule {
     }
 
     @Binds
-    abstract fun bindJobExecutorProvider(impl: JobExecutorProviderImpl): JobExecutorProvider
+    abstract fun bindJobExecutorProvider(impl: CoroutineContextProviderImpl): CoroutineContextProvider
 
     @Binds
     abstract fun bindTimeProvider(impl: TimeProviderImpl): TimeProvider

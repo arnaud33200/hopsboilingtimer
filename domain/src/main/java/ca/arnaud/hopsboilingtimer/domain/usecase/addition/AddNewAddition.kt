@@ -2,15 +2,15 @@ package ca.arnaud.hopsboilingtimer.domain.usecase.addition
 
 import ca.arnaud.hopsboilingtimer.domain.model.Addition
 import ca.arnaud.hopsboilingtimer.domain.repository.AdditionRepository
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import java.time.Duration
 import javax.inject.Inject
 
 class AddNewAddition @Inject constructor(
-    jobExecutorProvider: JobExecutorProvider,
+    coroutineContextProvider: CoroutineContextProvider,
     private val additionRepository: AdditionRepository,
-) : SuspendableUseCase<AddNewAddition.Params, Result<Unit>>(jobExecutorProvider) {
+) : SuspendableUseCase<AddNewAddition.Params, Result<Unit>>(coroutineContextProvider) {
 
     data class Params(
         val name: String,

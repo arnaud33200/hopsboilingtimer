@@ -6,16 +6,16 @@ import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleA
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleParams
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import javax.inject.Inject
 
 class StartAdditionSchedule @Inject constructor(
-    jobExecutorProvider: JobExecutorProvider,
+    coroutineContextProvider: CoroutineContextProvider,
     scheduleStateRepository: ScheduleStateRepository,
     stateMachine: AdditionScheduleStateMachine,
     actionHandler: AdditionScheduleActionHandler,
 ) : ScheduleStateUseCase<ScheduleOptions, Unit>(
-    jobExecutorProvider = jobExecutorProvider,
+    coroutineContextProvider = coroutineContextProvider,
     scheduleStateRepository = scheduleStateRepository,
     stateMachine = stateMachine,
     actionHandler = actionHandler,

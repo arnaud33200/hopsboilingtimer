@@ -6,18 +6,18 @@ import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleActionHandler
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.schedule.ScheduleStateUseCase
 import javax.inject.Inject
 
 class OnAdditionAlertReceived @Inject constructor(
-    jobExecutorProvider: JobExecutorProvider,
+    coroutineContextProvider: CoroutineContextProvider,
     private val scheduleRepository: ScheduleRepository,
     scheduleStateRepository: ScheduleStateRepository,
     stateMachine: AdditionScheduleStateMachine,
     actionHandler: AdditionScheduleActionHandler,
 ) : ScheduleStateUseCase<OnAdditionAlertReceived.Params, Unit>(
-    jobExecutorProvider = jobExecutorProvider,
+    coroutineContextProvider = coroutineContextProvider,
     scheduleStateRepository = scheduleStateRepository,
     stateMachine = stateMachine,
     actionHandler = actionHandler,

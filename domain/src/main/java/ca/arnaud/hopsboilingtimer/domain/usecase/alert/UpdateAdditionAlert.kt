@@ -4,15 +4,15 @@ import ca.arnaud.hopsboilingtimer.domain.common.Response
 import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.setChecked
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import javax.inject.Inject
 
 class UpdateAdditionAlert @Inject constructor(
-    jobExecutorProvider: JobExecutorProvider,
+    coroutineContextProvider: CoroutineContextProvider,
     private val scheduleRepository: ScheduleRepository,
 ) : SuspendableUseCase<UpdateAdditionAlert.Params, Response<AdditionAlert, UpdateAdditionAlert.UpdateAdditionAlertException>>(
-    jobExecutorProvider
+    coroutineContextProvider
 ) {
 
     data class Params(

@@ -6,20 +6,20 @@ import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import kotlinx.coroutines.CompletableDeferred
 import javax.inject.Inject
 import javax.inject.Named
 
 class InitializeScheduleState @Inject constructor(
-    jobExecutorProvider: JobExecutorProvider,
+    coroutineContextProvider: CoroutineContextProvider,
     @Named("InitScheduleState")
     private val initCompletion: CompletableDeferred<Unit>,
     private val scheduleRepository: ScheduleRepository,
     private val scheduleStateRepository: ScheduleStateRepository,
     private val timeProvider: TimeProvider,
-) : SuspendableUseCase<Unit, Unit>(jobExecutorProvider) {
+) : SuspendableUseCase<Unit, Unit>(coroutineContextProvider) {
 
     override suspend fun buildRequest(params: Unit) {
         val savedSchedule = scheduleRepository.getSchedule()

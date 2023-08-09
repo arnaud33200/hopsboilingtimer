@@ -3,11 +3,11 @@ package ca.arnaud.hopsboilingtimer.domain.usecase.common
 import kotlinx.coroutines.withContext
 
 abstract class SuspendableUseCase<in T, out S>(
-    private val jobExecutorProvider: JobExecutorProvider,
+    private val coroutineContextProvider: CoroutineContextProvider,
 ) {
 
     suspend fun execute(params: T): S {
-        return withContext(jobExecutorProvider.executionDispatcher) {
+        return withContext(coroutineContextProvider.context) {
             return@withContext buildRequest(params)
         }
     }

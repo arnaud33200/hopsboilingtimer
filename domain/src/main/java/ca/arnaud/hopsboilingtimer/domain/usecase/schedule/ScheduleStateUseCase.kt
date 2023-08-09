@@ -5,16 +5,16 @@ import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleA
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleParams
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleStateMachine
-import ca.arnaud.hopsboilingtimer.domain.usecase.common.JobExecutorProvider
+import ca.arnaud.hopsboilingtimer.domain.usecase.common.CoroutineContextProvider
 import ca.arnaud.hopsboilingtimer.domain.usecase.common.SuspendableUseCase
 import kotlinx.coroutines.flow.first
 
 abstract class ScheduleStateUseCase<in T, out S> constructor(
-    jobExecutorProvider: JobExecutorProvider,
+    coroutineContextProvider: CoroutineContextProvider,
     private val scheduleStateRepository: ScheduleStateRepository,
     private val stateMachine: AdditionScheduleStateMachine,
     private val actionHandler: AdditionScheduleActionHandler,
-) : SuspendableUseCase<T, S>(jobExecutorProvider) {
+) : SuspendableUseCase<T, S>(coroutineContextProvider) {
 
     suspend fun sendStateEvent(
         event: AdditionScheduleEvent,
