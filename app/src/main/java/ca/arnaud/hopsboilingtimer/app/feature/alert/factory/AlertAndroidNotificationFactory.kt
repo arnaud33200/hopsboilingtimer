@@ -28,6 +28,7 @@ class AlertAndroidNotificationFactory @Inject constructor(
 
         return NotificationChannel(channelId, name, importance).apply {
             description = stringProvider.get(R.string.notification_channel_description)
+            setSound(null, null)
         }
     }
 
@@ -41,6 +42,7 @@ class AlertAndroidNotificationFactory @Inject constructor(
             setCustomContentView(notificationLayout)
             setContentIntent(getContentIntent(context))
             setOngoing(!model.dismissible)
+            setSound(null)
             // setStyle(NotificationCompat.DecoratedCustomViewStyle()) // put back if need the classic notification style
             // setCustomBigContentView(notificationLayoutExpanded) // use if we need a separate bigger style
         }.build()

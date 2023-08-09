@@ -1,7 +1,9 @@
 package ca.arnaud.hopsboilingtimer.app.feature.alert.factory
 
+import androidx.annotation.RawRes
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AlertNotificationRowModel
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
@@ -26,7 +28,7 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         schedule: AdditionSchedule
     ): AdditionAlertNotificationModel {
         val currentAlert = schedule.alerts.find { it.id == currentAlertData.id }
-            ?: return AdditionAlertNotificationModel()
+            ?: return AdditionAlertNotificationModel() // TODO - return null instead of having an empty notification
 
         val alerts = currentAlert.getNextAlerts(schedule)
             .filter { it !is AdditionAlert.Start }
@@ -37,6 +39,7 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
                 createRow(baseAlertData, getRowType(baseAlertData, alerts))
             },
             dismissible = dismissible,
+            soundRes = getSoundRes(currentAlertData, currentAlert),
         )
     }
 
@@ -49,6 +52,7 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
                 )
             ),
             dismissible = true,
+            soundRes = getSoundRes(null, null),
         )
     }
 
@@ -114,5 +118,28 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
 
     private fun createEndMessage(input: AdditionAlert): String {
         return stringProvider.get(R.string.notification_end_schedule)
+    }
+
+    @RawRes
+    private fun getSoundRes(alertData: AdditionAlertData?, alert: AdditionAlert?): Int? {
+        when (alert) {
+            is AdditionAlert.Start -> {
+                return R.raw.schedule_start
+            }
+
+            is AdditionAlert.End -> {
+                return null
+            }
+
+            is AdditionAlert.Next,
+            null -> {
+            } // No-op
+        }
+
+        return when (alertData?.type) {
+            AdditionAlertDataType.Reminder -> R.raw.schedule_reminder
+            AdditionAlertDataType.Alert -> R.raw.schedule_add_now
+            null -> R.raw.schedule_end
+        }
     }
 }

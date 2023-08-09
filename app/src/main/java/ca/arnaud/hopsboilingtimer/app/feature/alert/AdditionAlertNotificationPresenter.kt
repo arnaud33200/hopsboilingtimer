@@ -2,6 +2,7 @@ package ca.arnaud.hopsboilingtimer.app.feature.alert
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
 import androidx.core.app.NotificationManagerCompat
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
@@ -60,6 +61,13 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         )
         createChannelIfNeeded()
         notificationManager.notify(NOTIFICATION_ID, notification)
+
+        model.soundRes?.let { res ->
+            MediaPlayer.create(context, res)?.let { mediaPlayer ->
+                mediaPlayer.setOnCompletionListener { player -> player.release() }
+                mediaPlayer.start()
+            }
+        }
     }
 
     private fun createChannelIfNeeded() {
