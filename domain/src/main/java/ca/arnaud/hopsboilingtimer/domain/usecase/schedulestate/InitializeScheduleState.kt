@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.usecase.schedulestate
 
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
+import ca.arnaud.hopsboilingtimer.domain.model.schedule.isValid
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
@@ -21,7 +22,15 @@ class InitializeScheduleState @Inject constructor(
 ) : SuspendableUseCase<Unit, Unit>(jobExecutorProvider) {
 
     override suspend fun buildRequest(params: Unit) {
-        val schedule = scheduleRepository.getSchedule()
+        val savedSchedule = scheduleRepository.getSchedule()
+        val schedule =
+            if (savedSchedule != null && !savedSchedule.isValid(timeProvider.getNowLocalDateTime())) {
+                scheduleRepository.deleteSchedule(savedSchedule)
+                null
+            } else {
+                savedSchedule
+            }
+
         val nextAlert = schedule?.getNextAlert(timeProvider.getNowLocalDateTime())
 
         val initialState = when {
