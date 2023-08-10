@@ -1,5 +1,6 @@
 package ca.arnaud.hopsboilingtimer.app.feature.alert.factory
 
+import androidx.annotation.RawRes
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
@@ -10,11 +11,13 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.additionsOrEmpty
 import ca.arnaud.hopsboilingtimer.domain.model.getDuration
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
+import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import java.time.Duration
 import javax.inject.Inject
 
 class NowAlertNotificationModelFactory @Inject constructor(
     private val stringProvider: StringProvider,
+    private val timeProvider: TimeProvider,
     private val durationTextFormatter: DurationTextFormatter,
 ) {
 
@@ -29,12 +32,13 @@ class NowAlertNotificationModelFactory @Inject constructor(
         val currentAlert = schedule?.alerts?.find { alert ->
             alert.id == currentAlertData.id
         } ?: return null
+
         val type = getNowAlertType(currentAlertData, currentAlert)
-        return NowAlertNotificationModel(
-            title = stringProvider.get(R.string.notification_now_add_hops_title),
-            text = getHopsListText(currentAlert),
-            soundRes = type.toRawRes()
-        )
+
+        return when (currentAlertData.type) {
+            AdditionAlertDataType.Alert -> getAddHopsModel(currentAlert, type.toRawRes())
+            AdditionAlertDataType.Reminder -> getComingSoonModel(currentAlert, type.toRawRes())
+        }
     }
 
     fun createEnd(): NowAlertNotificationModel {
@@ -59,15 +63,46 @@ class NowAlertNotificationModelFactory @Inject constructor(
         }
     }
 
-    private fun getHopsListText(alert: AdditionAlert): String {
-        val additions = alert.additionsOrEmpty()
+    private fun getAddHopsModel(
+        alert: AdditionAlert,
+        @RawRes soundRes: Int?,
+    ): NowAlertNotificationModel {
+        val hops = alert.getHopsList()
         val duration = alert.getDuration() ?: Duration.ZERO
-        val hops = additions.joinToString(separator = ", ", prefix = "") { it.name }
-        return stringProvider.get(
+        val text = stringProvider.get(
             R.string.notification_now_add_hops_text,
             hops,
             durationTextFormatter.format(duration),
         )
+        return NowAlertNotificationModel(
+            title = stringProvider.get(R.string.notification_now_add_hops_title),
+            text = text,
+            soundRes = soundRes,
+        )
+    }
+
+    private fun getComingSoonModel(
+        alert: AdditionAlert,
+        @RawRes soundRes: Int?,
+    ): NowAlertNotificationModel {
+        val remainingDuration = Duration.between(
+            timeProvider.getNowLocalDateTime(), alert.triggerAtTime
+        )
+        val title = stringProvider.get(
+            R.string.notification_now_coming_soon_title,
+            durationTextFormatter.format(remainingDuration)
+        )
+
+        return NowAlertNotificationModel(
+            title = title,
+            text = alert.getHopsList(),
+            soundRes = soundRes,
+        )
+    }
+
+    private fun AdditionAlert.getHopsList(): String {
+        val additions = additionsOrEmpty()
+        return additions.joinToString(separator = ", ", prefix = "") { it.name }
     }
 
     private fun NowAlertType.toRawRes(): Int? {

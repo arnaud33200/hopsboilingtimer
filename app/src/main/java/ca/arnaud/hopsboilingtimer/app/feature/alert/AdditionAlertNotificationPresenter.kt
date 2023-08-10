@@ -10,6 +10,7 @@ import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotifica
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NextAlertsNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NowAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NowAlertNotificationModel
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
@@ -31,7 +32,24 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         private const val NOW_ALERT_NOTIFICATION_ID = 23456
     }
 
-    fun showNextAlerts(
+    fun show(
+        alertData: AdditionAlertData,
+        schedule: AdditionSchedule?,
+        context: Context = this.context,
+    ) {
+        when (alertData.type) {
+            AdditionAlertDataType.Alert -> {
+                showNextAlerts(alertData, schedule, context)
+                showNowAlert(alertData, schedule, context)
+            }
+
+            AdditionAlertDataType.Reminder -> {
+                showNowAlert(alertData, schedule, context)
+            }
+        }
+    }
+
+    private fun showNextAlerts(
         alertData: AdditionAlertData,
         schedule: AdditionSchedule?,
         context: Context = this.context,
@@ -59,9 +77,14 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         showNotification(notification, NEXT_ALERTS_NOTIFICATION_ID)
     }
 
-    fun showNowAlert(alertData: AdditionAlertData, schedule: AdditionSchedule?, context: Context) {
+    private fun showNowAlert(
+        alertData: AdditionAlertData,
+        schedule: AdditionSchedule?,
+        context: Context
+    ) {
         showNowAlert(
-            model = nowAlertNotificationModelFactory.createAddHops(alertData, schedule)
+            model = nowAlertNotificationModelFactory.createAddHops(alertData, schedule),
+            context = context,
         )
     }
 
@@ -71,7 +94,10 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         )
     }
 
-    private fun showNowAlert(model: NowAlertNotificationModel?) {
+    private fun showNowAlert(
+        model: NowAlertNotificationModel?,
+        context: Context = this.context,
+    ) {
         if (model == null) {
             notificationManager.cancel(NOW_ALERT_NOTIFICATION_ID)
             return

@@ -23,6 +23,7 @@
     <!-- Notification Now Alert -->
     <string name="notification_now_add_hops_title">Add hops</string>
     <string name="notification_now_add_hops_text">^1 (^2)</string> <!-- ^1 = hops, ^2 = duration -->
+    <string name="notification_now_coming_soon_title">Coming soon (in ^1)</string> <!-- ^1 = duration -->
 
     <!-- Addition Timer -->
     <string name="addition_timer_screen_title">Hops Boiling Timer</string>

@@ -29,8 +29,7 @@ class AdditionNotificationWorker @AssistedInject constructor(
         coroutineScopeProvider.scope.launch {
             val alertData = additionAlertWorkerDataMapper.mapFrom(inputData)
             val schedule = getAdditionSchedule.execute()
-            additionAlertNotificationPresenter.showNextAlerts(alertData, schedule, context)
-            additionAlertNotificationPresenter.showNowAlert(alertData, schedule, context)
+            additionAlertNotificationPresenter.show(alertData, schedule, context)
 
             when (alertData.type) {
                 AdditionAlertDataType.Alert -> {
