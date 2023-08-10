@@ -1,9 +1,12 @@
 package ca.arnaud.hopsboilingtimer.app.feature.alert
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NextAlertsNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
@@ -22,52 +25,70 @@ class AdditionAlertNotificationPresenter @Inject constructor(
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"
-        private const val NOTIFICATION_ID = 12345
+        private const val NEXT_ALERTS_NOTIFICATION_ID = 12345
+        private const val NOW_ALERT_NOTIFICATION_ID = 23456
     }
 
-    fun show(
-        additionAlert: AdditionAlertData,
+    fun showNextAlerts(
+        alertData: AdditionAlertData,
         schedule: AdditionSchedule?,
-        context: Context,
+        context: Context = this.context,
     ) {
-        if (schedule == null) {
-            return
+        nextAlertsNotificationModelFactory.create(alertData, schedule)?.let { model ->
+            showNextAlerts(model, context)
         }
-
-        val model = nextAlertsNotificationModelFactory.create(additionAlert, schedule)
-        showNotification(model, context)
     }
 
-    fun showEnd() {
+    fun showNowAlert(alertData: AdditionAlertData, schedule: AdditionSchedule?, context: Context) {
+        // TODO - put in the factory
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+            setSmallIcon(R.drawable.ic_notification_badge)
+            setContentTitle("Now")
+            setContentText("add the hops please")
+//            setContentIntent(getContentIntent(context))
+            setSound(null)
+
+        }.build()
+        showNotification(notification, NOW_ALERT_NOTIFICATION_ID)
+    }
+
+    fun showEndAlert() {
+        // TODO - use the show now alert
         val model = nextAlertsNotificationModelFactory.createEnd()
-        showNotification(model, context)
+        showNextAlerts(model)
     }
 
-    fun cancel() {
-        notificationManager.cancel(NOTIFICATION_ID)
-    }
-
-    @SuppressLint("MissingPermission") // Already check in permission service
-    private fun showNotification(
+    private fun showNextAlerts(
         model: NextAlertsNotificationModel,
-        context: Context,
+        context: Context = this.context,
     ) {
-        if (!permissionService.hasNotificationPermission()) {
-            return
-        }
-
         val notification = alertAndroidNotificationFactory.createNextAlerts(
             model, CHANNEL_ID, context
         )
         createChannelIfNeeded()
-        notificationManager.notify(NOTIFICATION_ID, notification)
-
         model.soundRes?.let { res ->
             MediaPlayer.create(context, res)?.let { mediaPlayer ->
                 mediaPlayer.setOnCompletionListener { player -> player.release() }
                 mediaPlayer.start()
             }
         }
+        showNotification(notification, NEXT_ALERTS_NOTIFICATION_ID)
+    }
+
+    fun hideNotifications() {
+        notificationManager.cancel(NEXT_ALERTS_NOTIFICATION_ID)
+    }
+
+    @SuppressLint("MissingPermission") // Already check in permission service
+    private fun showNotification(
+        notification: Notification,
+        notificationId: Int,
+    ) {
+        if (!permissionService.hasNotificationPermission()) {
+            return
+        }
+
+        notificationManager.notify(notificationId, notification)
     }
 
     private fun createChannelIfNeeded() {

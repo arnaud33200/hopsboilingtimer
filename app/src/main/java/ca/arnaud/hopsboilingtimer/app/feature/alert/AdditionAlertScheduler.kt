@@ -46,7 +46,7 @@ class AdditionAlertScheduler @Inject constructor(
             is AdditionScheduleState.Started -> {} // No-op
             AdditionScheduleState.Stopped -> {
                 if (currentSchedule is AdditionScheduleState.Started) {
-                    additionAlertNotificationPresenter.showEnd()
+                    additionAlertNotificationPresenter.showEndAlert()
                 } else {
                     cancelAlarm()
                 }
@@ -59,7 +59,7 @@ class AdditionAlertScheduler @Inject constructor(
     }
 
     private fun cancelAlarm() {
-        additionAlertNotificationPresenter.cancel()
+        additionAlertNotificationPresenter.hideNotifications()
         workManager.cancelAllWork()
     }
 

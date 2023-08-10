@@ -25,15 +25,16 @@ class NextAlertsNotificationModelFactory @Inject constructor(
 
     fun create(
         currentAlertData: AdditionAlertData,
-        schedule: AdditionSchedule
-    ): NextAlertsNotificationModel {
-        val currentAlert = schedule.alerts.find { it.id == currentAlertData.id }
-            ?: return NextAlertsNotificationModel() // TODO - return null instead of having an empty notification
-
+        schedule: AdditionSchedule?
+    ): NextAlertsNotificationModel? {
+        val currentAlert = schedule?.alerts?.find { alert ->
+            alert.id == currentAlertData.id
+        } ?: return null
         val alerts = currentAlert.getNextAlerts(schedule)
             .filter { it !is AdditionAlert.Start }
             .filterIndexed { index, _ -> index <= 1 }
         val dismissible = false
+
         return NextAlertsNotificationModel(
             rows = alerts.map { baseAlertData ->
                 createRow(baseAlertData, getRowType(baseAlertData, alerts))
