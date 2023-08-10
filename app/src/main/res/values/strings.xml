@@ -20,6 +20,10 @@
     <string name="notification_row_type_now">Now</string>
     <string name="notification_end_schedule">stop boiling!</string>
 
+    <!-- Notification Now Alert -->
+    <string name="notification_now_add_hops_title">Add hops</string>
+    <string name="notification_now_add_hops_text">^1 (^2)</string> <!-- ^1 = hops, ^2 = duration -->
+
     <!-- Addition Timer -->
     <string name="addition_timer_screen_title">Hops Boiling Timer</string>
     <string name="alert_row_end_boiling">End boiling</string>

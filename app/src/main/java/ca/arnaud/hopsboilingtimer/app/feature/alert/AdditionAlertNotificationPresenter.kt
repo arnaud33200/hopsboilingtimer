@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Context
 import android.media.MediaPlayer
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NextAlertsNotificationModelFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NowAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
@@ -21,6 +20,7 @@ class AdditionAlertNotificationPresenter @Inject constructor(
     private val alertAndroidNotificationFactory: AlertAndroidNotificationFactory,
     private val permissionService: PermissionService,
     private val nextAlertsNotificationModelFactory: NextAlertsNotificationModelFactory,
+    private val nowAlertNotificationModelFactory: NowAlertNotificationModelFactory,
 ) {
 
     companion object {
@@ -34,28 +34,40 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         schedule: AdditionSchedule?,
         context: Context = this.context,
     ) {
-        nextAlertsNotificationModelFactory.create(alertData, schedule)?.let { model ->
-            showNextAlerts(model, context)
+        when (
+            val model = nextAlertsNotificationModelFactory.create(alertData, schedule)
+        ) {
+            null -> notificationManager.cancel(NEXT_ALERTS_NOTIFICATION_ID)
+            else -> showNextAlerts(model, context)
         }
     }
 
     fun showNowAlert(alertData: AdditionAlertData, schedule: AdditionSchedule?, context: Context) {
-        // TODO - put in the factory
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
-            setSmallIcon(R.drawable.ic_notification_badge)
-            setContentTitle("Now")
-            setContentText("add the hops please")
-//            setContentIntent(getContentIntent(context))
-            setSound(null)
-
-        }.build()
-        showNotification(notification, NOW_ALERT_NOTIFICATION_ID)
+        when (
+            val model = nowAlertNotificationModelFactory.createAddHops(alertData, schedule)
+        ) {
+            null -> notificationManager.cancel(NOW_ALERT_NOTIFICATION_ID)
+            else -> {
+                val notification = alertAndroidNotificationFactory.createNowAlert(
+                    model, CHANNEL_ID, context
+                )
+                showNotification(notification, NOW_ALERT_NOTIFICATION_ID)
+            }
+        }
     }
 
     fun showEndAlert() {
-        // TODO - use the show now alert
-        val model = nextAlertsNotificationModelFactory.createEnd()
-        showNextAlerts(model)
+        val model = nowAlertNotificationModelFactory.createEnd()
+        val notification = alertAndroidNotificationFactory.createNowAlert(
+            model, CHANNEL_ID, context
+        )
+        showNotification(notification, NOW_ALERT_NOTIFICATION_ID)
+    }
+
+    // TODO - rename hide all notifications
+    fun hideNotifications() {
+        notificationManager.cancel(NOW_ALERT_NOTIFICATION_ID)
+        notificationManager.cancel(NEXT_ALERTS_NOTIFICATION_ID)
     }
 
     private fun showNextAlerts(
@@ -75,10 +87,6 @@ class AdditionAlertNotificationPresenter @Inject constructor(
         showNotification(notification, NEXT_ALERTS_NOTIFICATION_ID)
     }
 
-    fun hideNotifications() {
-        notificationManager.cancel(NEXT_ALERTS_NOTIFICATION_ID)
-    }
-
     @SuppressLint("MissingPermission") // Already check in permission service
     private fun showNotification(
         notification: Notification,
@@ -88,6 +96,7 @@ class AdditionAlertNotificationPresenter @Inject constructor(
             return
         }
 
+        createChannelIfNeeded()
         notificationManager.notify(notificationId, notification)
     }
 

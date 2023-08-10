@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NowAlertNotificationModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.view.AdditionAlertNotificationView
 import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import javax.inject.Inject
@@ -49,6 +50,20 @@ class AlertAndroidNotificationFactory @Inject constructor(
             setSound(null)
             // setStyle(NotificationCompat.DecoratedCustomViewStyle()) // put back if need the classic notification style
             // setCustomBigContentView(notificationLayoutExpanded) // use if we need a separate bigger style
+        }.build()
+    }
+
+    fun createNowAlert(
+        model: NowAlertNotificationModel,
+        channelId: String,
+        context: Context
+    ): Notification {
+        return NotificationCompat.Builder(context, channelId).apply {
+            setSmallIcon(R.drawable.ic_notification_badge)
+            setContentTitle(model.title)
+            setContentText(model.text)
+            setContentIntent(getContentIntent(context))
+            setSound(null)
         }.build()
     }
 

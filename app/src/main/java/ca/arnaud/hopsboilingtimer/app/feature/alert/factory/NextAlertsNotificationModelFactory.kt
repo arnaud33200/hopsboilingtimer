@@ -35,25 +35,15 @@ class NextAlertsNotificationModelFactory @Inject constructor(
             .filterIndexed { index, _ -> index <= 1 }
         val dismissible = false
 
+        val rows = alerts.map { baseAlertData ->
+            createRow(baseAlertData, getRowType(baseAlertData, alerts))
+        }.takeIf { it.isNotEmpty() }
+            ?: return null
+
         return NextAlertsNotificationModel(
-            rows = alerts.map { baseAlertData ->
-                createRow(baseAlertData, getRowType(baseAlertData, alerts))
-            },
+            rows = rows,
             dismissible = dismissible,
             soundRes = getSoundRes(currentAlertData, currentAlert),
-        )
-    }
-
-    fun createEnd(): NextAlertsNotificationModel {
-        return NextAlertsNotificationModel(
-            rows = listOf(
-                NextAlertNotificationRowModel(
-                    type = RowType.Now.toTypeText(),
-                    title = stringProvider.get(R.string.notification_stop_boiling)
-                )
-            ),
-            dismissible = true,
-            soundRes = getSoundRes(null, null),
         )
     }
 
