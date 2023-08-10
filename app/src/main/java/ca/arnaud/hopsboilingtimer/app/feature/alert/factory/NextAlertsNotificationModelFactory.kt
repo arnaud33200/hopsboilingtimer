@@ -3,7 +3,6 @@ package ca.arnaud.hopsboilingtimer.app.feature.alert.factory
 import androidx.annotation.RawRes
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertNotificationRowModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
@@ -113,24 +112,6 @@ class NextAlertsNotificationModelFactory @Inject constructor(
 
     @RawRes
     private fun getSoundRes(alertData: AdditionAlertData?, alert: AdditionAlert?): Int? {
-        when (alert) {
-            is AdditionAlert.Start -> {
-                return R.raw.schedule_start
-            }
-
-            is AdditionAlert.End -> {
-                return null
-            }
-
-            is AdditionAlert.Next,
-            null -> {
-            } // No-op
-        }
-
-        return when (alertData?.type) {
-            AdditionAlertDataType.Reminder -> R.raw.schedule_reminder
-            AdditionAlertDataType.Alert -> R.raw.schedule_add_now
-            null -> R.raw.schedule_end
-        }
+        return null // has been moved in the now alert notification
     }
 }
