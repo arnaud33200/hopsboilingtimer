@@ -9,7 +9,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.MainActivity
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 import ca.arnaud.hopsboilingtimer.app.feature.alert.view.AdditionAlertNotificationView
 import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
 import javax.inject.Inject
@@ -32,7 +32,11 @@ class AlertAndroidNotificationFactory @Inject constructor(
         }
     }
 
-    fun createNotification(model: AdditionAlertNotificationModel, channelId: String, context: Context): Notification {
+    fun createNextAlerts(
+        model: NextAlertsNotificationModel,
+        channelId: String,
+        context: Context
+    ): Notification {
         val notificationLayout = AdditionAlertNotificationView(context.applicationContext).apply {
             bind(model = model, context = context)
         }

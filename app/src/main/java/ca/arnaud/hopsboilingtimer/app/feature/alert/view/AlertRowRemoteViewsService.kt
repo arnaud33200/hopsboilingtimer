@@ -4,18 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AlertNotificationRowModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertNotificationRowModel
 
 class AlertRowRemoteViewsService : RemoteViewsService() {
 
     companion object {
         private const val ROWS_EXTRA_KEY = "rows"
 
-        fun createInstance(context: Context, rows: List<AlertNotificationRowModel>): Intent {
+        fun createInstance(context: Context, rows: List<NextAlertNotificationRowModel>): Intent {
             return Intent(context, AlertRowRemoteViewsService::class.java).apply {
                 putParcelableArrayListExtra(
                     ROWS_EXTRA_KEY,
-                    ArrayList<AlertNotificationRowModel>(rows)
+                    ArrayList<NextAlertNotificationRowModel>(rows)
                 )
             }
         }
@@ -23,14 +23,14 @@ class AlertRowRemoteViewsService : RemoteViewsService() {
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
         val rows = intent.getParcelableArrayListExtra(ROWS_EXTRA_KEY)
-            ?: ArrayList<AlertNotificationRowModel>()
+            ?: ArrayList<NextAlertNotificationRowModel>()
         return AlertRowViewsFactory(applicationContext, rows)
     }
 }
 
 class AlertRowViewsFactory(
     private val context: Context,
-    private val items: java.util.ArrayList<AlertNotificationRowModel>
+    private val items: java.util.ArrayList<NextAlertNotificationRowModel>
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
@@ -55,7 +55,7 @@ class AlertRowViewsFactory(
 
     override fun onDestroy() {}
 
-    private fun getItem(index: Int): AlertNotificationRowModel? {
+    private fun getItem(index: Int): NextAlertNotificationRowModel? {
         return items.getOrNull(index)
     }
 }

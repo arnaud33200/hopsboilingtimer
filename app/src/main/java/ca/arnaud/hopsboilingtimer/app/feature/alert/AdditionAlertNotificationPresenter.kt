@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.core.app.NotificationManagerCompat
-import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AlertAndroidNotificationFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NextAlertsNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 import ca.arnaud.hopsboilingtimer.app.service.PermissionService
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class AdditionAlertNotificationPresenter @Inject constructor(
     private val notificationManager: NotificationManagerCompat,
     private val alertAndroidNotificationFactory: AlertAndroidNotificationFactory,
     private val permissionService: PermissionService,
-    private val additionAlertNotificationModelFactory: AdditionAlertNotificationModelFactory,
+    private val nextAlertsNotificationModelFactory: NextAlertsNotificationModelFactory,
 ) {
 
     companion object {
@@ -34,12 +34,12 @@ class AdditionAlertNotificationPresenter @Inject constructor(
             return
         }
 
-        val model = additionAlertNotificationModelFactory.create(additionAlert, schedule)
+        val model = nextAlertsNotificationModelFactory.create(additionAlert, schedule)
         showNotification(model, context)
     }
 
     fun showEnd() {
-        val model = additionAlertNotificationModelFactory.createEnd()
+        val model = nextAlertsNotificationModelFactory.createEnd()
         showNotification(model, context)
     }
 
@@ -49,14 +49,14 @@ class AdditionAlertNotificationPresenter @Inject constructor(
 
     @SuppressLint("MissingPermission") // Already check in permission service
     private fun showNotification(
-        model: AdditionAlertNotificationModel,
+        model: NextAlertsNotificationModel,
         context: Context,
     ) {
         if (!permissionService.hasNotificationPermission()) {
             return
         }
 
-        val notification = alertAndroidNotificationFactory.createNotification(
+        val notification = alertAndroidNotificationFactory.createNextAlerts(
             model, CHANNEL_ID, context
         )
         createChannelIfNeeded()

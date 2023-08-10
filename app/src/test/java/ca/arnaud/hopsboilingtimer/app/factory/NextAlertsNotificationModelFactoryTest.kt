@@ -1,7 +1,7 @@
 package ca.arnaud.hopsboilingtimer.app.factory
 
 import ca.arnaud.hopsboilingtimer.app.fake.FakeStringProvider
-import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.AdditionAlertNotificationModelFactory
+import ca.arnaud.hopsboilingtimer.app.feature.alert.factory.NextAlertsNotificationModelFactory
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
 import ca.arnaud.hopsboilingtimer.app.model.additionAlertDataDefault
@@ -15,9 +15,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class AdditionAlertNotificationModelFactoryTest {
+class NextAlertsNotificationModelFactoryTest {
 
-    private lateinit var subject: AdditionAlertNotificationModelFactory
+    private lateinit var subject: NextAlertsNotificationModelFactory
 
     private val durationTextFormatter: DurationTextFormatter = mockk()
     private val timeHoursTextFormatter: TimeHoursTextFormatter = mockk()
@@ -29,7 +29,7 @@ class AdditionAlertNotificationModelFactoryTest {
         every { durationTextFormatter.format(any()) } returns ""
         every { timeHoursTextFormatter.format(any()) } returns ""
 
-        subject = AdditionAlertNotificationModelFactory(
+        subject = NextAlertsNotificationModelFactory(
             durationTextFormatter = durationTextFormatter,
             timeHoursTextFormatter = timeHoursTextFormatter,
             stringProvider = stringProvider,

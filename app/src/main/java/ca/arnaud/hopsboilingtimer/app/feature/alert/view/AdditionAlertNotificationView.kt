@@ -4,14 +4,14 @@ import android.content.Context
 import android.view.View
 import android.widget.RemoteViews
 import ca.arnaud.hopsboilingtimer.R
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 
 class AdditionAlertNotificationView(context: Context) : RemoteViews(
     context.packageName,
     R.layout.view_addition_alert_notification
 ) {
 
-    fun bind(model: AdditionAlertNotificationModel, context: Context) {
+    fun bind(model: NextAlertsNotificationModel, context: Context) {
 
         // TODO - figure out why it doesn't work
 //        val serviceIntent = AlertRowRemoteViewsService.createInstance(context, model.rows)

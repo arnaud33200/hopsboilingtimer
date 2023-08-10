@@ -4,8 +4,8 @@ import androidx.annotation.RawRes
 import ca.arnaud.hopsboilingtimer.R
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertData
 import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertDataType
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AdditionAlertNotificationModel
-import ca.arnaud.hopsboilingtimer.app.feature.alert.model.AlertNotificationRowModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertNotificationRowModel
+import ca.arnaud.hopsboilingtimer.app.feature.alert.model.NextAlertsNotificationModel
 import ca.arnaud.hopsboilingtimer.app.formatter.time.DurationTextFormatter
 import ca.arnaud.hopsboilingtimer.app.formatter.time.TimeHoursTextFormatter
 import ca.arnaud.hopsboilingtimer.app.provider.StringProvider
@@ -17,7 +17,7 @@ import ca.arnaud.hopsboilingtimer.domain.model.schedule.AdditionSchedule
 import java.time.Duration
 import javax.inject.Inject
 
-class AdditionAlertNotificationModelFactory @Inject constructor(
+class NextAlertsNotificationModelFactory @Inject constructor(
     private val durationTextFormatter: DurationTextFormatter,
     private val timeHoursTextFormatter: TimeHoursTextFormatter,
     private val stringProvider: StringProvider,
@@ -26,15 +26,15 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
     fun create(
         currentAlertData: AdditionAlertData,
         schedule: AdditionSchedule
-    ): AdditionAlertNotificationModel {
+    ): NextAlertsNotificationModel {
         val currentAlert = schedule.alerts.find { it.id == currentAlertData.id }
-            ?: return AdditionAlertNotificationModel() // TODO - return null instead of having an empty notification
+            ?: return NextAlertsNotificationModel() // TODO - return null instead of having an empty notification
 
         val alerts = currentAlert.getNextAlerts(schedule)
             .filter { it !is AdditionAlert.Start }
             .filterIndexed { index, _ -> index <= 1 }
         val dismissible = false
-        return AdditionAlertNotificationModel(
+        return NextAlertsNotificationModel(
             rows = alerts.map { baseAlertData ->
                 createRow(baseAlertData, getRowType(baseAlertData, alerts))
             },
@@ -43,10 +43,10 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         )
     }
 
-    fun createEnd(): AdditionAlertNotificationModel {
-        return AdditionAlertNotificationModel(
+    fun createEnd(): NextAlertsNotificationModel {
+        return NextAlertsNotificationModel(
             rows = listOf(
-                AlertNotificationRowModel(
+                NextAlertNotificationRowModel(
                     type = RowType.Now.toTypeText(),
                     title = stringProvider.get(R.string.notification_stop_boiling)
                 )
@@ -82,8 +82,8 @@ class AdditionAlertNotificationModelFactory @Inject constructor(
         )
     }
 
-    private fun createRow(alert: AdditionAlert, type: RowType): AlertNotificationRowModel {
-        return AlertNotificationRowModel(
+    private fun createRow(alert: AdditionAlert, type: RowType): NextAlertNotificationRowModel {
+        return NextAlertNotificationRowModel(
             id = alert.id,
             type = type.toTypeText(),
             title = when (alert) {
