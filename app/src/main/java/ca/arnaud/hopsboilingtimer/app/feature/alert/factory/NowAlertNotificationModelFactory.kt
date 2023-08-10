@@ -43,7 +43,7 @@ class NowAlertNotificationModelFactory @Inject constructor(
 
     fun createEnd(): NowAlertNotificationModel {
         return NowAlertNotificationModel(
-            title = stringProvider.get(R.string.notification_stop_boiling),
+            title = stringProvider.get(R.string.notification_stop_now_stop_boiling),
             soundRes = NowAlertType.End.toRawRes(),
         )
     }

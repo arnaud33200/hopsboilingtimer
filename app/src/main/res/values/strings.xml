@@ -9,21 +9,22 @@
     <string name="time_duration_minutes_pattern">^1 min</string>
     <string name="time_countdown_minutes_seconds_pattern">^1:^2</string> <!-- ^1 = minutes, ^2 = seconds -->
 
-    <!-- Notification -->
+    <!-- Notification Channel -->
     <string name="notification_channel_name">Hops Additions</string>
-    <string name="notification_channel_description">Add the next additions\n</string>
-    <string name="notification_title">Hops Boiling Timer</string>
-    <string name="notification_addition_alert_message">add ^1 (^2)</string> <!-- ^1 = hops, ^2 = duration -->
-    <string name="notification_stop_boiling">Stop boiling!</string>
-    <string name="notification_row_type_next">Next</string>
-    <string name="notification_row_type_after">After</string>
-    <string name="notification_row_type_now">Now</string>
-    <string name="notification_end_schedule">stop boiling!</string>
+    <string name="notification_channel_description">Add the next additions</string>
+
+    <!-- Notification Next Alerts -->
+    <string name="notification_next_alerts_type_next">Next</string>
+    <string name="notification_next_alerts_type_after">After</string>
+    <string name="notification_next_alerts_type_now">Now</string>
+    <string name="notification_next_alerts_add_hops">^1 (^2)</string> <!-- ^1 = hops, ^2 = duration -->
+    <string name="notification_next_alerts_stop_boiling">stop boiling!</string>
 
     <!-- Notification Now Alert -->
     <string name="notification_now_add_hops_title">Add hops</string>
     <string name="notification_now_add_hops_text">^1 (^2)</string> <!-- ^1 = hops, ^2 = duration -->
     <string name="notification_now_coming_soon_title">Coming soon (in ^1)</string> <!-- ^1 = duration -->
+    <string name="notification_stop_now_stop_boiling">Stop boiling!</string>
 
     <!-- Addition Timer -->
     <string name="addition_timer_screen_title">Hops Boiling Timer</string>
@@ -34,6 +35,4 @@
     <string name="addition_timer_start_button">Start timer</string>
     <string name="addition_timer_stop_button">Stop timer</string>
     <string name="addition_timer_alert_added_title">Added</string>
-
-
 </resources>

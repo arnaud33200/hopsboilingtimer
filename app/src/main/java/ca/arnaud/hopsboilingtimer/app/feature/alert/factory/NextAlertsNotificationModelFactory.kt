@@ -65,9 +65,9 @@ class NextAlertsNotificationModelFactory @Inject constructor(
     private fun RowType.toTypeText(): String {
         return stringProvider.get(
             when (this) {
-                RowType.Next -> R.string.notification_row_type_next
-                RowType.After -> R.string.notification_row_type_after
-                RowType.Now -> R.string.notification_row_type_now
+                RowType.Next -> R.string.notification_next_alerts_type_next
+                RowType.After -> R.string.notification_next_alerts_type_after
+                RowType.Now -> R.string.notification_next_alerts_type_now
             }
         )
     }
@@ -100,14 +100,14 @@ class NextAlertsNotificationModelFactory @Inject constructor(
         val duration = input.getDuration() ?: Duration.ZERO
         val hops = additions.joinToString(separator = ", ", prefix = "") { it.name }
         return stringProvider.get(
-            R.string.notification_addition_alert_message,
+            R.string.notification_next_alerts_add_hops,
             hops,
             durationTextFormatter.format(duration),
         )
     }
 
     private fun createEndMessage(input: AdditionAlert): String {
-        return stringProvider.get(R.string.notification_end_schedule)
+        return stringProvider.get(R.string.notification_next_alerts_stop_boiling)
     }
 
     @RawRes

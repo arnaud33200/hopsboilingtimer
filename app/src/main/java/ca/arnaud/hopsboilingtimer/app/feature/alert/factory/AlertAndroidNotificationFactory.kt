@@ -43,7 +43,6 @@ class AlertAndroidNotificationFactory @Inject constructor(
         }
         return NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.ic_notification_badge)
-            setContentTitle(stringProvider.get(R.string.notification_title))
             setCustomContentView(notificationLayout)
             setContentIntent(getContentIntent(context))
             setOngoing(!model.dismissible)
