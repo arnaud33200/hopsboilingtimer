@@ -9,8 +9,6 @@ data class AdditionSchedule(
 ) {
 
     val id = "CURRENT_SCHEDULE" // Force to only have one schedule until we support it
-
-    val endingTime = alerts.maxOf { alert -> alert.triggerAtTime }
 }
 
 fun AdditionSchedule.getNextAlert(time: LocalDateTime): AdditionAlert? {
@@ -20,7 +18,7 @@ fun AdditionSchedule.getNextAlert(time: LocalDateTime): AdditionAlert? {
 fun AdditionSchedule?.isValid(nowTime: LocalDateTime): Boolean {
     return when {
         this == null -> false
-        endingTime <= nowTime -> false
+        getNextAlert(nowTime) == null -> false
         else -> true
     }
 }

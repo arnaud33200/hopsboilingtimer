@@ -20,4 +20,5 @@ dependencies {
     implementation libs.kotlin.reflect // For using ".nestedClasses"
 
     testImplementation libs.bundles.test
+    testImplementation libs.coroutines.test
 }

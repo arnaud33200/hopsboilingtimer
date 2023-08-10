@@ -34,7 +34,7 @@ roomVersion = "2.4.3"
 mockkVersion = "1.13.5"
 junitVersion = "4.13.2"
 jUnit5Version = "5.9.2"
-coroutinesTestVersion = "1.6.4"
+coroutinesTestVersion = "1.7.2"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [libraries]
@@ -78,6 +78,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVer
 # Test
 mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTestVersion" }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [bundles]

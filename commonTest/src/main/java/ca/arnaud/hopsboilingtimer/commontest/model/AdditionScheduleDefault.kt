@@ -5,5 +5,5 @@ import java.time.LocalDateTime
 
 val additionScheduleDefault = AdditionSchedule(
     startingTime = LocalDateTime.MIN,
-    alerts = emptyList()
+    alerts = emptyList(),
 )

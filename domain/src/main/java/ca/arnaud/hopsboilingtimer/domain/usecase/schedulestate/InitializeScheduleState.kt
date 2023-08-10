@@ -23,23 +23,22 @@ class InitializeScheduleState @Inject constructor(
 
     override suspend fun buildRequest(params: Unit) {
         val savedSchedule = scheduleRepository.getSchedule()
-        val schedule =
-            if (savedSchedule != null && !savedSchedule.isValid(timeProvider.getNowLocalDateTime())) {
-                scheduleRepository.deleteSchedule(savedSchedule)
-                null
-            } else {
-                savedSchedule
-            }
+        val schedule = if (
+            savedSchedule != null
+            && !savedSchedule.isValid(timeProvider.getNowLocalDateTime())
+        ) {
+            scheduleRepository.deleteSchedule(savedSchedule)
+            null
+        } else {
+            savedSchedule
+        }
 
-        val nextAlert = schedule?.getNextAlert(timeProvider.getNowLocalDateTime())
-
-        val initialState = when {
-            schedule == null -> AdditionScheduleState.Idle
-            nextAlert == null -> AdditionScheduleState.Idle
+        val initialState = when (schedule) {
+            null -> AdditionScheduleState.Idle
             else -> AdditionScheduleState.Started
         }
 
-        if (nextAlert != null) {
+        schedule?.getNextAlert(timeProvider.getNowLocalDateTime())?.let { nextAlert ->
             scheduleRepository.setNextAlert(nextAlert)
         }
 
