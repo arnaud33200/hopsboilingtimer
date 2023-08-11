@@ -7,6 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+// TODO - doesn't make sense to keep it, it's the same as the state machine
 class AdditionScheduleStateMachineTest {
 
     private lateinit var subject: AdditionScheduleStateMachine

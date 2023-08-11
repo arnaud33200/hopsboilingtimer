@@ -33,25 +33,29 @@ class AdditionScheduleStateMachine @Inject constructor() :
     ): List<ConditionalTransition<AdditionScheduleState, AdditionScheduleParams>>? {
         return when (fromState) {
             AdditionScheduleState.Idle -> when (event) {
-                is AdditionScheduleEvent.StartClick -> listOf(
+                AdditionScheduleEvent.StartClick -> listOf(
                     ConditionalTransition(AdditionScheduleState.Started)
                 )
 
                 AdditionScheduleEvent.CancelClick -> null // Forbidden
                 AdditionScheduleEvent.TimerEnd -> null // Forbidden
+                AdditionScheduleEvent.PauseClick -> null // Forbidden
+                AdditionScheduleEvent.ResumeClick -> null // Forbidden
             }
 
             AdditionScheduleState.Canceled -> when (event) {
-                is AdditionScheduleEvent.StartClick -> listOf(
+                AdditionScheduleEvent.StartClick -> listOf(
                     ConditionalTransition(AdditionScheduleState.Started)
                 )
 
-                AdditionScheduleEvent.CancelClick -> null // No Action
+                AdditionScheduleEvent.CancelClick -> null // Forbidden
                 AdditionScheduleEvent.TimerEnd -> null // Impossible
+                AdditionScheduleEvent.PauseClick -> null // Impossible
+                AdditionScheduleEvent.ResumeClick -> null // Forbidden
             }
 
             AdditionScheduleState.Started -> when (event) {
-                is AdditionScheduleEvent.StartClick -> null // No Action
+                AdditionScheduleEvent.StartClick -> null // No Action
                 AdditionScheduleEvent.CancelClick -> listOf(
                     ConditionalTransition(AdditionScheduleState.Canceled)
                 )
@@ -59,19 +63,29 @@ class AdditionScheduleStateMachine @Inject constructor() :
                 AdditionScheduleEvent.TimerEnd -> listOf(
                     ConditionalTransition(AdditionScheduleState.Finished)
                 )
+
+                AdditionScheduleEvent.PauseClick -> listOf(
+                    ConditionalTransition(AdditionScheduleState.Paused)
+                )
+
+                AdditionScheduleEvent.ResumeClick -> null // Forbidden
             }
 
             AdditionScheduleState.Finished -> when (event) {
-                is AdditionScheduleEvent.StartClick -> listOf(
+                AdditionScheduleEvent.StartClick -> listOf(
                     ConditionalTransition(AdditionScheduleState.Started)
                 )
 
                 AdditionScheduleEvent.CancelClick -> null // Impossible
-                AdditionScheduleEvent.TimerEnd -> null // No Action
+                AdditionScheduleEvent.TimerEnd -> null // Impossible
+                AdditionScheduleEvent.PauseClick -> null // Impossible
+                AdditionScheduleEvent.ResumeClick -> null // Forbidden
             }
 
             AdditionScheduleState.Paused -> when (event) {
-                is AdditionScheduleEvent.StartClick -> null // forbidden, use resume event
+                AdditionScheduleEvent.ResumeClick -> listOf(
+                    ConditionalTransition(AdditionScheduleState.Started)
+                )
 
                 AdditionScheduleEvent.CancelClick -> listOf(
                     ConditionalTransition(AdditionScheduleState.Canceled)
@@ -80,6 +94,9 @@ class AdditionScheduleStateMachine @Inject constructor() :
                 AdditionScheduleEvent.TimerEnd -> listOf(
                     ConditionalTransition(AdditionScheduleState.Finished)
                 )
+
+                AdditionScheduleEvent.StartClick -> null // forbidden, use resume event
+                AdditionScheduleEvent.PauseClick -> null // Forbidden
             }
         }
     }
