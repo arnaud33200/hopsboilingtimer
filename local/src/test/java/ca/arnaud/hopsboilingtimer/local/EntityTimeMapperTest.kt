@@ -22,21 +22,33 @@ class EntityTimeMapperTest {
     }
 
     @Test
-    fun `GIVEN min local date time WHEN mapping to VERIFY zero`() {
+    fun `GIVEN min local date time WHEN mapping to VERIFY -1`() {
         val localDateTime = LocalDateTime.MIN
-        assertEquals(0L, subject.mapTo(localDateTime))
+        assertEquals(-1L, subject.mapTo(localDateTime))
     }
 
     @Test
-    fun `GIVEN max local date time WHEN mapping to VERIFY zero`() {
+    fun `GIVEN max local date time WHEN mapping to VERIFY -1`() {
         val localDateTime = LocalDateTime.MAX
-        assertEquals(0L, subject.mapTo(localDateTime))
+        assertEquals(-1L, subject.mapTo(localDateTime))
+    }
+
+    @Test
+    fun `GIVEN null date time WHEN mapping to VERIFY -1`() {
+        val localDateTime = null
+        assertEquals(-1L, subject.mapTo(localDateTime))
     }
 
     @Test
     fun `GIVEN zero timestamp WHEN mapping from VERIFY beginning of time`() {
         val timestamp = 0L
         assertEquals(LocalDateTime.of(1970, 1, 1, 0, 0, 0), subject.mapFrom(timestamp))
+    }
+
+    @Test
+    fun `GIVEN -1 timestamp WHEN mapping from VERIFY null time`() {
+        val timestamp = -1L
+        assertEquals(null, subject.mapFrom(timestamp))
     }
 
     @Test

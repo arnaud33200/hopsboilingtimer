@@ -55,6 +55,6 @@ class AdditionAlertFactory @Inject constructor(
     }
 
     private fun Long.toLocalDateTime(): LocalDateTime {
-        return entityTimeMapper.mapFrom(this)
+        return entityTimeMapper.mapFrom(this) ?: LocalDateTime.MIN
     }
 }

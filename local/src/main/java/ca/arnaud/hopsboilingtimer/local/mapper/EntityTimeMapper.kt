@@ -9,18 +9,22 @@ import javax.inject.Inject
 
 class EntityTimeMapper @Inject constructor(
     private val timeProvider: TimeProvider
-) : TwoWayMapper<LocalDateTime, Long> {
+) : TwoWayMapper<LocalDateTime?, Long> {
 
-    override fun mapTo(input: LocalDateTime): Long {
-        return try {
-            input.toEpochMillis(timeProvider.getCurrentZoneId())
-        } catch (exception: Throwable) {
-            0L
-        }
+    companion object {
+        const val NULL_TIME_VALUE = -1L
     }
 
-    override fun mapFrom(output: Long): LocalDateTime {
-        return output.timestampMillisToLocateDateTime(
+    override fun mapTo(input: LocalDateTime?): Long {
+        return try {
+            input?.toEpochMillis(timeProvider.getCurrentZoneId())
+        } catch (exception: Throwable) {
+            null
+        } ?: NULL_TIME_VALUE
+    }
+
+    override fun mapFrom(output: Long): LocalDateTime? {
+        return output.takeIf { it > NULL_TIME_VALUE }?.timestampMillisToLocateDateTime(
             zoneId = timeProvider.getCurrentZoneId()
         )
     }

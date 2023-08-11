@@ -18,6 +18,7 @@ import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleStateRepository
 import ca.arnaud.hopsboilingtimer.domain.repository.preferences.PreferencesRepository
 import ca.arnaud.hopsboilingtimer.local.AppDatabase
+import ca.arnaud.hopsboilingtimer.local.database.migration.MIGRATION_1_TO_2
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -35,11 +36,9 @@ abstract class DataModule {
 
         @Provides
         fun provideAppDataBase(context: Context): AppDatabase {
-            return Room.databaseBuilder(
-                context,
-                AppDatabase::class.java,
-                DATA_BASE_NAME
-            ).build()
+            return Room.databaseBuilder(context, AppDatabase::class.java, DATA_BASE_NAME)
+                .addMigrations(MIGRATION_1_TO_2)
+                .build()
         }
 
         @Provides

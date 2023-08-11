@@ -13,7 +13,8 @@ class ScheduleEntityMapper @Inject constructor(
         return ScheduleEntity(
             id = input.id,
             startTime = entityTimeMapper.mapTo(input.startingTime),
-            alertIds = input.alerts.map { it.id }
+            alertIds = input.alerts.map { it.id },
+            pauseTime = entityTimeMapper.mapTo(input.pauseTime)
         )
     }
 }

@@ -12,12 +12,12 @@ import ca.arnaud.hopsboilingtimer.local.entity.AlertEntity
 import ca.arnaud.hopsboilingtimer.local.entity.ScheduleEntity
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [
         AdditionEntity::class,
         ScheduleEntity::class,
         AlertEntity::class
-    ]
+    ],
 )
 @TypeConverters(
     DurationConverter::class,
