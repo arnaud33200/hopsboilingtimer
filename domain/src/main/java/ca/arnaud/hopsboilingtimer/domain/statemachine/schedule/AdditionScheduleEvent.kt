@@ -4,11 +4,11 @@ import ca.arnaud.hopsboilingtimer.domain.statemachine.MachineEvent
 
 sealed interface AdditionScheduleEvent : MachineEvent {
 
-    object TimerStart : AdditionScheduleEvent {
+    object StartClick : AdditionScheduleEvent {
         override val id = "TimerStart"
     }
 
-    object Cancel : AdditionScheduleEvent {
+    object CancelClick : AdditionScheduleEvent {
         override val id = "Cancel"
     }
 

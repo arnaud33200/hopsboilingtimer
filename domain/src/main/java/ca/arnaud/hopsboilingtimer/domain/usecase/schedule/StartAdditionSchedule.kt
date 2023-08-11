@@ -23,7 +23,7 @@ class StartAdditionSchedule @Inject constructor(
 
     override suspend fun buildRequest(params: ScheduleOptions) {
         sendStateEvent(
-            event = AdditionScheduleEvent.TimerStart,
+            event = AdditionScheduleEvent.StartClick,
             params = AdditionScheduleParams.Start(
                 scheduleOptions = params
             )

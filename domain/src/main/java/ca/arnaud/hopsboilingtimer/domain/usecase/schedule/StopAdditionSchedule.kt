@@ -20,6 +20,6 @@ class StopAdditionSchedule @Inject constructor(
 ) {
 
     override suspend fun buildRequest(params: Unit) {
-        sendStateEvent(AdditionScheduleEvent.Cancel)
+        sendStateEvent(AdditionScheduleEvent.CancelClick)
     }
 }

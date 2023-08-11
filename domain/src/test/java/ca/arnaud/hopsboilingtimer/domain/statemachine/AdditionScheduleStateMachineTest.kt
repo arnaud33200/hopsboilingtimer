@@ -24,28 +24,28 @@ class AdditionScheduleStateMachineTest {
             AdditionScheduleState.Started,
             subject.transition(
                 AdditionScheduleState.Idle,
-                AdditionScheduleEvent.TimerStart
+                AdditionScheduleEvent.StartClick
             )!!.toState
         )
         assertEquals(
             AdditionScheduleState.Started,
             subject.transition(
                 AdditionScheduleState.Canceled,
-                AdditionScheduleEvent.TimerStart
+                AdditionScheduleEvent.StartClick
             )!!.toState
         )
         assertEquals(
             AdditionScheduleState.Started,
             subject.transition(
                 AdditionScheduleState.Finished,
-                AdditionScheduleEvent.TimerStart
+                AdditionScheduleEvent.StartClick
             )!!.toState
         )
         assertEquals(
             AdditionScheduleState.Canceled,
             subject.transition(
                 AdditionScheduleState.Started,
-                AdditionScheduleEvent.Cancel
+                AdditionScheduleEvent.CancelClick
             )!!.toState
         )
         assertEquals(

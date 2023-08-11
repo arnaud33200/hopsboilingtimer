@@ -22,6 +22,7 @@ class AdditionScheduleActionHandler @Inject constructor(
 
     @Throws(AdditionScheduleActionError::class)
     suspend fun handle(transition: AdditionScheduleTransition) {
+        // TODO - convert this into action?
         when (transition.toState) {
             AdditionScheduleState.Idle -> {} // No-op
             AdditionScheduleState.Started -> startSchedule(transition)
