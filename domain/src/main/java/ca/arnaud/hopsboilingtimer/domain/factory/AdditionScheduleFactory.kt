@@ -13,7 +13,8 @@ class AdditionScheduleFactory @Inject constructor(
     fun create(additions: List<Addition>, startTime: LocalDateTime): AdditionSchedule {
         return AdditionSchedule(
             startingTime = startTime,
-            alerts = additionAlertListMapper.mapTo(additions)
+            alerts = additionAlertListMapper.mapTo(additions),
+            pauseTime = null,
         )
     }
 }

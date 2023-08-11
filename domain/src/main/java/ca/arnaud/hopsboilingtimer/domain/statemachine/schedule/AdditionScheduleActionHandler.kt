@@ -1,6 +1,7 @@
 package ca.arnaud.hopsboilingtimer.domain.statemachine.schedule
 
 import ca.arnaud.hopsboilingtimer.domain.factory.AdditionScheduleFactory
+import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
@@ -18,14 +19,37 @@ class AdditionScheduleActionHandler @Inject constructor(
     sealed class AdditionScheduleActionError : Throwable() {
 
         object StartScheduleMissingParams : AdditionScheduleActionError()
+
+        sealed class ResumeAction : AdditionScheduleActionError() {
+
+            object MissingSchedule : ResumeAction()
+            object AlreadyResumed : ResumeAction()
+            object ExpiredSchedule : ResumeAction()
+        }
+
+        sealed class PauseAction : AdditionScheduleActionError() {
+
+            object MissingSchedule : PauseAction()
+        }
     }
 
     @Throws(AdditionScheduleActionError::class)
     suspend fun handle(transition: AdditionScheduleTransition) {
         // TODO - convert this into action?
+        //  each sub class would have just one function and unit test can be separated
         when (transition.toState) {
             AdditionScheduleState.Idle -> {} // No-op
-            AdditionScheduleState.Started -> startSchedule(transition)
+            AdditionScheduleState.Started -> {
+                when (transition.event) {
+                    AdditionScheduleEvent.StartClick -> startSchedule(transition)
+                    AdditionScheduleEvent.ResumeClick -> resumeSchedule(transition)
+                    AdditionScheduleEvent.CancelClick,
+                    AdditionScheduleEvent.PauseClick,
+                    AdditionScheduleEvent.TimerEnd -> {
+                    } // No-op
+                }
+            }
+
             AdditionScheduleState.Paused -> pauseSchedule(transition)
             AdditionScheduleState.Canceled,
             AdditionScheduleState.Finished -> {
@@ -58,7 +82,45 @@ class AdditionScheduleActionHandler @Inject constructor(
     }
 
     private suspend fun pauseSchedule(transition: AdditionScheduleTransition) {
-        // TODO - pause action (#14)
+        val schedule = scheduleRepository.getSchedule()
+            ?: throw AdditionScheduleActionError.PauseAction.MissingSchedule
+
+        scheduleRepository.setSchedule(
+            schedule.copy(
+                pauseTime = timeProvider.getNowLocalDateTime(),
+            )
+        )
+        scheduleRepository.setNextAlert(null)
+    }
+
+    @Throws(AdditionScheduleActionError.ResumeAction::class)
+    private suspend fun resumeSchedule(transition: AdditionScheduleTransition) {
+        val schedule = scheduleRepository.getSchedule()
+            ?: throw AdditionScheduleActionError.ResumeAction.MissingSchedule
+        val pauseTime = schedule.pauseTime
+            ?: throw AdditionScheduleActionError.ResumeAction.AlreadyResumed
+
+        val nowTime = timeProvider.getNowLocalDateTime()
+        val delaySincePause = Duration.between(pauseTime, nowTime)
+
+        val resumeSchedule = schedule.copy(
+            startingTime = schedule.startingTime + delaySincePause,
+            pauseTime = null,
+            alerts = schedule.alerts.map { alert ->
+                val triggerAtTime = alert.triggerAtTime + delaySincePause
+                when (alert) {
+                    is AdditionAlert.Start -> alert.copy(triggerAtTime = triggerAtTime)
+                    is AdditionAlert.End -> alert.copy(triggerAtTime = triggerAtTime)
+                    is AdditionAlert.Next -> alert.copy(triggerAtTime = triggerAtTime)
+                }
+            }
+        )
+
+        val nextAlert = resumeSchedule.getNextAlert(nowTime)
+            ?: throw AdditionScheduleActionError.ResumeAction.ExpiredSchedule
+
+        scheduleRepository.setSchedule(resumeSchedule)
+        scheduleRepository.setNextAlert(nextAlert)
     }
 
     private suspend fun stopSchedule() {

@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 data class AdditionSchedule(
     val startingTime: LocalDateTime,
     val alerts: List<AdditionAlert>,
+    val pauseTime: LocalDateTime?,
 ) {
 
     val id = "CURRENT_SCHEDULE" // Force to only have one schedule until we support it
