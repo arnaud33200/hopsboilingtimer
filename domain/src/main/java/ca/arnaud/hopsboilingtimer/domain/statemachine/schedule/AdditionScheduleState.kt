@@ -16,6 +16,10 @@ sealed interface AdditionScheduleState : MachineState {
         override val id = "Started"
     }
 
+    object Paused : AdditionScheduleState {
+        override val id = "Paused"
+    }
+
     object Canceled : AdditionScheduleState {
         override val id = "Canceled"
     }

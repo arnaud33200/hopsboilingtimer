@@ -25,6 +25,7 @@ class AdditionScheduleActionHandler @Inject constructor(
         when (transition.toState) {
             AdditionScheduleState.Idle -> {} // No-op
             AdditionScheduleState.Started -> startSchedule(transition)
+            AdditionScheduleState.Paused -> pauseSchedule(transition)
             AdditionScheduleState.Canceled,
             AdditionScheduleState.Stopped -> {
                 stopSchedule()
@@ -53,6 +54,10 @@ class AdditionScheduleActionHandler @Inject constructor(
 
         val nextAlert = schedule.getNextAlert(startTime)
         scheduleRepository.setNextAlert(nextAlert)
+    }
+
+    private suspend fun pauseSchedule(transition: AdditionScheduleTransition) {
+        // TODO - pause action (#14)
     }
 
     private suspend fun stopSchedule() {

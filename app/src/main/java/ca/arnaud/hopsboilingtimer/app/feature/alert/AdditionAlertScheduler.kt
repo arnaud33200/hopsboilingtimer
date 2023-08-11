@@ -54,6 +54,10 @@ class AdditionAlertScheduler @Inject constructor(
 
             AdditionScheduleState.Idle,
             AdditionScheduleState.Canceled -> cancelAlarm()
+
+            AdditionScheduleState.Paused -> {
+                additionAlertNotificationPresenter.showPause()
+            }
         }
         currentSchedule = status
     }

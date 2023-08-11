@@ -150,4 +150,8 @@ class AdditionAlertNotificationPresenter @Inject constructor(
             alertAndroidNotificationFactory.createChannel(CHANNEL_ID)
         )
     }
+
+    fun showPause() {
+        // TODO - show pause notification (#14)
+    }
 }

@@ -93,15 +93,6 @@ class AdditionTimerViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onClockTick(event: AdditionClockEvent) {
-        val schedule = event.schedule ?: return
-        val nextAlert = event.nextAlert ?: return
-        _timerTextUpdate.value = TimerTextUpdateModel(
-            buttonTimer = additionTimerScreenModelFactory.getButtonTime(schedule),
-            highlightRowTimer = additionTimerScreenModelFactory.getHighlightedTimeText(nextAlert)
-        )
-    }
-
     private suspend fun updateScreenModel() {
         val result = getAdditions.execute(Unit)
         val additions = result.getOrDefault(emptyList())
@@ -157,6 +148,32 @@ class AdditionTimerViewModel @AssistedInject constructor(
 
     // endregion
 
+    // region Clock Service
+
+    private fun onClockTick(event: AdditionClockEvent) {
+        val schedule = event.schedule ?: return
+        val nextAlert = event.nextAlert ?: return
+        _timerTextUpdate.value = TimerTextUpdateModel(
+            buttonTimer = additionTimerScreenModelFactory.getButtonTime(schedule),
+            highlightRowTimer = additionTimerScreenModelFactory.getHighlightedTimeText(nextAlert)
+        )
+    }
+
+    private fun updateClockService(status: AdditionScheduleState) {
+        when (status) {
+            is AdditionScheduleState.Started -> clockService.start()
+            AdditionScheduleState.Idle,
+            AdditionScheduleState.Canceled,
+            AdditionScheduleState.Stopped,
+            AdditionScheduleState.Paused -> {
+                clockService.reset()
+                _timerTextUpdate.value = TimerTextUpdateModel()
+            }
+        }
+    }
+
+    // endregion
+
     // region Schedule
 
     private suspend fun onScheduleUpdate(schedule: AdditionSchedule?) {
@@ -165,13 +182,23 @@ class AdditionTimerViewModel @AssistedInject constructor(
     }
 
     private fun onScheduleStateUpdate(status: AdditionScheduleState) {
+        updateClockService(status)
         when (status) {
-            is AdditionScheduleState.Started -> clockService.start()
-            AdditionScheduleState.Idle,
-            AdditionScheduleState.Canceled,
+            is AdditionScheduleState.Started -> {
+                // No-op? handled in subscribe schedule
+            }
+
+            AdditionScheduleState.Idle -> {} // No-op
+            AdditionScheduleState.Canceled -> {
+                // No-op, user should be able to edit immediately
+            }
+
             AdditionScheduleState.Stopped -> {
-                clockService.reset()
-                _timerTextUpdate.value = TimerTextUpdateModel()
+                // TODO - show stop mode (#15)
+            }
+
+            AdditionScheduleState.Paused -> {
+                // TODO - show paused mode (#14)
             }
         }
     }
@@ -284,6 +311,10 @@ class AdditionTimerViewModel @AssistedInject constructor(
                 AdditionScheduleState.Idle,
                 AdditionScheduleState.Canceled,
                 AdditionScheduleState.Stopped -> startSchedule()
+
+                AdditionScheduleState.Paused -> {
+                    // TODO - call resume (#14)
+                }
             }
         }
     }

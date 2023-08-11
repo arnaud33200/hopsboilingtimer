@@ -69,6 +69,18 @@ class AdditionScheduleStateMachine @Inject constructor() :
                 AdditionScheduleEvent.Cancel -> null // Impossible
                 AdditionScheduleEvent.TimerEnd -> null // No Action
             }
+
+            AdditionScheduleState.Paused -> when (event) {
+                is AdditionScheduleEvent.TimerStart -> null // forbidden, use resume event
+
+                AdditionScheduleEvent.Cancel -> listOf(
+                    ConditionalTransition(AdditionScheduleState.Canceled)
+                )
+
+                AdditionScheduleEvent.TimerEnd -> listOf(
+                    ConditionalTransition(AdditionScheduleState.Stopped)
+                )
+            }
         }
     }
 
