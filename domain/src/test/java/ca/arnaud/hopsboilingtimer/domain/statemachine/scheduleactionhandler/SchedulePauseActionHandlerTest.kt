@@ -8,6 +8,7 @@ import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleA
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleTransition
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.error.AdditionSchedulePauseActionError
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -38,7 +39,7 @@ class SchedulePauseActionHandlerTest {
         )
     }
 
-    @Test(expected = AdditionScheduleActionHandler.AdditionScheduleActionError.PauseAction.MissingSchedule::class)
+    @Test(expected = AdditionSchedulePauseActionError.MissingSchedule::class)
     fun `GIVEN null schedule and pause transition WHEN handling VERIFY MissingSchedule error`() =
         runTest {
             timeProvider.now = LocalDateTime.of(2023, 8, 11, 10, 18)

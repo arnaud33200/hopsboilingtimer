@@ -5,6 +5,10 @@ import ca.arnaud.hopsboilingtimer.domain.model.AdditionAlert
 import ca.arnaud.hopsboilingtimer.domain.model.schedule.getNextAlert
 import ca.arnaud.hopsboilingtimer.domain.provider.TimeProvider
 import ca.arnaud.hopsboilingtimer.domain.repository.ScheduleRepository
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.error.AdditionScheduleActionError
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.error.AdditionSchedulePauseActionError
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.error.AdditionScheduleResumeActionError
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.error.AdditionScheduleStartActionError
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import java.time.Duration
 import javax.inject.Inject
@@ -15,23 +19,6 @@ class AdditionScheduleActionHandler @Inject constructor(
     private val additionScheduleFactory: AdditionScheduleFactory,
     private val scheduleRepository: ScheduleRepository,
 ) {
-
-    sealed class AdditionScheduleActionError : Throwable() {
-
-        object StartScheduleMissingParams : AdditionScheduleActionError()
-
-        sealed class ResumeAction : AdditionScheduleActionError() {
-
-            object MissingSchedule : ResumeAction()
-            object AlreadyResumed : ResumeAction()
-            object ExpiredSchedule : ResumeAction()
-        }
-
-        sealed class PauseAction : AdditionScheduleActionError() {
-
-            object MissingSchedule : PauseAction()
-        }
-    }
 
     @Throws(AdditionScheduleActionError::class)
     suspend fun handle(transition: AdditionScheduleTransition) {
@@ -61,7 +48,7 @@ class AdditionScheduleActionHandler @Inject constructor(
     @Throws(AdditionScheduleActionError::class)
     private suspend fun startSchedule(transition: AdditionScheduleTransition) {
         val params = (transition.params as? AdditionScheduleParams.Start)?.scheduleOptions
-            ?: throw AdditionScheduleActionError.StartScheduleMissingParams
+            ?: throw AdditionScheduleStartActionError.MissingParams
 
         val additions = getAdditions.execute(Unit).getOrDefault(emptyList())
 
@@ -83,7 +70,7 @@ class AdditionScheduleActionHandler @Inject constructor(
 
     private suspend fun pauseSchedule(transition: AdditionScheduleTransition) {
         val schedule = scheduleRepository.getSchedule()
-            ?: throw AdditionScheduleActionError.PauseAction.MissingSchedule
+            ?: throw AdditionSchedulePauseActionError.MissingSchedule
 
         scheduleRepository.setSchedule(
             schedule.copy(
@@ -93,12 +80,12 @@ class AdditionScheduleActionHandler @Inject constructor(
         scheduleRepository.setNextAlert(null)
     }
 
-    @Throws(AdditionScheduleActionError.ResumeAction::class)
+    @Throws(AdditionScheduleResumeActionError::class)
     private suspend fun resumeSchedule(transition: AdditionScheduleTransition) {
         val schedule = scheduleRepository.getSchedule()
-            ?: throw AdditionScheduleActionError.ResumeAction.MissingSchedule
+            ?: throw AdditionScheduleResumeActionError.MissingSchedule
         val pauseTime = schedule.pauseTime
-            ?: throw AdditionScheduleActionError.ResumeAction.AlreadyResumed
+            ?: throw AdditionScheduleResumeActionError.AlreadyResumed
 
         val nowTime = timeProvider.getNowLocalDateTime()
         val delaySincePause = Duration.between(pauseTime, nowTime)
@@ -117,7 +104,7 @@ class AdditionScheduleActionHandler @Inject constructor(
         )
 
         val nextAlert = resumeSchedule.getNextAlert(nowTime)
-            ?: throw AdditionScheduleActionError.ResumeAction.ExpiredSchedule
+            ?: throw AdditionScheduleResumeActionError.ExpiredSchedule
 
         scheduleRepository.setSchedule(resumeSchedule)
         scheduleRepository.setNextAlert(nextAlert)

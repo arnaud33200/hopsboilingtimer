@@ -12,6 +12,7 @@ import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleA
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleEvent
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleState
 import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.AdditionScheduleTransition
+import ca.arnaud.hopsboilingtimer.domain.statemachine.schedule.error.AdditionScheduleResumeActionError
 import ca.arnaud.hopsboilingtimer.domain.usecase.addition.GetAdditions
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -24,7 +25,7 @@ import org.junit.Test
 import java.time.Duration
 import java.time.LocalDateTime
 
-class ScheduleResumeActionHandlerTest {
+class ScheduleAdditionScheduleResumeActionErrorHandlerTest {
 
     private lateinit var subject: AdditionScheduleActionHandler
 
@@ -43,7 +44,7 @@ class ScheduleResumeActionHandlerTest {
         )
     }
 
-    @Test(expected = AdditionScheduleActionHandler.AdditionScheduleActionError.ResumeAction.MissingSchedule::class)
+    @Test(expected = AdditionScheduleResumeActionError.MissingSchedule::class)
     fun `GIVEN null schedule and resume transition WHEN handling VERIFY MissingSchedule error`() =
         runTest {
             val transition = object : AdditionScheduleTransition {
@@ -57,7 +58,7 @@ class ScheduleResumeActionHandlerTest {
             subject.handle(transition)
         }
 
-    @Test(expected = AdditionScheduleActionHandler.AdditionScheduleActionError.ResumeAction.AlreadyResumed::class)
+    @Test(expected = AdditionScheduleResumeActionError.AlreadyResumed::class)
     fun `GIVEN schedule without pause time and resume transition WHEN handling VERIFY AlreadyResumed error`() =
         runTest {
             val transition = object : AdditionScheduleTransition {
@@ -74,7 +75,7 @@ class ScheduleResumeActionHandlerTest {
             subject.handle(transition)
         }
 
-    @Test(expected = AdditionScheduleActionHandler.AdditionScheduleActionError.ResumeAction.ExpiredSchedule::class)
+    @Test(expected = AdditionScheduleResumeActionError.ExpiredSchedule::class)
     fun `GIVEN schedule pause at end time and resume transition WHEN handling VERIFY ExpiredSchedule error`() =
         runTest {
             val transition = object : AdditionScheduleTransition {
