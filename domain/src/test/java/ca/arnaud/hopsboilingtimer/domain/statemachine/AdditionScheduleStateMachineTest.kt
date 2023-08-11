@@ -37,7 +37,7 @@ class AdditionScheduleStateMachineTest {
         assertEquals(
             AdditionScheduleState.Started,
             subject.transition(
-                AdditionScheduleState.Stopped,
+                AdditionScheduleState.Finished,
                 AdditionScheduleEvent.TimerStart
             )!!.toState
         )
@@ -49,7 +49,7 @@ class AdditionScheduleStateMachineTest {
             )!!.toState
         )
         assertEquals(
-            AdditionScheduleState.Stopped,
+            AdditionScheduleState.Finished,
             subject.transition(
                 AdditionScheduleState.Started,
                 AdditionScheduleEvent.TimerEnd

@@ -44,7 +44,7 @@ class AdditionAlertScheduler @Inject constructor(
     private fun onScheduleStatusUpdate(status: AdditionScheduleState) {
         when (status) {
             is AdditionScheduleState.Started -> {} // No-op
-            AdditionScheduleState.Stopped -> {
+            AdditionScheduleState.Finished -> {
                 if (currentSchedule is AdditionScheduleState.Started) {
                     additionAlertNotificationPresenter.showEndAlert()
                 } else {

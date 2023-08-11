@@ -164,7 +164,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
             is AdditionScheduleState.Started -> clockService.start()
             AdditionScheduleState.Idle,
             AdditionScheduleState.Canceled,
-            AdditionScheduleState.Stopped,
+            AdditionScheduleState.Finished,
             AdditionScheduleState.Paused -> {
                 clockService.reset()
                 _timerTextUpdate.value = TimerTextUpdateModel()
@@ -193,7 +193,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
                 // No-op, user should be able to edit immediately
             }
 
-            AdditionScheduleState.Stopped -> {
+            AdditionScheduleState.Finished -> {
                 // TODO - show stop mode (#15)
             }
 
@@ -310,7 +310,7 @@ class AdditionTimerViewModel @AssistedInject constructor(
                 is AdditionScheduleState.Started -> stopSchedule()
                 AdditionScheduleState.Idle,
                 AdditionScheduleState.Canceled,
-                AdditionScheduleState.Stopped -> startSchedule()
+                AdditionScheduleState.Finished -> startSchedule()
 
                 AdditionScheduleState.Paused -> {
                     // TODO - call resume (#14)

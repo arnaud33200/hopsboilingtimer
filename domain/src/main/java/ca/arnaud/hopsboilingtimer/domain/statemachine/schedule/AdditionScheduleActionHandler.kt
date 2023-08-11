@@ -27,7 +27,7 @@ class AdditionScheduleActionHandler @Inject constructor(
             AdditionScheduleState.Started -> startSchedule(transition)
             AdditionScheduleState.Paused -> pauseSchedule(transition)
             AdditionScheduleState.Canceled,
-            AdditionScheduleState.Stopped -> {
+            AdditionScheduleState.Finished -> {
                 stopSchedule()
             }
         }

@@ -57,11 +57,11 @@ class AdditionScheduleStateMachine @Inject constructor() :
                 )
 
                 AdditionScheduleEvent.TimerEnd -> listOf(
-                    ConditionalTransition(AdditionScheduleState.Stopped)
+                    ConditionalTransition(AdditionScheduleState.Finished)
                 )
             }
 
-            AdditionScheduleState.Stopped -> when (event) {
+            AdditionScheduleState.Finished -> when (event) {
                 is AdditionScheduleEvent.TimerStart -> listOf(
                     ConditionalTransition(AdditionScheduleState.Started)
                 )
@@ -78,7 +78,7 @@ class AdditionScheduleStateMachine @Inject constructor() :
                 )
 
                 AdditionScheduleEvent.TimerEnd -> listOf(
-                    ConditionalTransition(AdditionScheduleState.Stopped)
+                    ConditionalTransition(AdditionScheduleState.Finished)
                 )
             }
         }
