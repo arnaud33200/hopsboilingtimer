@@ -10,6 +10,12 @@ apply from: "$gradleDir/android_dependencies.gradle"
 
 android {
     namespace 'ca.arnaud.hopsboilingtimer.local'
+    lint {
+        targetSdk 34
+    }
+    testOptions {
+        targetSdk 34
+    }
 }
 
 dependencies {

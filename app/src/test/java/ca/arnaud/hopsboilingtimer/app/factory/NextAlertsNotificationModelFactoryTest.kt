@@ -49,6 +49,6 @@ class NextAlertsNotificationModelFactoryTest {
         )
 
         val result = subject.create(currentAlert, schedule)
-        assertEquals("3,4", result.rows.joinToString(separator = ",") { it.id })
+        assertEquals("3,4", result?.rows?.joinToString(separator = ",") { it.id })
     }
 }

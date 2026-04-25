@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
@@ -28,9 +29,6 @@ android {
         ]
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion compose_compiler_version
-    }
 
     buildFeatures {
         compose true
